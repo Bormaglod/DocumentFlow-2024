@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="DocumentFlow.Controls.DocumentsList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:FileLengthConverter x:Key="FileLengthConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True">
+                <syncfusion:ButtonAdv Label="Сохранить" 
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-save-16.png"/>
+                <syncfusion:ButtonAdv Label="Открыть" 
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-open-document-16.png"/>
+                <Separator/>
+                <syncfusion:ButtonAdv Label="Добавить" 
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-add-16.png"/>
+                <syncfusion:ButtonAdv Label="Изменить" 
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-edit-16.png"/>
+                <syncfusion:ButtonAdv Label="Удалить" 
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-delete-16.png"/>
+                <Separator/>
+                <syncfusion:ButtonAdv Label="Сканировать" 
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-rescan-document-16.png"/>
+            </ToolBar>
+        </ToolBarPanel>
+        <syncfusion:SfDataGrid x:Name="gridContent" 
+                               Grid.Row="1" 
+                               AllowGrouping="False" 
+                               AllowResizingColumns="True" 
+                               AllowTriStateSorting="True" 
+                               AutoGenerateColumns="False" 
+                               NavigationMode="Row">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn HeaderText="Описание"
+                                           MappingName="Note"
+                                           ColumnSizer="AutoLastColumnFill"/>
+                <syncfusion:GridTextColumn HeaderText="Имя файла"
+                                           MappingName="FileName"
+                                           Width="300"/>
+                <syncfusion:GridTextColumn HeaderText="Размер"
+                                           Width="150"
+                                           UseBindingValue="True"
+                                           TextAlignment="Right"
+                                           ValueBinding="{Binding FileLength, Converter={StaticResource FileLengthConverter}}"/>
+                <syncfusion:GridCheckBoxColumn HeaderText="Галлерея"
+                                               MappingName="ThumbnailExist"
+                                               Width="100"/>
+            </syncfusion:SfDataGrid.Columns>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</UserControl>

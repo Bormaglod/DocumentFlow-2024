@@ -1,0 +1,107 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.DirectoryWindow"
+        x:Name="directoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:comparers="clr-namespace:DocumentFlow.Common.Comparers"
+        xmlns:data="clr-namespace:Syncfusion.Data;assembly=Syncfusion.Data.WPF"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        mc:Ignorable="d"
+        Title="Выбор" Height="450" Width="600" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <comparers:CustomComparer x:Key="CustomComparer"/>
+        <DataTemplate x:Key="WatermarkTemplate">
+            <TextBlock Text="{Binding}" 
+                       FontStyle="Italic" 
+                       Opacity="0.5"
+                       VerticalAlignment="Center"/>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="buttonSelect" 
+                    Content="Выбор"
+                    Margin="5,5,5,5" 
+                    IsDefault="True"
+                    Click="ButtonSelect_Click"/>
+            <syncfusion:SfTextBoxExt Grid.Column="1"
+                                     Margin="0,5,5,5"
+                                     Watermark="Поиск..."
+                                     WatermarkTemplate="{StaticResource WatermarkTemplate}">
+            </syncfusion:SfTextBoxExt>
+            <Button x:Name="clearFilter" 
+                    Grid.Column="2"
+                    Margin="0,5,5,5"
+                    Width="{Binding ElementName=clearFilter, Path=ActualHeight}">
+                <ContentControl Height="18" 
+                                IsTabStop="False">
+                    <Image Source="/Images/icons8-delete-16.png" 
+                           Width="16" 
+                           Height="16"/>
+                </ContentControl>
+            </Button>
+            <Button Content="Отмена"
+                    IsCancel="True"
+                    Grid.Column="3"
+                    Margin="0,5,5,5"/>
+        </Grid>
+        <syncfusion:SfTreeGrid x:Name="gridContent"
+                               Grid.Row="1"
+                               SelectedItem="{Binding ElementName=directoryWindow, Path=SelectedItem}"
+                               ParentPropertyName="Id"
+                               ChildPropertyName="ParentId"
+                               SelfRelationRootValue="{x:Null}"
+                               ItemsSource="{Binding ElementName=directoryWindow, Path=ItemsSource}" 
+                               AutoExpandMode="AllNodesExpanded" 
+                               NavigationMode="Row"
+                               AutoGeneratingColumn="SfTreeGrid_AutoGeneratingColumn" MouseDoubleClick="SfTreeGrid_MouseDoubleClick">
+            <syncfusion:SfTreeGrid.Columns>
+                <syncfusion:TreeGridTextColumn MappingName="ItemName"
+                                               HeaderText="Наименование"
+                                               ColumnSizer="AutoFillColumn">
+                    <syncfusion:TreeGridTextColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" 
+                                       Source="{Binding RowStatusImage}"
+                                       Width="16"
+                                       Height="16"
+                                       Stretch="None"/>
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding ItemName}" />
+                            </Grid>
+                        </DataTemplate>
+                    </syncfusion:TreeGridTextColumn.CellTemplate>
+                </syncfusion:TreeGridTextColumn>
+            </syncfusion:SfTreeGrid.Columns>
+            <syncfusion:SfTreeGrid.SortComparers>
+                <data:SortComparer Comparer="{StaticResource CustomComparer}"
+                                   PropertyName="ItemName"/>
+            </syncfusion:SfTreeGrid.SortComparers>
+            <syncfusion:SfTreeGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="ItemName" 
+                                                  SortDirection="Ascending" />
+            </syncfusion:SfTreeGrid.SortColumnDescriptions>
+        </syncfusion:SfTreeGrid>
+    </Grid>
+</Window>

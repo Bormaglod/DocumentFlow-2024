@@ -1,0 +1,27 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.WipeConfirmationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DocumentFlow.Dialogs"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        mc:Ignorable="d"
+        Title="Удаление" Height="224" Width="336" WindowStartupLocation="CenterScreen" SizeToContent="Height" ShowInTaskbar="False" ResizeMode="NoResize" ContentRendered="Window_ContentRendered">
+    <StackPanel Margin="10">
+        <TextBlock Text="Безвозвратное удаление записи (записей)."
+                   Margin="0,0,0,30"/>
+        <Button x:Name="onlyCurrentButton"
+                Content="Удалить только текущую запись"
+                Height="36"
+                Margin="0,0,0,5" Click="OnlyCurrentButton_Click"/>
+        <Button x:Name="allButton" 
+                Content="Удалить все помеченные на удаление записи"
+                Height="36"
+                Margin="0,0,0,5" Click="AllButton_Click"/>
+        <Button Content="Отменить всё. Я передумал(а)"
+                Height="36"
+                Margin="0,0,0,5" 
+                IsCancel="True"/>
+    </StackPanel>
+</Window>

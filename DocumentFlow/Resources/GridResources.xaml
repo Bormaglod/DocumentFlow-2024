@@ -1,0 +1,402 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+                    xmlns:commands="clr-namespace:DocumentFlow.Commands"
+                    xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+                    xmlns:behavior="clr-namespace:DocumentFlow.Common.Behaviors">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/SfDatagrid/SfDatagrid.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/MSControl/Menu.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <converters:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
+    <converters:RowHeaderImageConverter x:Key="RowHeaderImageConverter"/>
+    <converters:MultiParameterConverter x:Key="MultiParameterConverter"/>
+    <Style TargetType="{x:Type MenuItem}"
+           BasedOn="{StaticResource WPFMenuItemStyle}">
+        <Setter Property="HorizontalContentAlignment" 
+                Value="Left" />
+        <Setter Property="VerticalContentAlignment" 
+                Value="Top" />
+    </Style>
+    <ContextMenu x:Key="GridHeaderContextMenu">
+        <MenuItem Header="Сортировка по возрастанию" 
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.SortAscending}}" 
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-sort-by-asc-16.png"
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Сортировка по убыванию" 
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.SortDescending}}" 
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-sort-by-desc-16.png"
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Убрать сортировку"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ClearSorting}}" 
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-sort-clear-16.png"
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Очистить фильтр"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ClearFiltering}}" 
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-filter-clear-16.png" 
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Группировать по этой колонке"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.GroupThisColumn}}" 
+                  CommandParameter="{Binding}" />
+        <MenuItem Header="Показать/скрыть область группировки"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ShowHideGroupArea}}" 
+                  CommandParameter="{Binding}" />
+        <Separator/>
+        <MenuItem Header="Видимые столбцы" ItemsSource="{Binding Path=DataGrid.Parent.Parent.DataContext.VisibleColumnsMenuItems}">
+            <MenuItem.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" 
+                              IsEnabled="{Binding IsEnabled}" 
+                              Content="{Binding Header}"
+                              Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ChangeColumnVisible}}"
+                              CommandParameter="{Binding}"/>
+                </DataTemplate>
+            </MenuItem.ItemTemplate>
+        </MenuItem>
+    </ContextMenu>
+    <ContextMenu x:Key="GridRecordContextMenu">
+        <MenuItem Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.CopyIdentifier}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Id: {"/>
+                    <TextBlock Text="{Binding DataGrid.CurrentItem.Id}"/>
+                    <TextBlock Text="}"/>
+                </StackPanel>
+            </MenuItem.Header>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Копировать"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.Copy}}"
+                  CommandParameter="{Binding}"
+                  InputGestureText="Ctrl+C">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-copy-16.png"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Создать"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CreateRow}"
+                  InputGestureText="Alt+INSERT">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-file-add-16.png"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Изменить"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.EditCurrentRow}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-file-edit-16.png"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Пометить на удаление / снять отметку"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.SwapMarkedRow}"
+                  InputGestureText="Alt+DELETE">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-file-delete-16.png"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Создать копию"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CopyRow}"
+                  InputGestureText="Ctrl+Alt+INSERT">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-copy-edit-16.png"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Создать на основании"
+                  ItemsSource="{Binding Path=DataGrid.Parent.Parent.DataContext.CreationBasedMenuItems}">
+            <MenuItem.ItemContainerStyle>
+                <Style TargetType="{x:Type MenuItem}"
+                       BasedOn="{StaticResource WPFMenuItemStyle}">
+                    <Setter Property="Header" Value="{Binding Header}"/>
+                    <Setter Property="Command" Value="{Binding PlacementTarget.CreateBasedDocument}"/>
+                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                </Style>
+            </MenuItem.ItemContainerStyle>
+        </MenuItem>
+        <MenuItem Header="Перенести в другую группу..."
+                  Visibility="{Binding Path=DataGrid.Parent.Parent.DataContext.AvailableNavigation, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Separator/>
+        <MenuItem Header="Документы" 
+                  ItemsSource="{Binding Path=DataGrid.Parent.Parent.DataContext.DocumentMenuItems}">
+            <MenuItem.ItemContainerStyle>
+                <Style TargetType="{x:Type MenuItem}"
+                       BasedOn="{StaticResource WPFMenuItemStyle}">
+                    <Setter Property="Header" Value="{Binding Header}"/>
+                    <Setter Property="Command" Value="{Binding PlacementTarget.OpenDocument}"/>
+                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                </Style>
+            </MenuItem.ItemContainerStyle>
+        </MenuItem>
+    </ContextMenu>
+    <ContextMenu x:Key="GroupDropAreaContextMenu">
+        <MenuItem Header="Показать/Скрыть область группировки"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ShowHideGroupArea}}"
+                  CommandParameter="{Binding}"/>
+        <MenuItem Header="Развернуть всё"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ExpandAll}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-expand-16.png" 
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Свернуть всё" 
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.CollapseAll}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-collapse-16.png" 
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Очистить" 
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ClearGroups}}"
+                  CommandParameter="{Binding}"/>
+    </ContextMenu>
+    <ContextMenu x:Key="GroupDropItemContextMenu">
+        <MenuItem Header="Развернуть всё"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ExpandAll}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-expand-16.png" 
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Свернуть всё" 
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.CollapseAll}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-collapse-16.png" 
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Сортировка по возрастанию" 
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.SortAscending}}" 
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-sort-by-asc-16.png"
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Сортировка по убыванию" 
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.SortDescending}}" 
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-sort-by-desc-16.png"
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="Очистить"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ClearGroup}}"
+                  CommandParameter="{Binding}"/>
+        <MenuItem Header="Убрать сортировку"
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ClearSorting}}" 
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-sort-clear-16.png"
+                       Width="16" 
+                       Height="16"/>
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+    <DataTemplate x:Key="RootItem">
+        <Image Source="/Images/icons8-home-16.png" 
+               Margin="10,0,0,0"
+               Width="16"
+               Height="16"/>
+    </DataTemplate>
+    <DataTemplate x:Key="ParentItem">
+        <TextBlock Text="{Binding ContentString}" 
+                   Margin="2,0" />
+    </DataTemplate>
+    <HierarchicalDataTemplate x:Key="DirectoryHierarchy" 
+                              ItemsSource="{Binding HierarchyItems}">
+        <ContentControl Content="{Binding}">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsRoot}" 
+                                     Value="True">
+                            <Setter Property="ContentTemplate" 
+                                    Value="{StaticResource RootItem}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsRoot}" 
+                                     Value="False">
+                            <Setter Property="ContentTemplate" 
+                                    Value="{StaticResource ParentItem}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+    </HierarchicalDataTemplate>
+    <Style TargetType="{x:Type syncfusion:GridRowHeaderCell}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="#0E000000" />
+        <Setter Property="BorderThickness" Value="0,0,1,1" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="syncfusion:GridRowHeaderCell">
+                    <Border x:Name="PART_RowHeaderCellBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="IndicationStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="CurrentRow">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RowHeaderStatusImage" 
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <SolidColorBrush Color="#E6E6E6"/>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_RowHeaderIndicator" 
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <SolidColorBrush Color="#0078D2"/>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid UseLayoutRounding="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="2"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="RowHeaderStatusImage" 
+                                    Grid.Column="0"
+                                    Background="#F2F2F2">
+                                <Image Source="{Binding Converter={StaticResource RowHeaderImageConverter}}"
+                                       Width="16"
+                                       Height="16">
+                                </Image>
+                            </Border>
+                            <Border x:Name="PART_RowHeaderIndicator"
+                                    Grid.Column="1"
+                                    Background="#F2F2F2"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type syncfusion:SfDataGrid}"
+           BasedOn="{StaticResource SyncfusionSfDataGridStyle}">
+        <Setter Property="AllowDeleting"
+                Value="False"/>
+        <Setter Property="AllowDraggingColumns"
+                Value="True"/>
+        <Setter Property="AllowEditing"
+                Value="False"/>
+        <Setter Property="AllowFiltering"
+                Value="True"/>
+        <Setter Property="AllowSorting"
+                Value="True"/>
+        <Setter Property="AllowGrouping"
+                Value="{Binding Path=DataContext.AvailableNavigation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
+        <Setter Property="AllowResizingColumns"
+                Value="True"/>
+        <Setter Property="AllowTriStateSorting"
+                Value="True"/>
+        <Setter Property="ShowRowHeader"
+                Value="True"/>
+        <Setter Property="ShowSortNumbers"
+                Value="True"/>
+        <Setter Property="NavigationMode"
+                Value="Cell"/>
+        <Setter Property="ShowGroupDropArea"
+                Value="{Binding Path=DataContext.AvailableNavigation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
+        <Setter Property="GridLinesVisibility"
+                Value="Both"/>
+        <Setter Property="ColumnSizer"
+                Value="AutoWithLastColumnFill"/>
+        <Setter Property="AutoGenerateColumns"
+                Value="False"/>
+        <Setter Property="UseLayoutRounding"
+                Value="True"/>
+        <Setter Property="RowHeight"
+                Value="28"/>
+    </Style>
+    <DataTemplate x:Key="ThumbnailsViewTemplate">
+        <ListView ItemsSource="{Binding Data.Thumbnails}">
+            <ListView.ItemsPanel >
+                <ItemsPanelTemplate >
+                    <WrapPanel Orientation="Horizontal" 
+                               VerticalAlignment="Top"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Cursor="Hand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row="0" 
+                               Source="{Binding Thumbnail, Converter={StaticResource Base64ToImageConverter}}"/>
+                        <TextBlock Grid.Row="1" 
+                                   Text="{Binding Note}" 
+                                   HorizontalAlignment="Center"/>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseDown">
+                                <i:InvokeCommandAction Command="{Binding Source={x:Static Member=commands:EntityGridCommands.OpenImage}}">
+                                    <i:InvokeCommandAction.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                                            <Binding Path="DataContext"  RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}"/>
+                                            <Binding/>
+                                        </MultiBinding>
+                                    </i:InvokeCommandAction.CommandParameter>
+                                </i:InvokeCommandAction>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <i:Interaction.Behaviors>
+                <behavior:IgnoreMouseWheelBehavior/>
+            </i:Interaction.Behaviors>
+        </ListView>
+    </DataTemplate>
+</ResourceDictionary>

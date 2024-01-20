@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Browsers.BankView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Browsers"
+             xmlns:commands="clr-namespace:DocumentFlow.Commands"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:BankViewModel}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:DecimalValueConverter x:Key="DecimalConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.Copy}}"/>
+        <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
+        <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <syncfusion:HierarchyNavigator ItemsSource="{Binding HierarchyItemsSource}" 
+                                       Grid.Row="1" 
+                                       Height="30"
+                                       ItemTemplate="{StaticResource DirectoryHierarchy}"
+                                       SelectedItem="{Binding SelectedFolder, Mode=TwoWay}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="HierarchyNavigatorRefreshButtonClick">
+                    <i:InvokeCommandAction Command="{Binding Refresh}"
+                                           CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </syncfusion:HierarchyNavigator>
+        <syncfusion:SfDataGrid x:Name="gridContent" 
+                               Grid.Row="2"
+                               ShowBusyIndicator="True"
+                               ItemsSource="{Binding DataSource}"
+                               SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                               HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
+                               RecordContextMenu="{StaticResource GridRecordContextMenu}"
+                               GroupDropAreaContextMenu="{StaticResource GroupDropAreaContextMenu}"
+                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="Id"
+                                           Width="180"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="ItemName"
+                                           HeaderText="Наименование"
+                                           ColumnSizer="AutoLastColumnFill"/>
+                <syncfusion:GridNumericColumn MappingName="Bik"
+                                              HeaderText="БИК"
+                                              Width="100" 
+                                              ParsingMode="Decimal" 
+                                              UseBindingValue="True"
+                                              DisplayBinding="{Binding Bik, ConverterParameter=BIK, Converter={StaticResource DecimalConverter}}"/>
+                <syncfusion:GridNumericColumn MappingName="Account"
+                                              HeaderText="Корр. счёт"
+                                              Width="180" 
+                                              ParsingMode="Decimal" 
+                                              UseBindingValue="True"
+                                              DisplayBinding="{Binding Account, ConverterParameter=BANK, Converter={StaticResource DecimalConverter}}"/>
+                <syncfusion:GridTextColumn MappingName="Town"
+                                           HeaderText="Город"
+                                           Width="200"/>
+            </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="ItemName" 
+                                                  SortDirection="Ascending"/>
+            </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding SelectCurrentRow}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="GridContextMenuOpening">
+                    <i:InvokeCommandAction Command="{Binding PopulateListDocuments}"
+                                           CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</UserControl>

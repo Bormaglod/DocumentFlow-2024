@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="DocumentFlow.Controls.ComboBox"
+             x:Name="comboBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="25" d:DesignWidth="400">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:EditorTypeConverter x:Key="EditorTypeConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox x:Name="combo" 
+                  Grid.Column="0"
+                  Margin="0,0,5,0"
+                  ItemsSource="{Binding ElementName=comboBox, Path=ItemsSource}"
+                  SelectedItem="{Binding ElementName=comboBox, Path=DocumentItem, Mode=TwoWay}"
+                  DisplayMemberPath="ItemName"
+                  IsReadOnly="True"/>
+        <Button x:Name="buttonClear" 
+                Grid.Column="1"
+                Width="25" 
+                Click="ButtonClear_Click">
+            <ContentControl IsTabStop="False">
+                <Image Source="/Images/icons8-delete-16.png" 
+                       Stretch="None"/>
+            </ContentControl>
+        </Button>
+        <Button x:Name="buttonOpenEditor" 
+                Grid.Column="2"
+                Width="25" 
+                Margin="5,0,0,0"
+                Visibility="{Binding ElementName=comboBox, Path=EditorType, Converter={StaticResource EditorTypeConverter}}"
+                Click="ButtonOpenEditor_Click">
+            <ContentControl IsTabStop="False">
+                <Image Source="/Images/icons8-open-in-window-16.png" 
+                       Stretch="None"/>
+            </ContentControl>
+        </Button>
+    </Grid>
+</UserControl>

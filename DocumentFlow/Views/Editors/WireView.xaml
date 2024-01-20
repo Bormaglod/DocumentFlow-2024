@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Editors.WireView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:c="clr-namespace:DocumentFlow.Controls"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="600" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:WireViewModel, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorButtonResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <ScrollViewer Grid.Row="1" >
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Код"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="0"/>
+                <TextBlock Text="Папка"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="1"/>
+                <TextBlock Text="Наименование"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="2"/>
+                <TextBlock Text="Сечение"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="3"/>
+                <TextBox x:Name="textCode"
+                         Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}"
+                         Width="100"
+                         Grid.Column="1"
+                         HorizontalAlignment="Left"
+                         Style="{StaticResource TextBoxStyle}" 
+                         MaxLength="30"/>
+                <c:SelectBox x:Name="selectParent"
+                             SelectedValue="{Binding ParentId, Mode=TwoWay}"
+                             ItemsSource="{Binding Folders}"
+                             Grid.Row="1" Grid.Column="1"
+                             Style="{StaticResource SelectParentStyle}"/>
+                <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
+                         Width="400"
+                         Grid.Row="2" Grid.Column="1"
+                         Style="{StaticResource TextBoxStyle}"
+                         MaxLength="255"/>
+                <syncfusion:DoubleTextBox Value="{Binding Wsize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Width="100"
+                                          Grid.Row="3" Grid.Column="1"
+                                          Style="{StaticResource DoubleTextBoxStyle}" 
+                                          MaxLength="10"/>
+            </Grid>
+        </ScrollViewer>
+        <syncfusion:SfGridSplitter Name="gridSplitter"
+                                   HorizontalAlignment="Stretch"
+                                   ResizeBehavior="PreviousAndNext"
+                                   Width="auto"
+                                   Grid.Row="2"/>
+        <syncfusion:TabControlExt Grid.Row="3"
+                                  Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Документы">
+                <c:DocumentsList Margin="5" 
+                                 DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Информация">
+                <c:EntityInfo Margin="5"
+                              DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+        </syncfusion:TabControlExt>
+    </Grid>
+</UserControl>

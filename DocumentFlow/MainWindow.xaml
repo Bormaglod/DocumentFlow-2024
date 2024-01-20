@@ -1,0 +1,58 @@
+﻿<Window x:Class="DocumentFlow.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:local="clr-namespace:DocumentFlow"
+        xmlns:views="clr-namespace:DocumentFlow.Views"
+        xmlns:vm="clr-namespace:DocumentFlow.ViewModels"
+        xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+        xmlns:common="clr-namespace:DocumentFlow.Common"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        mc:Ignorable="d"
+        Title="{Binding Title}"
+        Left="{Binding Left, Mode=TwoWay}"
+        Top="{Binding Top, Mode=TwoWay}"
+        WindowState="{Binding WindowState, Mode=TwoWay}"
+        Width="{Binding Width, Mode=TwoWay}"
+        Height="{Binding Height, Mode=TwoWay}"
+        d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:MainWindowViewModel}"
+        local:ViewModelLocator.AutoWireViewModel="True">
+    <Window.Resources>
+        <DataTemplate x:Key="HeaderTemplate">
+            <TextBlock Text="{Binding Header, Mode=TwoWay}" />
+        </DataTemplate>
+        <converters:GridLengthConverter x:Key="gridLengthConverter" />
+    </Window.Resources>
+    <Grid x:Name="gridBase">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding NavigatorWidth, Mode=TwoWay, Converter={StaticResource gridLengthConverter}}" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <views:NavigatorView Padding="10"
+                             Grid.Column="0"/>
+        <syncfusion:SfGridSplitter Name="gridSplitter"
+                                   HorizontalAlignment="Stretch"
+                                   ResizeBehavior="PreviousAndNext"
+                                   Width="auto"
+                                   Grid.Column="1"/>
+        <syncfusion:DocumentContainer Name="documentContainer"
+                                      Grid.Column="2"
+                                      Mode="TDI"
+                                      ItemsSource="{Binding Windows}"
+                                      AddTabDocumentAtLast="True" 
+                                      SwitchMode="QuickTabs" 
+                                      ActiveDocument="{Binding ActiveDocument, Mode=TwoWay}"
+                                      TDICloseButtonType="Individual">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="DocumentClosing">
+                    <common:EventCommandAction Command="{Binding DocumentClosing}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </syncfusion:DocumentContainer>
+    </Grid>
+</Window>

@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="DocumentFlow.Views.NavigatorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="clr-namespace:DocumentFlow"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels"
+             xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+             xmlns:navigation="clr-namespace:Syncfusion.Windows.Controls.Navigation;assembly=Syncfusion.SfTreeNavigator.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="250"
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:NavigatorViewModel}"
+             core:ViewModelLocator.AutoWireViewModel="True"
+             syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}">
+    <Grid UseLayoutRounding="True">
+        <navigation:SfTreeNavigator ItemsSource="{Binding Models}"
+                                    NavigationMode="Extended"
+                                    Header="Каталог"
+                                    BorderThickness="1"
+                                    SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+            <navigation:SfTreeNavigator.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Models}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding Image}"
+                               Width="16"
+                               Height="16"
+                               Margin="10,0,0,0"/>
+                        <TextBlock Text="{Binding Header}" 
+                                   VerticalAlignment="Center" 
+                                   Margin="12 0 0 0" 
+                                   FontSize="12"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </navigation:SfTreeNavigator.ItemTemplate>
+        </navigation:SfTreeNavigator>
+    </Grid>
+</UserControl>

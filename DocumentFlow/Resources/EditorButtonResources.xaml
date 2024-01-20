@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+                    xmlns:m="clr-namespace:DocumentFlow.Models">
+    <DataTemplate DataType="{x:Type m:ToolBarButtonModel}">
+        <syncfusion:ButtonAdv Label="{Binding Label}"
+                              LargeIcon="{Binding LargeIcon}"
+                              SmallIcon="{Binding SmallIcon}"
+                              Command="{Binding Command}"
+                              CommandParameter="{Binding}"
+                              IsEnabled="{Binding PlacementTarget.Enabled}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type m:ToolBarSeparatorModel}">
+        <Separator/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type m:ToolBarButtonComboModel}">
+        <syncfusion:DropDownButtonAdv Label="{Binding Label}"
+                                      LargeIcon="{Binding LargeIcon}"
+                                      SmallIcon="{Binding SmallIcon}"
+                                      IsEnabled="{Binding PlacementTarget.Enabled}"/>
+    </DataTemplate>
+</ResourceDictionary>

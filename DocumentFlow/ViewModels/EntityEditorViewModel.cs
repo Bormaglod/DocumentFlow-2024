@@ -1,0 +1,392 @@
+﻿//-----------------------------------------------------------------------
+// Copyright © 2010-2024 Тепляшин Сергей Васильевич. 
+// Contacts: <sergio.teplyashin@yandex.ru>
+// License: https://opensource.org/licenses/GPL-3.0
+//-----------------------------------------------------------------------
+
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+
+using Dapper;
+
+using DocumentFlow.Common;
+using DocumentFlow.Common.Data;
+using DocumentFlow.Common.Enums;
+using DocumentFlow.Common.Extension;
+using DocumentFlow.Common.Messages;
+using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
+using DocumentFlow.Models.Entities;
+
+using Humanizer;
+
+using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
+
+using Syncfusion.Windows.Shared;
+
+using System.Data;
+using System.Windows;
+using System.Windows.Input;
+
+namespace DocumentFlow.ViewModels;
+
+public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEntityEditorViewModel
+    where T : DocumentInfo, new()
+{
+    private string? headerDetails;
+
+    [ObservableProperty]
+    private Guid id;
+
+    [ObservableProperty]
+    private DocumentInfo? owner;
+
+    [ObservableProperty]
+    private string header = string.Empty;
+
+    [ObservableProperty]
+    private bool enabled = true;
+
+    [ObservableProperty]
+    private T? entity;
+
+    public EntityEditorViewModel()
+    {
+        UpdateHeader();
+    }
+
+    public ToolBarViewModel ToolBarItems { get; } = new();
+
+    public IEditorPageView? View { get; set; }
+
+    #region Commands
+
+    #region Refresh
+
+    private ICommand? refresh;
+
+    public ICommand Refresh
+    {
+        get
+        {
+            refresh ??= new DelegateCommand(OnRefresh);
+            return refresh;
+        }
+    }
+
+    private void OnRefresh(object parameter)
+    {
+        if (Id != Guid.Empty)
+        {
+            Load();
+        }
+    }
+
+    #endregion
+
+    #region Save
+
+    private ICommand? save;
+
+    public ICommand Save
+    {
+        get
+        {
+            save ??= new DelegateCommand(OnSave);
+            return save;
+        }
+    }
+
+    private void OnSave(object parameter) => OnSave();
+
+    #endregion
+
+    #region SaveAndClose
+
+    private ICommand? saveAndClose;
+
+    public ICommand SaveAndClose
+    {
+        get
+        {
+            saveAndClose ??= new DelegateCommand(OnSaveAndClose);
+            return saveAndClose;
+        }
+    }
+
+    private void OnSaveAndClose(object parameter)
+    {
+        OnSave();
+        if (View != null)
+        {
+            WeakReferenceMessenger.Default.Send(new ClosePageMessage(View));
+        }
+    }
+
+    #endregion
+
+    #endregion
+
+    public void LoadDocument(DocumentInfo info, MessageOptions? options)
+    {
+        Id = info.Id;
+
+        if (options != null)
+        {
+            SetOptions(options);
+        }
+
+        Load();
+    }
+
+    public void CreateDocument(MessageOptions? options)
+    {
+        if (options != null)
+        {
+            SetOptions(options);
+        }
+
+        using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+        InitializeEntityCollections(conn);
+    }
+
+    protected virtual void SetOptions(MessageOptions options)
+    {
+        if (options is DocumentEditorMessageOptions documentOptions)
+        {
+            Owner = documentOptions.Owner;
+        }
+    }
+
+    protected virtual void InitializeEntityCollections(IDbConnection connection, T? entity = null) { }
+
+    private void RaiseAfterLoad(IDbConnection connection, T entity)
+    {
+        InitializeEntityCollections(connection, entity);
+        RaiseAfterLoadDocument(entity);
+        Enabled = !entity.Deleted;
+    }
+
+    protected virtual void Load()
+    {
+        try
+        {
+            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+            Entity = DefaultQuery(conn).First<T>();
+
+            RaiseAfterLoad(conn, Entity);
+
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        
+    }
+
+    protected void Load<P>(Func<T, P, T> map, Func<string, string>? referenceMap = null)
+    {
+        try
+        {
+            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+
+            var query = MappingQuery<P>(DefaultQuery(conn), referenceMap);
+
+            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
+            var parameters = new DynamicParameters(compiled.NamedBindings);
+            Entity = conn.Query(
+                compiled.Sql,
+                map,
+                parameters).First();
+
+            RaiseAfterLoad(conn, Entity);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    protected void Load<P1, P2>(Func<T, P1, P2, T> map, Func<string, string>? referenceMap = null)
+    {
+        try
+        {
+            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+
+            var query = MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(conn), referenceMap), referenceMap);
+
+            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
+            var parameters = new DynamicParameters(compiled.NamedBindings);
+            Entity = conn.Query(
+                compiled.Sql,
+                map,
+                parameters).First();
+
+            RaiseAfterLoad(conn, Entity);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    protected void Load<P1, P2, P3>(Func<T, P1, P2, P3, T> map, Func<string, string>? referenceMap = null)
+    {
+        try
+        {
+            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+
+            var query = MappingQuery<P3>(MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(conn), referenceMap), referenceMap), referenceMap);
+
+            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
+            var parameters = new DynamicParameters(compiled.NamedBindings);
+            Entity = conn.Query(
+                compiled.Sql,
+                map,
+                parameters).First();
+
+            RaiseAfterLoad(conn, Entity);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    protected abstract string GetStandardHeader();
+
+    protected virtual void RaiseAfterLoadDocument(T entity) { }
+
+    protected abstract void UpdateEntity(T entity);
+
+    protected virtual Query SelectQuery(Query query) => query;
+
+    protected void UpdateHeader(string details)
+    {
+        string readOnlyText = Enabled ? string.Empty : " (только для чтения)";
+
+        if (Id == Guid.Empty)
+        {
+            if (string.IsNullOrEmpty(details))
+            {
+                Header = $"{GetStandardHeader()} (новый)";
+            }
+            else
+            {
+                Header = $"{GetStandardHeader()} - {details} (новый)";
+            }
+        }
+        else
+        {
+            Header = $"{GetStandardHeader()} - {details}{readOnlyText}";
+        }
+
+        if (!string.IsNullOrEmpty(details))
+        {
+            headerDetails = details;
+        }
+    }
+
+    private static Query GetQuery(IDbConnection conn)
+    {
+        var factory = new QueryFactory(conn, new PostgresCompiler());
+        return factory.Query(EntityProperties.GetTableName(typeof(T)));
+    }
+
+    private void UpdateHeader() => UpdateHeader(headerDetails ?? string.Empty);
+
+    private void OnSave()
+    {
+        try
+        {
+            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+            using var transaction = conn.BeginTransaction();
+
+            try
+            {
+                MessageAction action;
+
+                Entity ??= new();
+                Entity.OwnerId = Owner?.Id;
+
+                UpdateEntity(Entity);
+
+                if (Entity.Id == Guid.Empty)
+                {
+                    conn.Insert(Entity, transaction);
+                    action = MessageAction.Add;
+                }
+                else
+                {
+                    conn.Update(Entity, transaction);
+                    action = MessageAction.Refresh;
+                }
+
+                transaction.Commit();
+
+                Id = Entity.Id;
+
+                Load();
+                UpdateHeader();
+
+                if (Id != Guid.Empty)
+                {
+                    WeakReferenceMessenger.Default.Send(new EntityActionMessage(EntityProperties.GetTableName(typeof(T)), Id, action));
+                }
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+
+            }
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private Query DefaultQuery(IDbConnection connection)
+    {
+        var table = EntityProperties.GetTableName(typeof(T));
+        var query = SelectQuery(
+            GetQuery(connection)
+                .Select($"{table}.*")
+                .Select("u1.name as user_created")
+                .Select("u2.name as user_updated")
+                .Join("user_alias as u1", $"{table}.user_created_id", "u1.id")
+                .Join("user_alias as u2", $"{table}.user_updated_id", "u2.id")
+                .Where($"{table}.id", Id));
+        return query;
+    }
+
+    private static Query MappingQuery<P>(Query query, Func<string, string>? referenceMap = null)
+    {
+        var table = typeof(P).Name.Underscore();
+
+        string refName;
+        if (referenceMap != null)
+        {
+            refName = referenceMap($"{table}_id");
+        }
+        else
+        {
+            refName = $"{table}_id";
+        }
+
+        return query
+            .Select($"{table}.*")
+            .LeftJoin(table, $"{table}.id", $"{typeof(T).Name.Underscore()}.{refName}");
+    }
+
+    partial void OnHeaderChanging(string value)
+    {
+        if (View != null)
+        {
+            WeakReferenceMessenger.Default.Send(new EditorPageHeaderChangedMessage(View, value));
+        }
+    }
+}
