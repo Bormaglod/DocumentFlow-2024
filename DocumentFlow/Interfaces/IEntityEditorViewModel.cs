@@ -14,6 +14,8 @@ public interface IEntityEditorViewModel
     IEditorPageView? View { get; set; }
     Guid Id { get; }
     string Header { get; }
+
+    DocumentInfo? DocumentInfo { get; }
     void LoadDocument(DocumentInfo info, MessageOptions? options);
     void CreateDocument(MessageOptions? options);
 }

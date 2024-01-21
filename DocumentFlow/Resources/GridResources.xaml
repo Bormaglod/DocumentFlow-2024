@@ -381,7 +381,7 @@
                                    HorizontalAlignment="Center"/>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDown">
-                                <i:InvokeCommandAction Command="{Binding Source={x:Static Member=commands:EntityGridCommands.OpenImage}}">
+                                <i:InvokeCommandAction Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}">
                                     <i:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource MultiParameterConverter}">
                                             <Binding Path="DataContext"  RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}"/>

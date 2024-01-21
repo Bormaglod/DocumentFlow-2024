@@ -61,6 +61,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     public IEditorPageView? View { get; set; }
 
+    public DocumentInfo? DocumentInfo => Entity;
+
     #region Commands
 
     #region Refresh

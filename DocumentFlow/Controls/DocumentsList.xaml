@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="DocumentFlow.Controls.DocumentsList"
+             x:Name="documentListControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,12 +7,14 @@
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
              xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:commands="clr-namespace:DocumentFlow.Commands"
              syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:FileLengthConverter x:Key="FileLengthConverter"/>
+            <converters:MultiParameterConverter x:Key="MultiParameterConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -22,9 +25,25 @@
         <ToolBarPanel>
             <ToolBar ToolBarTray.IsLocked="True">
                 <syncfusion:ButtonAdv Label="Сохранить" 
-                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-save-16.png"/>
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-save-16.png"
+                                      Command="{Binding Source={x:Static Member=commands:FileCommands.SaveFile}}">
+                    <syncfusion:ButtonAdv.CommandParameter>
+                        <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                            <Binding ElementName="gridContent" Path="SelectedItem"/>
+                            <Binding ElementName="documentListControl" Path="DocumentInfo"/>
+                        </MultiBinding>
+                    </syncfusion:ButtonAdv.CommandParameter>
+                </syncfusion:ButtonAdv>
                 <syncfusion:ButtonAdv Label="Открыть" 
-                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-open-document-16.png"/>
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-open-document-16.png"
+                                      Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}">
+                    <syncfusion:ButtonAdv.CommandParameter>
+                        <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                            <Binding ElementName="gridContent" Path="SelectedItem"/>
+                            <Binding ElementName="documentListControl" Path="DocumentInfo"/>
+                        </MultiBinding>
+                    </syncfusion:ButtonAdv.CommandParameter>
+                </syncfusion:ButtonAdv>
                 <Separator/>
                 <syncfusion:ButtonAdv Label="Добавить" 
                                       SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-add-16.png"/>
@@ -60,6 +79,52 @@
                                                MappingName="ThumbnailExist"
                                                Width="100"/>
             </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.RecordContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Сохранить на диск"
+                              Command="{Binding Source={x:Static Member=commands:FileCommands.SaveFile}}"
+                              CommandParameter="{Binding}">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/icons8-save-16.png" 
+                                   Stretch="None" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Открыть файл"
+                              Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}"
+                              CommandParameter="{Binding}">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/icons8-open-document-16.png" 
+                                   Stretch="None" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Добавить">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/icons8-file-add-16.png" 
+                                   Stretch="None" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Изменить">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/icons8-file-edit-16.png" 
+                                   Stretch="None" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Удалить">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/icons8-file-delete-16.png" 
+                                   Stretch="None" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Сканировать">
+                        <MenuItem.Icon>
+                            <Image Source="/Images/icons8-rescan-document-16.png" 
+                                   Stretch="None" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </syncfusion:SfDataGrid.RecordContextMenu>
         </syncfusion:SfDataGrid>
     </Grid>
 </UserControl>

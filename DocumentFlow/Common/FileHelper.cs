@@ -14,9 +14,18 @@ namespace DocumentFlow.Common;
 
 public static class FileHelper
 {
-    public static string GetTempPath(string category) => Path.Combine(Path.GetTempPath(), "DocumentFlow", category);
+    public static void OpenFile(IMinioClient client, string fileName, string bucket, string s3object)
+    {
+        string path = PrepareTempPath("DocumentRefs");
+        string file = Path.Combine(path, fileName);
 
-    public static string PrepareTempPath(string category)
+        GetObject.Run(client, bucket, s3object, file).Wait();
+        WorkOperations.OpenFile(file);
+    }
+
+    private static string GetTempPath(string category) => Path.Combine(Path.GetTempPath(), "DocumentFlow", category);
+
+    private static string PrepareTempPath(string category)
     {
         DeleteTempFiles(category);
         string path = GetTempPath("DocumentRefs");
@@ -28,7 +37,7 @@ public static class FileHelper
         return path;
     }
 
-    public static void DeleteTempFiles(string category)
+    private static void DeleteTempFiles(string category)
     {
         string path = GetTempPath(category);
         if (Directory.Exists(path))
@@ -40,14 +49,5 @@ public static class FileHelper
                 file.Delete();
             }
         }
-    }
-
-    public static void OpenFile(IMinioClient client, string fileName, string bucket, string s3object)
-    {
-        string path = PrepareTempPath("DocumentRefs");
-        string file = Path.Combine(path, fileName);
-
-        GetObject.Run(client, bucket, s3object, file).Wait();
-        WorkOperations.OpenFile(file);
     }
 }
