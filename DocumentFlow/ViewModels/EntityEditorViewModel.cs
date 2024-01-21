@@ -12,7 +12,7 @@ using Dapper;
 using DocumentFlow.Common;
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
-using DocumentFlow.Common.Extension;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Common.Messages;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;

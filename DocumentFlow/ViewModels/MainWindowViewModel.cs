@@ -95,25 +95,25 @@ public partial class MainWindowViewModel :
 
         WeakReferenceMessenger.Default.RegisterAll(this);
 
-        if (this.localSettings.MainWindow.WindowState == WindowState.Minimized)
+        if (localSettings.MainWindow.WindowState == WindowState.Minimized)
         {
             WindowState = WindowState.Normal;
         }
         else
         {
-            WindowState = this.localSettings.MainWindow.WindowState;
+            WindowState = localSettings.MainWindow.WindowState;
         }
 
         if (WindowState == WindowState.Normal)
         {
-            Left = this.localSettings.MainWindow.Left;
-            Top = this.localSettings.MainWindow.Top; ;
+            Left = localSettings.MainWindow.Left;
+            Top = localSettings.MainWindow.Top; ;
 
-            Width = this.localSettings.MainWindow.Width;
-            Height = this.localSettings.MainWindow.Height;
+            Width = localSettings.MainWindow.Width;
+            Height = localSettings.MainWindow.Height;
         }
 
-        NavigatorWidth = this.localSettings.MainWindow.NavigatorWidth;
+        NavigatorWidth = localSettings.MainWindow.NavigatorWidth;
 
         cancelTokenSource = new CancellationTokenSource();
 

@@ -20,7 +20,7 @@ using System.Reflection;
 
 using Windows.Foundation;
 
-namespace DocumentFlow.Common.Extension;
+namespace DocumentFlow.Common.Extensions;
 
 public static class ConnectionExtension
 {

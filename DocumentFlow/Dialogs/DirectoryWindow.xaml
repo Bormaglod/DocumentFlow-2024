@@ -12,13 +12,12 @@
         mc:Ignorable="d"
         Title="Выбор" Height="450" Width="600" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <comparers:CustomComparer x:Key="CustomComparer"/>
-        <DataTemplate x:Key="WatermarkTemplate">
-            <TextBlock Text="{Binding}" 
-                       FontStyle="Italic" 
-                       Opacity="0.5"
-                       VerticalAlignment="Center"/>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/DialogResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <comparers:CustomComparer x:Key="CustomComparer"/>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

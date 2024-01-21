@@ -88,6 +88,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\DocumentFlow.Ghostscript\DocumentFlow.Ghostscript.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Reference Include="Syncfusion.Data.WPF">
 			<HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\WPF\23.1.36\precompiledassemblies\net6.0\Syncfusion.Data.WPF.dll</HintPath>
 		</Reference>

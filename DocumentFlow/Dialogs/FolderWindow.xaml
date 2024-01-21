@@ -12,46 +12,44 @@
         ContentRendered="Window_ContentRendered">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <Label Content="Код" 
-               Grid.Row="0" 
-               Grid.Column="0" 
-               Margin="10,10,5,5"/>
-        <syncfusion:SfTextBoxExt x:Name="textCode" 
-                                 Watermark="Введите код группы" 
-                                 Grid.Row="0" 
-                                 Grid.Column="1" 
-                                 Margin="5,10,10,5"/>
-
-        <Label Content="Наименование группы" 
-               Grid.Row="1" 
-               Grid.Column="0" 
-               Margin="10,5,5,0"/>
-        <syncfusion:SfTextBoxExt x:Name="textName" 
-                                 Watermark="Введите наименование группы"
-                                 Grid.Row="1" 
-                                 Grid.Column="1" 
-                                 Margin="5,5,10,0"/>
-
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Код" 
+                   Margin="10,10,5,5"/>
+            <Label Content="Наименование группы" 
+                   Grid.Row="1" 
+                   Margin="10,5,5,0"/>
+            <syncfusion:SfTextBoxExt x:Name="textCode" 
+                                     Watermark="Введите код группы" 
+                                     Grid.Column="1" 
+                                     Margin="5,10,10,5"/>
+            <syncfusion:SfTextBoxExt x:Name="textName" 
+                                     Watermark="Введите наименование группы"
+                                     Grid.Row="1" 
+                                     Grid.Column="1" 
+                                     Margin="5,5,10,0"/>
+        </Grid>
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Right"
-                    Grid.Row="2"
-                    Grid.Column="1">
+                    Grid.Row="1">
             <Button Content="Сохранить"
                     Margin="0,5,5,10" 
                     IsDefault="True" 
+                    Padding="2"
                     Click="AcceptClick"/>
             <Button Content="Отменить"
                     Margin="5,5,10,10" 
+                    Padding="2"
                     IsCancel="True"/>
         </StackPanel>
     </Grid>

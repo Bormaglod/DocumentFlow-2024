@@ -23,9 +23,7 @@ public static class FileHelper
         WorkOperations.OpenFile(file);
     }
 
-    private static string GetTempPath(string category) => Path.Combine(Path.GetTempPath(), "DocumentFlow", category);
-
-    private static string PrepareTempPath(string category)
+    public static string PrepareTempPath(string category)
     {
         DeleteTempFiles(category);
         string path = GetTempPath("DocumentRefs");
@@ -36,6 +34,8 @@ public static class FileHelper
 
         return path;
     }
+
+    private static string GetTempPath(string category) => Path.Combine(Path.GetTempPath(), "DocumentFlow", category);
 
     private static void DeleteTempFiles(string category)
     {

@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate x:Key="WatermarkTemplate">
+        <TextBlock Text="{Binding}" 
+               FontStyle="Italic" 
+               Opacity="0.5"
+               VerticalAlignment="Center"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="WatermarkMultiLineTemplate">
+        <TextBlock Text="{Binding}" 
+           FontStyle="Italic" 
+           Opacity="0.5"/>
+    </DataTemplate>
+</ResourceDictionary>

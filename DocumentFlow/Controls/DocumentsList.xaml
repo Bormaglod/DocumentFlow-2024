@@ -46,11 +46,12 @@
                 </syncfusion:ButtonAdv>
                 <Separator/>
                 <syncfusion:ButtonAdv Label="Добавить" 
-                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-add-16.png"/>
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-add-16.png" 
+                                      Click="AddDocument"/>
                 <syncfusion:ButtonAdv Label="Изменить" 
                                       SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-edit-16.png"/>
                 <syncfusion:ButtonAdv Label="Удалить" 
-                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-delete-16.png"/>
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-file-delete-16.png" Click="DeleteDocument"/>
                 <Separator/>
                 <syncfusion:ButtonAdv Label="Сканировать" 
                                       SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-rescan-document-16.png"/>
@@ -98,7 +99,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="Добавить">
+                    <MenuItem Header="Добавить" Click="AddDocument">
                         <MenuItem.Icon>
                             <Image Source="/Images/icons8-file-add-16.png" 
                                    Stretch="None" />
