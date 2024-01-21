@@ -26,6 +26,7 @@
             <converters:EnumConverter x:Key="EnumConverter"/>
             <converters:SubjectsCivilRowVisibilityConverter x:Key="SubjectsCivilConverter"/>
             <converters:ContractorCodeConverter x:Key="ContractorCodeConverter"/>
+            <converters:CodeValueConverter x:Key="CodeValueConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -158,7 +159,7 @@
                         </MultiBinding>
                     </syncfusion:SfMaskedEdit.Mask>
                 </syncfusion:SfMaskedEdit>
-                <syncfusion:SfMaskedEdit Value="{Binding Okpo, Mode=TwoWay}"
+                <syncfusion:SfMaskedEdit Value="{Binding Okpo, Mode=TwoWay, Converter={StaticResource CodeValueConverter}, ConverterParameter=8}"
                                          Width="200"
                                          Grid.Row="8" Grid.Column="1"
                                          Style="{StaticResource MaskedEditStyle}"
