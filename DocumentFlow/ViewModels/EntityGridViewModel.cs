@@ -180,29 +180,6 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     #endregion
 
-    #region OpenDocument
-
-    private ICommand? openDocument;
-
-    public ICommand OpenDocument
-    {
-        get
-        {
-            openDocument ??= new DelegateCommand<MenuItemModel>(OnOpenDocument);
-            return openDocument;
-        }
-    }
-
-    private void OnOpenDocument(MenuItemModel parameter)
-    {
-        if (parameter.Tag is OpenDocumentContext context)
-        {
-            WeakReferenceMessenger.Default.Send(new OpenDocumentMessage(context));
-        }
-    }
-
-    #endregion
-
     #region CreateRow
 
     private ICommand? createRow;

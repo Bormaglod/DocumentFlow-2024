@@ -146,8 +146,8 @@
                 <Style TargetType="{x:Type MenuItem}"
                        BasedOn="{StaticResource WPFMenuItemStyle}">
                     <Setter Property="Header" Value="{Binding Header}"/>
-                    <Setter Property="Command" Value="{Binding PlacementTarget.OpenDocument}"/>
-                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                    <Setter Property="Command" Value="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}"/>
+                    <Setter Property="CommandParameter" Value="{Binding Tag}"/>
                 </Style>
             </MenuItem.ItemContainerStyle>
         </MenuItem>

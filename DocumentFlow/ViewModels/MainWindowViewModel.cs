@@ -42,7 +42,6 @@ public partial class MainWindowViewModel :
     ObservableObject,
     IRecipient<EntityListOpenMessage>,
     IRecipient<EntityEditorOpenMessage>,
-    IRecipient<OpenDocumentMessage>,
     IRecipient<EditorPageHeaderChangedMessage>,
     IRecipient<ClosePageMessage>,
     ISelfSingletonLifetime
@@ -228,25 +227,6 @@ public partial class MainWindowViewModel :
         if (page is DependencyObject dependency) 
         {
             DocumentContainer.SetHeader(dependency, message.Header);
-        }
-    }
-
-    public void Receive(OpenDocumentMessage message)
-    {
-        var context = message.Value;
-        if (context.Document.S3object == null)
-        {
-            return;
-        }
-
-        try
-        {
-            var name = DocumentRefs.GetBucketForEntity(context.Owner);
-            FileHelper.OpenFile(services.GetRequiredService<IMinioClient>(), context.Document.FileName, name, context.Document.S3object);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ExceptionHelper.Message(ex), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

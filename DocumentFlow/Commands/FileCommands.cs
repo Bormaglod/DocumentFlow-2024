@@ -93,6 +93,12 @@ public static class FileCommands
 
         switch (parameter)
         {
+            case OpenDocumentContext context:
+                bucket = DocumentRefs.GetBucketForEntity(context.Owner);
+                fileName = context.Document.FileName;
+                s3object = context.Document.S3object;
+
+                break;
             case GridRecordContextMenuInfo menuInfo:
                 if (menuInfo.DataGrid.DataContext is IEntityEditorViewModel model && model.DocumentInfo != null)
                 {
