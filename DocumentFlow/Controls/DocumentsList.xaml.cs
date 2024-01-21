@@ -21,6 +21,7 @@ using Minio;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DocumentFlow.Controls;
 
@@ -104,6 +105,37 @@ public partial class DocumentsList : UserControl
         }
     }
 
+    private void EditDocumentRefs()
+    {
+        if (gridContent.SelectedItem is DocumentRefs refs)
+        {
+            var dialog = new DocumentRefWindow();
+            if (dialog.Edit(refs))
+            {
+                try
+                {
+                    using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+                    using var transaction = conn.BeginTransaction();
+
+                    try
+                    {
+                        conn.Execute("update document_refs set note = :Note where id = :Id", refs, transaction);
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+    }
+
     private void AddDocument(object sender, RoutedEventArgs e)
     {
         if (DocumentInfo == null)
@@ -168,4 +200,8 @@ public partial class DocumentsList : UserControl
             MessageBox.Show(ExceptionHelper.Message(ex), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+    private void EditDocument(object sender, RoutedEventArgs e) => EditDocumentRefs();
+
+    private void GridContent_MouseDoubleClick(object sender, MouseButtonEventArgs e) => EditDocumentRefs();
 }

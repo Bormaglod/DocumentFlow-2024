@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using DocumentFlow.Interfaces;
 
 using Humanizer;
@@ -12,8 +14,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Models.Entities;
 
-public class DocumentRefs
+public partial class DocumentRefs : ObservableObject
 {
+    [ObservableProperty]
+    [Display(Name = "Описание", Order = 1)]
+    private string? note;
+
     [Display(AutoGenerateField = false)]
     public long Id { get; set; }
 
@@ -22,9 +28,6 @@ public class DocumentRefs
 
     [Display(Name = "Имя файла", Order = 2)]
     public string FileName { get; set; } = string.Empty;
-
-    [Display(Name = "Описание", Order = 1)]
-    public string? Note { get; set; }
 
     [Display(Name = "Размер", Order = 3)]
     public long FileLength { get; set; }
