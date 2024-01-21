@@ -6,19 +6,10 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using DocumentFlow.Common.Data;
-
 namespace DocumentFlow.Models.Entities;
 
 public partial class Product : Directory
 {
-    /*private static readonly Dictionary<int, string> taxes = new()
-    {
-        [0] = "Без НДС",
-        [10] = "10%",
-        [20] = "20%"
-    };*/
-
     /// <summary>
     /// Возвращает или устанавливает цену материала / изделия (без учёта НДС).
     /// </summary>
@@ -59,28 +50,4 @@ public partial class Product : Directory
     /// Возвращает остаток материала или изделия на текущий момент.
     /// </summary>
     public decimal? ProductBalance { get; protected set; }
-
-    /// <summary>
-    /// Возвращает true, если материал или изделие имеют сохранённые эскизы изображений.
-    /// </summary>
-    public bool HasThumbnails { get; protected set; }
-
-    //public static IReadOnlyDictionary<int, string> Taxes => taxes;
-
-    protected override string GetRowStatusImageName()
-    {
-        if (HasThumbnails)
-        {
-            if (HasDocuments == true)
-            {
-                return "icons8-document-attached-images-16";
-            }
-            else
-            {
-                return "icons8-document-images-16";
-            }
-        }
-
-        return base.GetRowStatusImageName();
-    }
 }

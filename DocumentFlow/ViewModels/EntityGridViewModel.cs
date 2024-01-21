@@ -586,7 +586,9 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
         if (database.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
         {
-            query = query.SelectRaw("exists(select 1 from document_refs dr where dr.owner_id = t0.id) as has_documents");
+            query = query
+                .SelectRaw("exists(select 1 from document_refs dr where dr.owner_id = t0.id) as has_documents")
+                .SelectRaw("(exists (select 1 from document_refs dr where ((dr.owner_id = t0.id) and (dr.thumbnail IS not null)))) AS has_thumbnails");
             var grp = query.Clauses.Where(c => c.Component == "group").OfType<Column>();
             if (grp.Any() && grp.FirstOrDefault(x => x.Name == "t0.id") == null)
             {
@@ -684,7 +686,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             try
             {
-                T row = GetData(connection, id).First();
+                T row = GetData(connection, id)[0];
                 DataSource.Add(row);
 
                 return row;
@@ -720,7 +722,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             var row = DataSource.FirstOrDefault(x => x.Id == id);
             try
             {
-                var refreshDoc = GetData(id).First();
+                var refreshDoc = GetData(id)[0];
                 if (row != null)
                 {
                     DataSource[DataSource.IndexOf(row)] = refreshDoc;
@@ -762,7 +764,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
                     if (DataSource != null)
                     {
-                        DataSource[DataSource.IndexOf(row)] = GetData(row.Id).First();
+                        DataSource[DataSource.IndexOf(row)] = GetData(row.Id)[0];
                     }
                 }
                 catch

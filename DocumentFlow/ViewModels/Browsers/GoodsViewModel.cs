@@ -11,7 +11,6 @@ using DocumentFlow.Models.Entities;
 using SqlKata;
 
 using System.Data;
-using System.Windows.Controls;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
@@ -32,8 +31,7 @@ public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 
     protected override Query SelectQuery(Query query)
     {
-        query = base.SelectQuery(query)
-            .SelectRaw("(exists (select 1 from document_refs dr where ((dr.owner_id = t0.id) and (dr.thumbnail IS not null)))) AS has_thumbnails");
+        query = base.SelectQuery(query);
 
         if (database.HasPrivilege("calculation", Privilege.Select))
         {
