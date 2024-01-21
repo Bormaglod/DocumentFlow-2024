@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Company>Автоком</Company>
+		<Copyright>Copyright © ООО Автоком (Autokom Company), 2024</Copyright>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<Version>5.0.0.40121</Version>
+		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <COMReference Include="WIA">
+	    <WrapperTool>tlbimp</WrapperTool>
+	    <VersionMinor>0</VersionMinor>
+	    <VersionMajor>1</VersionMajor>
+	    <Guid>94a0e92d-43c0-494e-ac29-fd45948a5221</Guid>
+	    <Lcid>0</Lcid>
+	    <Isolated>false</Isolated>
+	    <EmbedInteropTypes>true</EmbedInteropTypes>
+	  </COMReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Syncfusion.SfSkinManager.WPF">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\WPF\23.1.36\precompiledassemblies\net6.0\Syncfusion.SfSkinManager.WPF.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Syncfusion.Themes.Windows11Light.WPF">
+	    <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\WPF\23.1.36\precompiledassemblies\net6.0\Syncfusion.Themes.Windows11Light.WPF.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+</Project>
