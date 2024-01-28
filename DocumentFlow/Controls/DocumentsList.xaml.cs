@@ -91,7 +91,7 @@ public partial class DocumentsList : UserControl
 
             try
             {
-                conn.Execute("insert into document_refs (owner_id, file_name, note, file_length, thumbnail, s3object) values (:OwnerId, :FileName, :Note, :FileLength, :Thumbnail, :S3object)", document, transaction);
+                conn.Insert(document, transaction);
                 transaction.Commit();
 
                 if (gridContent.ItemsSource is IList<DocumentRefs> list)
