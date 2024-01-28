@@ -7,8 +7,6 @@
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Scanner.Enums;
 
-using System.Text.Json.Serialization;
-
 namespace DocumentFlow.Models.Settings;
 
 public class ScannerSettings
