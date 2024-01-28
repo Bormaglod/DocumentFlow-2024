@@ -7,12 +7,14 @@
 using Dapper;
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Common.Minio;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Models.Settings;
+using DocumentFlow.Tools;
 
 using Microsoft.Extensions.Options;
 
@@ -60,16 +62,20 @@ public partial class DocumentsList : UserControl
 
         var minio = ServiceLocator.Context.GetService<IMinioClient>();
         BucketExists.Run(minio, bucket)
-            .ContinueWith(task =>
+            .ContinueWith(async task =>
             {
                 if (task.Result)
                 {
                     return;
                 }
-                MakeBucket.Run(minio, bucket).Wait();
-            });
 
-        PutObject.Run(minio, bucket, document.S3object, fileName).Wait();
+                await MakeBucket.Run(minio, bucket);
+            })
+            .ContinueWith(async task =>
+            {
+                await PutObject.Run(minio, bucket, document.S3object, fileName);
+            })
+            .Wait();
 
         if (createThumbnail)
         {
@@ -204,4 +210,34 @@ public partial class DocumentsList : UserControl
     private void EditDocument(object sender, RoutedEventArgs e) => EditDocumentRefs();
 
     private void GridContent_MouseDoubleClick(object sender, MouseButtonEventArgs e) => EditDocumentRefs();
+
+    private void ScanDocument(object sender, RoutedEventArgs e)
+    {
+        if (DocumentInfo == null)
+        {
+            MessageBox.Show("Для добавления сопутствующих документов необходимо сначала сохранить текущий", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var scanDialog = new ScannerWindow();
+        if (scanDialog.Scan(out var images))
+        {
+            string file;
+            if (scanDialog.ImageStore == FileExtension.Pdf)
+            {
+                file = PdfHelper.CreateDocument(images, PdfNamingStrategy.DateTime);
+            }
+            else
+            {
+                file = FileHelper.GetTempFileName("Scanned Images", PdfNamingStrategy.DateTime, scanDialog.ImageStore);
+                images[0].SaveToFile(file, scanDialog.ImageStore);
+            }
+
+            var refDialog = new DocumentRefWindow();
+            if (refDialog.Create(DocumentInfo.Id, file, out var refs))
+            {
+                AddDocumentRef(refs, refDialog.FileNameWithPath, refDialog.CreateThumbnailImage, DocumentRefs.GetBucketForEntity(DocumentInfo));
+            }
+        }
+    }
 }

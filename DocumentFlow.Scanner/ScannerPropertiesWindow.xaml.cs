@@ -63,41 +63,6 @@ public partial class ScannerPropertiesWindow : Window
             }
 
             ScannerProperties.Add(prop);
-            /*Property property;
-            ListViewItem item;
-            string value;
-            WiaPropertyType type;
-
-            property = properties[i + 1];
-            type = (WiaPropertyType)property.Type;
-
-            value = property.GetValueString();
-            item = new ListViewItem();
-
-            for (int j = 0; j < listView.Columns.Count; j++)
-            {
-                item.SubItems.Add(string.Empty);
-            }
-
-            item.SubItems[(int)ColumnType.Name].Text = property.Name;
-            item.SubItems[(int)ColumnType.Id].Text = property.PropertyID.ToString();
-            item.SubItems[(int)ColumnType.Value].Text = value;
-
-            if (type > WiaPropertyType.UnsupportedPropertyType && type <= WiaPropertyType.CurrencyPropertyType)
-            {
-                if (property.SubType == WiaSubType.RangeSubType)
-                {
-                    item.SubItems[(int)ColumnType.Min].Text = property.SubTypeMin.ToString();
-                    item.SubItems[(int)ColumnType.Max].Text = property.SubTypeMax.ToString();
-                    item.SubItems[(int)ColumnType.Step].Text = property.SubTypeStep.ToString();
-                }
-                else if (property.SubType == WiaSubType.ListSubType)
-                {
-                    item.SubItems[(int)ColumnType.Values].Text = property.SubTypeValues.ToSeparatedString();
-                }
-            }
-
-            listView.Items.Add(item);*/
         }
     }
 }

@@ -16,6 +16,7 @@ public class LocalSettings
     public string ConnectionName { get; set; } = string.Empty;
     public MainWindowSettings MainWindow { get; set; } = new();
     public PreviewRowSettings PreviewRows { get; set; } = new();
+    public ScannerSettings Scanner { get; set; } = new();
 
     public void Save()
     {

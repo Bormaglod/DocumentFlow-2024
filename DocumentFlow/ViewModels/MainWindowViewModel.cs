@@ -12,7 +12,7 @@ using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
-using DocumentFlow.Models.Entities;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Models.Settings;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +39,7 @@ using System.Windows.Threading;
 namespace DocumentFlow.ViewModels;
 
 public partial class MainWindowViewModel :
-    ObservableObject,
+    WindowViewModel,
     IRecipient<EntityListOpenMessage>,
     IRecipient<EntityEditorOpenMessage>,
     IRecipient<EditorPageHeaderChangedMessage>,
@@ -56,22 +56,7 @@ public partial class MainWindowViewModel :
     private readonly DispatcherTimer timerDatabaseListen;
 
     [ObservableProperty]
-    private WindowState windowState;
-
-    [ObservableProperty]
     private object? activeDocument;
-
-    [ObservableProperty]
-    private double left;
-
-    [ObservableProperty]
-    private double top;
-
-    [ObservableProperty]
-    private double width = 800;
-
-    [ObservableProperty]
-    private double height = 450;
 
     [ObservableProperty]
     private double navigatorWidth = 250;
@@ -85,34 +70,17 @@ public partial class MainWindowViewModel :
     {
     }
 
-    public MainWindowViewModel(IServiceProvider services, IDatabase database, IOptions<AppSettings> appOptions, IOptionsSnapshot<LocalSettings> localOptions)
+    public MainWindowViewModel(IServiceProvider services, IDatabase database, IOptionsMonitor<AppSettings> appOptions, IOptionsSnapshot<LocalSettings> localOptions)
     {
         this.services = services;
         this.database = database;
         
         localSettings = localOptions.Value;
-        appSettings = appOptions.Value;
+        appSettings = appOptions.CurrentValue;
 
         WeakReferenceMessenger.Default.RegisterAll(this);
 
-        if (localSettings.MainWindow.WindowState == WindowState.Minimized)
-        {
-            WindowState = WindowState.Normal;
-        }
-        else
-        {
-            WindowState = localSettings.MainWindow.WindowState;
-        }
-
-        if (WindowState == WindowState.Normal)
-        {
-            Left = localSettings.MainWindow.Left;
-            Top = localSettings.MainWindow.Top; ;
-
-            Width = localSettings.MainWindow.Width;
-            Height = localSettings.MainWindow.Height;
-        }
-
+        RestoreSettings(localSettings.MainWindow.Settings);
         NavigatorWidth = localSettings.MainWindow.NavigatorWidth;
 
         cancelTokenSource = new CancellationTokenSource();
@@ -237,11 +205,7 @@ public partial class MainWindowViewModel :
 
     public void OnWindowClosing(object? sender, CancelEventArgs e)
     {
-        localSettings.MainWindow.WindowState = WindowState;
-        localSettings.MainWindow.Left = Left;
-        localSettings.MainWindow.Top = Top;
-        localSettings.MainWindow.Width = Width;
-        localSettings.MainWindow.Height = Height;
+        SaveSettings(localSettings.MainWindow.Settings);
         localSettings.MainWindow.NavigatorWidth = NavigatorWidth;
 
         localSettings.Save();

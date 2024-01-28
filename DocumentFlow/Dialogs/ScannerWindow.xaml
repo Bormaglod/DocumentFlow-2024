@@ -1,0 +1,364 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.ScannerWindow"
+        x:Name="scannerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:core="clr-namespace:DocumentFlow"
+        xmlns:ext="clr-namespace:DocumentFlow.Common.Extensions"
+        xmlns:models="clr-namespace:DocumentFlow.Models"
+        xmlns:enums="clr-namespace:DocumentFlow.Scanner.Enums;assembly=DocumentFlow.Scanner"
+        xmlns:local="clr-namespace:DocumentFlow.ViewModels.Dialogs"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=local:ScannerViewModel}"
+        core:ViewModelLocator.AutoWireViewModel="True"
+        Title="ScannerWindow"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
+        Left="{Binding Left, Mode=TwoWay}"
+        Top="{Binding Top, Mode=TwoWay}"
+        WindowState="{Binding WindowState, Mode=TwoWay}"
+        Width="{Binding Width, Mode=TwoWay}"
+        Height="{Binding Height, Mode=TwoWay}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/MSControl/Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="BorderStyle" TargetType="{x:Type Border}">
+                <Setter Property="BorderBrush" Value="#E1E6EA"/>
+            </Style>
+            <Style x:Key="BorderHeader" TargetType="{x:Type Border}"
+                   BasedOn="{StaticResource BorderStyle}">
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Background" Value="#EFF4F9"/>
+                <Setter Property="Padding" Value="10"/>
+            </Style>
+            <Style x:Key="BorderTopHeader" TargetType="{x:Type Border}"
+                   BasedOn="{StaticResource BorderHeader}">
+                <Setter Property="CornerRadius" Value="8,8,0,0"/>
+            </Style>
+            <Style x:Key="BorderBottomHeader" TargetType="{x:Type Border}"
+                   BasedOn="{StaticResource BorderHeader}">
+                <Setter Property="CornerRadius" Value="0,0,8,8"/>
+            </Style>
+            <Style x:Key="BorderContent" TargetType="{x:Type Border}"
+                   BasedOn="{StaticResource BorderStyle}">
+                <Setter Property="BorderThickness" Value="1,0,1,0"/>
+            </Style>
+            <Style x:Key="BorderBottomContent" TargetType="{x:Type Border}"
+                   BasedOn="{StaticResource BorderStyle}">
+                <Setter Property="BorderThickness" Value="1,1,1,0"/>
+            </Style>
+            <Style x:Key="DialogBitton" TargetType="{x:Type Button}"
+                   BasedOn="{StaticResource WPFButtonStyle}">
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="Padding" Value="2"/>
+            </Style>
+            <DataTemplate x:Key="ImageStoreData" DataType="{x:Type models:ImageStoreModel}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding Image}" 
+                           Stretch="None"/>
+                    <TextBlock Text="{Binding Name}"
+                               Margin="5,0,0,0" 
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </DataTemplate>
+            <DataTemplate x:Key="ResulutionData">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding}"/>
+                    <TextBlock Text=" DPI"/>
+                    <TextBlock x:Name="forDocs" Text=" (Для документов)" Visibility="Collapsed"/>
+                    <TextBlock x:Name="forImages" Text=" (Для фотографий)" Visibility="Collapsed"/>
+                </StackPanel>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding}" Value="300">
+                        <Setter TargetName="forDocs" Property="Visibility" Value="Visible"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding}" Value="600">
+                        <Setter TargetName="forImages" Property="Visibility" Value="Visible"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Margin="5,5,5,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Border Style="{StaticResource BorderTopHeader}">
+                <ComboBox x:Name="comboDevices"
+                          Height="25"
+                          ItemsSource="{Binding Devices}"
+                          SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"/>
+            </Border>
+            <Border Style="{StaticResource BorderContent}"
+                    Grid.Row="1">
+                <ScrollViewer>
+                    <StackPanel UseLayoutRounding="True">
+                        <TextBlock Text="Сохранить как"
+                                   FontWeight="Bold"
+                                   Margin="10"/>
+                        <ComboBox x:Name="comboSaveAs"
+                                  Margin="10,0,10,10"
+                                  Height="25"
+                                  ItemsSource="{Binding ImageStoreList}"
+                                  SelectedItem="{Binding ImageStore}"
+                                  ItemTemplate="{StaticResource ImageStoreData}">
+                        </ComboBox>
+                        <TextBlock Text="Цветовой режим"
+                                   FontWeight="Bold"
+                                   Margin="10"/>
+                        <RadioButton Content="Цветное"
+                                     Margin="10,10,10,0" 
+                                     IsChecked="{Binding ColorMode, Converter={ext:EnumToBool}, ConverterParameter={x:Static enums:WIAColorMode.Color}}"/>
+                        <RadioButton Content="Оттенки серого"
+                                     Margin="10"
+                                     IsChecked="{Binding ColorMode, Converter={ext:EnumToBool}, ConverterParameter={x:Static enums:WIAColorMode.Greyscale}}"/>
+                        <RadioButton Content="Монохромное"
+                                     Margin="10,0,10,10"
+                                     IsChecked="{Binding ColorMode, Converter={ext:EnumToBool}, ConverterParameter={x:Static enums:WIAColorMode.Monochrome}}"/>
+                        <TextBlock Text="Разрешение"
+                                   FontWeight="Bold"
+                                   Margin="10"/>
+                        <ComboBox x:Name="comboDim"
+                                  Margin="10,0,10,10"
+                                  Height="25"
+                                  ItemsSource="{Binding Resolutions}"
+                                  SelectedItem="{Binding Dpi}"
+                                  ItemTemplate="{StaticResource ResulutionData}">
+                        </ComboBox>
+                        <TextBlock Text="Регулировка яркости"
+                                   FontWeight="Bold"
+                                   Margin="10,10,10,0"/>
+                        <TextBlock Text="Всегда сохраняется в сеансах приложения"
+                                   FontSize="10"
+                                   Margin="10,0,10,10"/>
+                        <Grid Margin="10,0,10,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <syncfusion:SfRangeSlider VerticalAlignment="Center"
+                                                      Margin="0,0,20,0"
+                                                      Minimum="-1000"
+                                                      Maximum="1000"
+                                                      TickFrequency="200"
+                                                      StepFrequency="10"
+                                                      SnapsTo="StepValues"
+                                                      TickPlacement="BottomRight"
+                                                      Value="{Binding Brightness}"/>
+                            <Button x:Name="buttonBrightnessReset"
+                                    Grid.Column="1"
+                                    Command="{Binding ResetScanParameter}"
+                                    CommandParameter="BRIGHTNESS">
+                                <Button.Content>
+                                    <Image Source="/Images/icons8-undo-16.png" Stretch="None"/>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+                        <TextBlock Text="Регулировка контрастности"
+                                   FontWeight="Bold"
+                                   Margin="10,10,10,0"/>
+                        <TextBlock Text="Всегда сохраняется в сеансах приложения"
+                                   FontSize="10"
+                                   Margin="10,0,10,10"/>
+                        <Grid Margin="10,0,10,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <syncfusion:SfRangeSlider VerticalAlignment="Center"
+                                                      Margin="0,0,20,0"
+                                                      Minimum="-1000"
+                                                      Maximum="1000"
+                                                      TickFrequency="200"
+                                                      StepFrequency="10"
+                                                      SnapsTo="StepValues"
+                                                      TickPlacement="BottomRight"
+                                                      Value="{Binding Contrast}"/>
+                            <Button x:Name="buttonContrastReset" 
+                                    Grid.Column="1"
+                                    Command="{Binding ResetScanParameter}"
+                                    CommandParameter="CONTRAST">
+                                <Button.Content>
+                                    <Image Source="/Images/icons8-undo-16.png" Stretch="None"/>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+            <Border Style="{StaticResource BorderBottomHeader}"
+                    Grid.Row="2">
+                <Button x:Name="buttonScan"
+                        Style="{StaticResource DialogBitton}"
+                        Content="Сканировать"
+                        Grid.Row="2"
+                        Command="{Binding Scan}"/>
+            </Border>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource BorderTopHeader}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <syncfusion:ButtonAdv x:Name="buttonOpenImage"
+                                                  SizeMode="Small"
+                                                  SmallIcon="/Images/icons8-folder-open-16.png"
+                                                  Command="{Binding OpenImage}"/>
+                            <Border Style="{StaticResource BorderStyle}"
+                                    BorderThickness="0,0,1,0"
+                                    Padding="0,0,5,0">
+                                <syncfusion:ButtonAdv x:Name="buttonSaveImage" SizeMode="Small" 
+                                                      SmallIcon="/Images/icons8-save-16.png"
+                                                      Margin="2,0,0,0"
+                                                      Command="{Binding SaveImage}"/>
+                            </Border>
+                            <syncfusion:ButtonAdv x:Name="buttonUndo" 
+                                                  SizeMode="Small" 
+                                                  SmallIcon="/Images/icons8-undo-16.png"
+                                                  Margin="5,0,0,0"
+                                                  IsEnabled="False"/>
+                            <syncfusion:ButtonAdv x:Name="buttonRedo" 
+                                                  SizeMode="Small" 
+                                                  SmallIcon="/Images/icons8-redo-16.png"
+                                                  Margin="2,0,0,0"
+                                                  IsEnabled="False"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" 
+                                    HorizontalAlignment="Center"
+                                    Grid.Column="1">
+                            <syncfusion:ButtonAdv x:Name="buttonCropImage" 
+                                                  SizeMode="Small" 
+                                                  SmallIcon="/Images/icons8-crop-16.png"
+                                                  IsEnabled="False"/>
+                            <syncfusion:DropDownButtonAdv SizeMode="Small" 
+                                                          SmallIcon="/Images/icons8-flip-horizontal-16.png"
+                                                          Margin="2,0,0,0">
+                                <syncfusion:DropDownMenuGroup>
+                                    <syncfusion:DropDownMenuItem HorizontalAlignment="Left" 
+                                                                 Header="Перевернуть горизонтально"
+                                                                 Command="{Binding FlipImage}"
+                                                                 CommandParameter="X">
+                                        <syncfusion:DropDownMenuItem.Icon>
+                                            <Image Source="/Images/icons8-flip-horizontal-16.png"/>
+                                        </syncfusion:DropDownMenuItem.Icon>
+                                    </syncfusion:DropDownMenuItem>
+                                    <syncfusion:DropDownMenuItem HorizontalAlignment="Left" 
+                                                                 Header="Перевернуть вертикально"
+                                                                 Command="{Binding FlipImage}"
+                                                                 CommandParameter="Y">
+                                        <syncfusion:DropDownMenuItem.Icon>
+                                            <Image Source="/Images/icons8-flip-vertical-16.png"/>
+                                        </syncfusion:DropDownMenuItem.Icon>
+                                    </syncfusion:DropDownMenuItem>
+                                </syncfusion:DropDownMenuGroup>
+                            </syncfusion:DropDownButtonAdv>
+                            <syncfusion:DropDownButtonAdv SizeMode="Small" 
+                                                          SmallIcon="/Images/icons8-rotate90-16.png"
+                                                          Margin="2,0,0,0">
+                                <syncfusion:DropDownMenuGroup>
+                                    <syncfusion:DropDownMenuItem HorizontalAlignment="Left" 
+                                                                 Header="Повернуть по часовой стрелке на 90°"
+                                                                 Command="{Binding RotateImage}"
+                                                                 CommandParameter="90">
+                                        <syncfusion:DropDownMenuItem.Icon>
+                                            <Image Source="/Images/icons8-rotate90-16.png"/>
+                                        </syncfusion:DropDownMenuItem.Icon>
+                                    </syncfusion:DropDownMenuItem>
+                                    <syncfusion:DropDownMenuItem HorizontalAlignment="Left"
+                                                                 Header="Повернуть против часовой стрелке на 90°"
+                                                                 Command="{Binding RotateImage}"
+                                                                 CommandParameter="-90">
+                                        <syncfusion:DropDownMenuItem.Icon>
+                                            <Image Source="/Images/icons8-rotate-back90-16.png"/>
+                                        </syncfusion:DropDownMenuItem.Icon>
+                                    </syncfusion:DropDownMenuItem>
+                                    <syncfusion:DropDownMenuItem HorizontalAlignment="Left"
+                                                                 Header="Повернуть на 180°"
+                                                                 Command="{Binding RotateImage}"
+                                                                 CommandParameter="180">
+                                        <syncfusion:DropDownMenuItem.Icon>
+                                            <Image Source="/Images/icons8-rotate-180-16.png"/>
+                                        </syncfusion:DropDownMenuItem.Icon>
+                                    </syncfusion:DropDownMenuItem>
+                                </syncfusion:DropDownMenuGroup>
+                            </syncfusion:DropDownButtonAdv>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Grid.Column="2">
+                            <Button Content="Reset" 
+                                    Padding="2,0,2,0"
+                                    IsEnabled="False"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource BorderContent}"
+                        Grid.Row="1">
+                    <Image x:Name="imageScan" 
+                           Source="{Binding CurrentImage}" 
+                           Stretch="Uniform"/>
+                </Border>
+                <Border Style="{StaticResource BorderBottomHeader}" 
+                        Grid.Row="2"
+                        Padding="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource BorderStyle}"
+                                BorderThickness="0,0,1,0">
+                            <StackPanel Margin="0,0,5,0"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                <TextBlock Text="{Binding CurrentPage}"/>
+                                <TextBlock Text=" из "/>
+                                <TextBlock Text="{Binding MaxPage}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource BorderStyle}"
+                                BorderThickness="0,0,1,0"
+                                Grid.Column="1">
+                        </Border>
+                        <syncfusion:SfDataPager x:Name="imagePager" 
+                                                Grid.Column="1"
+                                                HorizontalContentAlignment="Center"
+                                                PageSize="1"
+                                                Height="34"
+                                                Source="{Binding Images}"
+                                                PageIndex="{Binding PageIndex, Mode=TwoWay}"/>
+                        <Button x:Name="buttonSave"
+                                Style="{StaticResource DialogBitton}"
+                                Content="Сохранить"
+                                Margin="5,5,0,5"
+                                Grid.Column="2" 
+                                Click="ButtonSave_Click"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

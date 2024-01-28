@@ -8,6 +8,31 @@ using System.ComponentModel;
 
 namespace DocumentFlow.Common.Enums;
 
+public enum GraphicsUnit 
+{ 
+    Inch, 
+    Centimeter, 
+    Millimeter, 
+    Display, 
+    Point, 
+    Dpi 
+}
+
+public enum PdfNamingStrategy 
+{ 
+    Guid, 
+    DateTime 
+}
+
+public enum FileExtension
+{
+    Jpg,
+    Png,
+    Pdf,
+    Tif,
+    Bmp
+}
+
 public enum Privilege 
 { 
     Select, 

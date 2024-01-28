@@ -28,3 +28,10 @@ public enum WIAPageSize
     Letter, // 8.5 x 11 in (216 x 279 mm)
     Legal, // 8.5 x 14 in (216 x 356 mm)
 }
+
+public enum WIAColorMode
+{
+    Color = 1,
+    Greyscale = 2,
+    Monochrome = 4
+}

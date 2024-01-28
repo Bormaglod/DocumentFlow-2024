@@ -56,7 +56,7 @@
                                       Click="DeleteDocument"/>
                 <Separator/>
                 <syncfusion:ButtonAdv Label="Сканировать" 
-                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-rescan-document-16.png"/>
+                                      SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-rescan-document-16.png" Click="ScanDocument"/>
             </ToolBar>
         </ToolBarPanel>
         <syncfusion:SfDataGrid x:Name="gridContent" 

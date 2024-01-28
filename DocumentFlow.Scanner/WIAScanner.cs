@@ -16,7 +16,7 @@ using WIA;
 
 namespace DocumentFlow.Scanner;
 
-public class WIAScanner : IScanner
+public class WIAScanner
 {
     class WIA_DPS_DOCUMENT_HANDLING_SELECT
     {
@@ -140,7 +140,7 @@ public class WIAScanner : IScanner
 
     public bool ShowSelectDevice([MaybeNullWhen(false)] out string deviceId)
     {
-        var dialog = new WIA.CommonDialog();
+        var dialog = new CommonDialog();
 
         Device? selection;
         try
@@ -166,7 +166,7 @@ public class WIAScanner : IScanner
     /// Use scanner to scan an image (scanner is selected by its unique id).
     /// </summary>
     /// <returns>Scanned images.</returns>
-    public IList<BitmapSource> Scan(int pages, int resolution = 300, WIAPageSize pageSize = WIAPageSize.A4)
+    public IList<BitmapSource> Scan(int pages, ScanSettings settings)
     {
         List<BitmapSource> images = new();
         bool hasMorePages = true;
@@ -185,31 +185,31 @@ public class WIAScanner : IScanner
                 int width_pixels;
                 int height_pixels;
 
-                switch (pageSize)
+                switch (settings.PageSize)
                 {
                     case WIAPageSize.A4:
-                        width_pixels = (int)(8.3f * resolution);
-                        height_pixels = (int)(11.7f * resolution);
+                        width_pixels = (int)(8.3f * settings.Resolution);
+                        height_pixels = (int)(11.7f * settings.Resolution);
                         break;
                     case WIAPageSize.Letter:
-                        width_pixels = (int)(8.5f * resolution);
-                        height_pixels = (int)(11f * resolution);
+                        width_pixels = (int)(8.5f * settings.Resolution);
+                        height_pixels = (int)(11f * settings.Resolution);
                         break;
                     case WIAPageSize.Legal:
-                        width_pixels = (int)(8.5f * resolution);
-                        height_pixels = (int)(14f * resolution);
+                        width_pixels = (int)(8.5f * settings.Resolution);
+                        height_pixels = (int)(14f * settings.Resolution);
                         break;
                     default:
-                        throw new Exception("Unknown WIAPageSize: " + pageSize.ToString());
+                        throw new Exception("Unknown WIAPageSize: " + settings.PageSize.ToString());
                 }
 
-                AdjustScannerSettings(item, resolution, 0, 0, width_pixels, height_pixels, 0, 0, 1);
+                AdjustScannerSettings(item, settings.Resolution, 0, 0, width_pixels, height_pixels, settings.Brightness, settings.Contrast, (int)settings.ColorMode);
             }
 
             try
             {
                 // scan image
-                ICommonDialog wiaCommonDialog = new WIA.CommonDialog();
+                ICommonDialog wiaCommonDialog = new CommonDialog();
                 ImageFile scanImage = (ImageFile)wiaCommonDialog.ShowTransfer(item, wiaFormatPNG, false);
 
                 if (scanImage != null)

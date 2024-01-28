@@ -65,7 +65,14 @@ public static class ViewModelLocator
         }
         else
         {
-            viewModelTypeName = $"DocumentFlow.ViewModels.{viewType.Name}ViewModel";
+            if (viewType.Namespace != null && viewType.Namespace.EndsWith("Dialogs"))
+            {
+                viewModelTypeName = $"DocumentFlow.ViewModels.Dialogs.{viewType.Name.Replace("Window", string.Empty)}ViewModel";
+            }
+            else
+            {
+                viewModelTypeName = $"DocumentFlow.ViewModels.{viewType.Name}ViewModel";
+            }
         }
 
         // Get the type of ViewModel

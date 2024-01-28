@@ -8,7 +8,7 @@
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2024</Copyright>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Version>5.0.0.40121</Version>
+		<Version>5.0.0.40128</Version>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 	</PropertyGroup>
 

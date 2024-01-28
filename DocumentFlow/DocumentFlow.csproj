@@ -9,7 +9,7 @@
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Version>5.0.0.40121</Version>
+		<Version>5.0.0.40128</Version>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 	</PropertyGroup>
 
@@ -18,6 +18,7 @@
 	  <None Remove="Images\icons8-copy-16.png" />
 	  <None Remove="Images\icons8-copy-edit-16.png" />
 	  <None Remove="Images\icons8-copy-edit-30.png" />
+	  <None Remove="Images\icons8-crop-16.png" />
 	  <None Remove="Images\icons8-delete-16.png" />
 	  <None Remove="Images\icons8-document-16.png" />
 	  <None Remove="Images\icons8-document-attached-16.png" />
@@ -37,19 +38,29 @@
 	  <None Remove="Images\icons8-file-edit-30.png" />
 	  <None Remove="Images\icons8-filter-clear-16.png" />
 	  <None Remove="Images\icons8-find-filled-16.png" />
+	  <None Remove="Images\icons8-flip-horizontal-16.png" />
+	  <None Remove="Images\icons8-flip-vertical-16.png" />
 	  <None Remove="Images\icons8-folder-16.png" />
 	  <None Remove="Images\icons8-folder-add-16.png" />
 	  <None Remove="Images\icons8-folder-add-30.png" />
 	  <None Remove="Images\icons8-folder-delete-16.png" />
+	  <None Remove="Images\icons8-folder-open-16.png" />
 	  <None Remove="Images\icons8-home-16.png" />
+	  <None Remove="Images\icons8-image-16.png" />
 	  <None Remove="Images\icons8-info-16.png" />
 	  <None Remove="Images\icons8-open-document-16.png" />
 	  <None Remove="Images\icons8-open-document-30.png" />
 	  <None Remove="Images\icons8-open-in-window-16.png" />
+	  <None Remove="Images\icons8-pdf-16.png" />
 	  <None Remove="Images\icons8-print-16.png" />
 	  <None Remove="Images\icons8-print-30.png" />
+	  <None Remove="Images\icons8-redo-16.png" />
 	  <None Remove="Images\icons8-rescan-document-16.png" />
 	  <None Remove="Images\icons8-rescan-document-30.png" />
+	  <None Remove="Images\icons8-rotate-180-16.png" />
+	  <None Remove="Images\icons8-rotate-back90-16.png" />
+	  <None Remove="Images\icons8-rotate-clockwise-16.png" />
+	  <None Remove="Images\icons8-rotate90-16.png" />
 	  <None Remove="Images\icons8-save-16.png" />
 	  <None Remove="Images\icons8-save-30.png" />
 	  <None Remove="Images\icons8-save-close-16.png" />
@@ -65,6 +76,8 @@
 	  <None Remove="Images\icons8-sync-30.png" />
 	  <None Remove="Images\icons8-trash-16.png" />
 	  <None Remove="Images\icons8-trash-30.png" />
+	  <None Remove="Images\icons8-trash2-16.png" />
+	  <None Remove="Images\icons8-undo-16.png" />
 	  <None Remove="Images\insufficient.png" />
 	  <None Remove="Images\perfect.png" />
 	  <None Remove="Images\sufficient.png" />
@@ -74,8 +87,10 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Dapper" Version="2.1.28" />
 		<PackageReference Include="FastReport.Data.Postgres" Version="2024.1.0" />
-		<PackageReference Include="FastReport.OpenSource" Version="2024.1.2" />
+		<PackageReference Include="FastReport.OpenSource" Version="2024.1.3" />
 		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
+		<PackageReference Include="itext7" Version="8.0.2" />
+		<PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
@@ -89,6 +104,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\DocumentFlow.Ghostscript\DocumentFlow.Ghostscript.csproj" />
+	  <ProjectReference Include="..\DocumentFlow.Scanner\DocumentFlow.Scanner.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -97,6 +113,9 @@
 		</Reference>
 		<Reference Include="Syncfusion.SfGrid.WPF">
 			<HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\WPF\23.1.36\precompiledassemblies\net6.0\Syncfusion.SfGrid.WPF.dll</HintPath>
+		</Reference>
+		<Reference Include="Syncfusion.SfImageEditor.WPF">
+		  <HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\WPF\23.1.36\precompiledassemblies\net6.0\Syncfusion.SfImageEditor.WPF.dll</HintPath>
 		</Reference>
 		<Reference Include="Syncfusion.SfInput.Wpf">
 			<HintPath>..\..\..\Program Files (x86)\Syncfusion\Essential Studio\WPF\23.1.36\precompiledassemblies\net6.0\Syncfusion.SfInput.WPF.dll</HintPath>
@@ -132,6 +151,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-copy-edit-30.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-crop-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-delete-16.png">
@@ -191,6 +213,12 @@
 	  <Resource Include="Images\icons8-find-filled-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
+	  <Resource Include="Images\icons8-flip-horizontal-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-flip-vertical-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-folder-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
@@ -203,7 +231,13 @@
 	  <Resource Include="Images\icons8-folder-delete-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
+	  <Resource Include="Images\icons8-folder-open-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-home-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-image-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-info-16.png">
@@ -218,16 +252,34 @@
 	  <Resource Include="Images\icons8-open-in-window-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
+	  <Resource Include="Images\icons8-pdf-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-print-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-print-30.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
+	  <Resource Include="Images\icons8-redo-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-rescan-document-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-rescan-document-30.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-rotate-180-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-rotate-back90-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-rotate-clockwise-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-rotate90-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-save-16.png">
@@ -275,6 +327,9 @@
 	  <Resource Include="Images\icons8-trash-30.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
+	  <Resource Include="Images\icons8-undo-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\insufficient.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
@@ -282,6 +337,12 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\sufficient.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Images\icons8-trash2-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	</ItemGroup>
