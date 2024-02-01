@@ -57,9 +57,10 @@ public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 
     protected override IReadOnlyList<Goods> GetData(IDbConnection connection, Guid? id)
     {
-        return GetData<Measurement>(connection, (goods, measurement) => 
+        return GetData<Measurement, Calculation>(connection, (goods, measurement, calculation) => 
         { 
             goods.Measurement = measurement;
+            goods.Calculation = calculation;
             return goods; 
         },
         id: id);

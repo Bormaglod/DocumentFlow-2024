@@ -6,8 +6,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using Dapper;
-
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
@@ -53,7 +51,7 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
 
     protected override void InitializeEntityCollections(IDbConnection connection, Account? account)
     {
-        Banks = connection.Query<Bank>("select * from bank where not deleted");
+        Banks = GetForeignDirectory<Bank>(connection);
     }
 
     protected override void Load()

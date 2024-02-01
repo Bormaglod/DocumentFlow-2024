@@ -20,7 +20,7 @@ public partial class Goods : Product
     /// Возвращает или устанавливает идентификатор калькуляции.
     /// </summary>
     [ObservableProperty]
-    private Guid? calculationId;
+    private Calculation? calculation;
 
     /// <summary>
     /// Возвращает или устанавливает дополнительную информацию об изделии/услуге.

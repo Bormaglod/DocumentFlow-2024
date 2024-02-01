@@ -6,6 +6,7 @@
 
 using DocumentFlow.Models.Entities;
 
+using Syncfusion.UI.Xaml.ScrollAxis;
 using Syncfusion.UI.Xaml.TreeGrid;
 
 using System.Windows;
@@ -54,12 +55,12 @@ public partial class DirectoryWindow : Window
     }
 
     public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
-        "SelectedItem",
+        nameof(SelectedItem),
         typeof(Directory),
         typeof(DirectoryWindow));
 
     public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register(
-        "ItemsSource",
+        nameof(ItemsSource),
         typeof(IEnumerable<Directory>),
         typeof(DirectoryWindow));
 
@@ -98,5 +99,12 @@ public partial class DirectoryWindow : Window
         {
             DialogResult = true;
         }
+    }
+
+    private void GridContent_Loaded(object sender, RoutedEventArgs e)
+    {
+        var rowIndex = gridContent.ResolveToRowIndex(gridContent.SelectedItem);
+        var columnIndex = gridContent.ResolveToStartColumnIndex();
+        gridContent.ScrollInView(new RowColumnIndex(rowIndex, columnIndex));
     }
 }

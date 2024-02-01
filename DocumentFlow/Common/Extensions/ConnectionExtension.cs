@@ -141,8 +141,38 @@ public static class ConnectionExtension
         var enums = EntityProperties.EnumsPropertiesCache(type);
         var allPropertiesExceptKeyAndComputed = allProperties.Except(keyProperties.Union(denyWritingProperties)).ToList();
 
-        var fields = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x => $"{x.Name.Underscore()}{(x.PropertyType.IsSubclassOf(typeof(Identifier)) ? "_id" : string.Empty)}"));
-        var values = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x => $":{x.Name}{(x.PropertyType.IsSubclassOf(typeof(Identifier)) ? "Id" : string.Empty)}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}"));
+        var fields = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
+        {
+            string name;
+            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            {
+                var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
+                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldName) ? x.Name.Underscore() + "_id" : attr.ForeignFieldName;
+            }
+            else
+            {
+                name = x.Name.Underscore();
+            }
+
+            return name;
+        }));
+
+        var values = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
+        {
+            string name;
+            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            {
+                var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
+                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey) ? x.Name + "Id" : attr.ForeignFieldKey;
+            }
+            else
+            {
+                name = x.Name;
+            }
+
+            return $":{name}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}";
+        }));
+
         var returning = keyProperties.Count == 0 ? "*" : string.Join(", ", keyProperties.Select(x => x.Name.Underscore()));
 
         var discriminator = GetDiscriminator(entity);
@@ -185,8 +215,38 @@ public static class ConnectionExtension
         var enums = EntityProperties.EnumsPropertiesCache(type);
         var allPropertiesExceptKeyAndComputed = allProperties.Except(keyProperties.Union(denyWritingProperties).Union(deniesProperties)).ToList();
 
-        var fields = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x => $"{x.Name.Underscore()}{(x.PropertyType.IsSubclassOf(typeof(Identifier)) ? "_id" : string.Empty)}"));
-        var values = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x => $":{x.Name}{(x.PropertyType.IsSubclassOf(typeof(Identifier)) ? "Id" : string.Empty)}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}"));
+        var fields = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
+        {
+            string name;
+            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            {
+                var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
+                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldName) ? x.Name.Underscore() + "_id" : attr.ForeignFieldName;
+            }
+            else
+            {
+                name = x.Name.Underscore();
+            }
+
+            return name;
+        }));
+
+        var values = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
+        {
+            string name;
+            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            {
+                var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
+                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey) ? x.Name + "Id" : attr.ForeignFieldKey;
+            }
+            else
+            {
+                name = x.Name;
+            }
+
+            return $":{name}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}";
+        }));
+
         var returning = keyProperties.Count == 0 ? "*" : string.Join(", ", keyProperties.Select(x => x.Name.Underscore()));
 
         var discriminator = GetDiscriminator(entity);
@@ -226,9 +286,26 @@ public static class ConnectionExtension
         var denyWritingProperties = EntityProperties.DenyWritingPropertiesCache(type);
         var nonIdProps = allProperties.Except(keyProperties.Union(denyWritingProperties)).ToList();
         var enums = EntityProperties.EnumsPropertiesCache(type);
-
-        var sets = string.Join(',', nonIdProps.Select(x => $"{x.Name.Underscore()}{(x.PropertyType.IsSubclassOf(typeof(Identifier)) ? "_id" : string.Empty)} = :{x.Name}{(x.PropertyType.IsSubclassOf(typeof(Identifier)) ? "Id" : string.Empty)}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}"));
         var keys = string.Join(" and ", keyProperties.Select(x => $"{x.Name.Underscore()} = :{x.Name}"));
+
+        var sets = string.Join(", ", nonIdProps.Select(x =>
+        {
+            string name;
+            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            {
+                var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
+                var fname = attr == null || string.IsNullOrEmpty(attr.ForeignFieldName) ? $"{x.Name.Underscore()}_id" : attr.ForeignFieldName;
+                var sname = attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey) ? $"{x.Name}Id" : attr.ForeignFieldKey;
+
+                name = $"{fname} = :{sname}";
+            }
+            else
+            {
+                name = $"{x.Name.Underscore()} = :{x.Name}{(enums.TryGetValue(x, out string? value) ? "::" + value : "")}";
+            }
+
+            return name;
+        }));
 
         var discriminator = GetDiscriminator(entity);
 
@@ -353,9 +430,17 @@ public static class ConnectionExtension
         foreach (var item in props)
         {
             var val = item.GetValue(entity);
-            if (val is Identifier id)
+            if (val is DocumentInfo document)
             {
-                parameters.Add($"{item.Name}Id", id.Id);
+                var attr = item.GetCustomAttribute<ForeignKeyAttribute>(true);
+                if (attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey))
+                {
+                    parameters.Add($"{item.Name}Id", document.Id);
+                }
+                else
+                {
+                    parameters.Add(attr.ForeignFieldKey, document.Id);
+                }
             }
             else
             {

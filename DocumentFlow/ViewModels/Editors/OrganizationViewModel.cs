@@ -84,8 +84,8 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
 
     protected override void InitializeEntityCollections(IDbConnection connection, Organization? contractor)
     {
-        Okopfs = connection.Query<Okopf>("select * from okopf where not deleted");
-        Accounts = connection.Query<Account>("select * from account where not deleted and owner_id = :id", new { id = Id });
+        Okopfs = GetForeignData<Okopf>(connection);
+        Accounts = GetForeignData<Account>(connection, Id);
     }
 
     protected override void RaiseAfterLoadDocument(Organization entity)

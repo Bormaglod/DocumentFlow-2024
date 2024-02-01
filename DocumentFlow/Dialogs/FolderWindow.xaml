@@ -10,6 +10,13 @@
         Title="Группа" Height="126" Width="540" 
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height" 
         ContentRendered="Window_ContentRendered">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/DialogResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -31,10 +38,12 @@
                    Margin="10,5,5,0"/>
             <syncfusion:SfTextBoxExt x:Name="textCode" 
                                      Watermark="Введите код группы" 
+                                     WatermarkTemplate="{StaticResource WatermarkTemplate}"
                                      Grid.Column="1" 
                                      Margin="5,10,10,5"/>
             <syncfusion:SfTextBoxExt x:Name="textName" 
                                      Watermark="Введите наименование группы"
+                                     WatermarkTemplate="{StaticResource WatermarkTemplate}"
                                      Grid.Row="1" 
                                      Grid.Column="1" 
                                      Margin="5,5,10,0"/>

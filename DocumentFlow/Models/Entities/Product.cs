@@ -6,6 +6,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Common.Data;
+
 namespace DocumentFlow.Models.Entities;
 
 public partial class Product : Directory
@@ -44,6 +46,7 @@ public partial class Product : Directory
     /// Возвращает список документов/файлов прикреплённых к данному материалу или изделию.
     /// </summary>
     [ObservableProperty]
+    [property: DenyWriting]
     private IReadOnlyList<DocumentRefs>? thumbnails;
 
     /// <summary>

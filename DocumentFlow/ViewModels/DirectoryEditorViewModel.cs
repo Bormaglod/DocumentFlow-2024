@@ -15,6 +15,11 @@ using DocumentFlow.Models.Entities;
 
 using Humanizer;
 
+using SqlKata;
+using SqlKata.Execution;
+
+using System.Data;
+
 namespace DocumentFlow.ViewModels;
 
 public abstract partial class DirectoryEditorViewModel<T> : EntityEditorViewModel<T>
@@ -50,5 +55,14 @@ public abstract partial class DirectoryEditorViewModel<T> : EntityEditorViewMode
         {
             ParentId = directoryOptions.Parent?.Id;
         }
+    }
+
+    protected IEnumerable<P> GetForeignDirectory<P>(IDbConnection connection, Guid? ownerId = null, Func<Query, Query>? callback = null)
+        where P : Directory
+    {
+        var query = GetForeignQuery<P>(connection, ownerId, callback)
+            .Select("parent_id", "is_folder");
+
+        return query.Get<P>();    
     }
 }

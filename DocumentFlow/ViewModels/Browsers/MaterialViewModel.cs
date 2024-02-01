@@ -19,7 +19,7 @@ public class MaterialViewModel : ProductViewModel<Material>, ISelfTransientLifet
 
     public MaterialViewModel(IDatabase database) : base(database) { }
 
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.ContractorView);
+    public override Type? GetEditorViewType() => typeof(Views.Editors.MaterialView);
 
     protected override Query SelectQuery(Query query)
     {

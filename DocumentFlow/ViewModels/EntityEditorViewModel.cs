@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Dapper;
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
@@ -164,6 +165,29 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     protected virtual void InitializeEntityCollections(IDbConnection connection, T? entity = null) { }
 
+    protected IEnumerable<P> GetForeignData<P>(IDbConnection connection, Guid? ownerId = null, Func<Query, Query>? callback = null)
+        where P : DocumentInfo
+    {
+        return GetForeignQuery<P>(connection, ownerId, callback).Get<P>();
+    }
+
+    protected Query GetForeignQuery<P>(IDbConnection connection, Guid? ownerId = null, Func<Query, Query>? callback = null)
+    {
+        var factory = new QueryFactory(connection, new PostgresCompiler());
+        var query = factory.Query(typeof(P).Name.Underscore())
+            .Select("id", "code", "item_name")
+            .WhereFalse("deleted")
+            .When(ownerId != null, q => q.Where("owner_id", ownerId))
+            .OrderBy("item_name");
+
+        if (callback != null)
+        {
+            query = callback(query);
+        }
+
+        return query;
+    }
+
     private void RaiseAfterLoad(IDbConnection connection, T entity)
     {
         InitializeEntityCollections(connection, entity);
@@ -294,7 +318,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
     private static Query GetQuery(IDbConnection conn)
     {
         var factory = new QueryFactory(conn, new PostgresCompiler());
-        return factory.Query(EntityProperties.GetTableName(typeof(T)));
+        return factory.Query($"{EntityProperties.GetTableName(typeof(T))} as t0");
     }
 
     private void UpdateHeader() => UpdateHeader(headerDetails ?? string.Empty);
@@ -353,15 +377,14 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     private Query DefaultQuery(IDbConnection connection)
     {
-        var table = EntityProperties.GetTableName(typeof(T));
         var query = SelectQuery(
             GetQuery(connection)
-                .Select($"{table}.*")
+                .Select("t0.*")
                 .Select("u1.name as user_created")
                 .Select("u2.name as user_updated")
-                .Join("user_alias as u1", $"{table}.user_created_id", "u1.id")
-                .Join("user_alias as u2", $"{table}.user_updated_id", "u2.id")
-                .Where($"{table}.id", Id));
+                .Join("user_alias as u1", "t0.user_created_id", "u1.id")
+                .Join("user_alias as u2", "t0.user_updated_id", "u2.id")
+                .Where("t0.id", Id));
         return query;
     }
 
@@ -381,7 +404,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
         return query
             .Select($"{table}.*")
-            .LeftJoin(table, $"{table}.id", $"{typeof(T).Name.Underscore()}.{refName}");
+            .LeftJoin(table, $"{table}.id", $"t0.{refName}");
     }
 
     partial void OnHeaderChanging(string value)

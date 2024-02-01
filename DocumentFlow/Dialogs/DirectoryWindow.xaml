@@ -67,7 +67,7 @@
                                ItemsSource="{Binding ElementName=directoryWindow, Path=ItemsSource}" 
                                AutoExpandMode="AllNodesExpanded" 
                                NavigationMode="Row"
-                               AutoGeneratingColumn="SfTreeGrid_AutoGeneratingColumn" MouseDoubleClick="SfTreeGrid_MouseDoubleClick">
+                               AutoGeneratingColumn="SfTreeGrid_AutoGeneratingColumn" MouseDoubleClick="SfTreeGrid_MouseDoubleClick" Loaded="GridContent_Loaded">
             <syncfusion:SfTreeGrid.Columns>
                 <syncfusion:TreeGridTextColumn MappingName="ItemName"
                                                HeaderText="Наименование"

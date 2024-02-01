@@ -83,9 +83,9 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
 
     protected override void InitializeEntityCollections(IDbConnection connection, Contractor? contractor)
     {
-        Okopfs = connection.Query<Okopf>("select * from okopf where not deleted");
-        Accounts = connection.Query<Account>("select * from account where not deleted and owner_id = :id", new { id = Id });
-        Persons = connection.Query<Person>("select * from person where not deleted");
+        Okopfs = GetForeignData<Okopf>(connection);
+        Accounts = GetForeignData<Account>(connection, Id);        
+        Persons = GetForeignDirectory<Person>(connection);
     }
 
     protected override void RaiseAfterLoadDocument(Contractor entity)

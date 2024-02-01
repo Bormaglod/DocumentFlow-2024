@@ -98,8 +98,8 @@ public partial class ContractViewModel : DirectoryEditorViewModel<Contract>, ISe
     protected override void InitializeEntityCollections(IDbConnection connection, Contract? contract)
     {
         var orgId = (contract?.OrganizationId) ?? connection.QuerySingleOrDefault<Guid>("select id from organization where default_org");
-        Employees = connection.Query<Employee>("select * from employee where not deleted and owner_id = :id", new { id = Owner?.Id });
-        OurEmployees = connection.Query<OurEmployee>("select * from our_employee where not deleted and owner_id = :id", new { id = orgId});
+        Employees = GetForeignDirectory<Employee>(connection, Owner?.Id);
+        OurEmployees = GetForeignDirectory<OurEmployee>(connection, orgId);
     }
 
     protected override void Load()

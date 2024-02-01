@@ -129,3 +129,24 @@ public enum MaterialKind
     [Description("Уплотнитель")]
     Seal
 }
+
+public enum CalculationState
+{
+    [Description("Подготовлена")]
+    Prepare,
+
+    [Description("Утверждена")]
+    Approved,
+
+    [Description("В архиве")]
+    Expired
+}
+
+public enum StimulatingValue
+{
+    [Description("Сумма")]
+    Money,
+
+    [Description("Процент")]
+    Percent
+}

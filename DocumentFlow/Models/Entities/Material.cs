@@ -38,6 +38,7 @@ public partial class Material : Product
     /// Возвращает материал являющийся оригиналом по отношению к текущему
     /// </summary>
     [ObservableProperty]
+    [property: DenyWriting]
     private Material? cross;
 
     /// <summary>
@@ -45,12 +46,6 @@ public partial class Material : Product
     /// </summary>
     [EnumType("material_kind")]
     public string MaterialKind { get; set; } = "undefined";
-
-    
-
-    /*
-    [Computed]
-    public string? CrossName { get; protected set; }*/
 
     /// <summary>
     /// Возвращает true, если данный материал используется хотя бы в одной калькуляции (калькуляция
@@ -64,24 +59,15 @@ public partial class Material : Product
     /// </summary>
     public int PriceStatus { get; protected set; }
 
-    /*/// <summary>
-    /// Возвращает наименование типа провода (для записей с установленным типом 
-    /// материала <see cref="MaterialKind.Wire"/> 
-    /// </summary>
-    [Computed]
-    public string? WireName { get; protected set; }
-
-    /// <summary>
-    /// Возвращает список совместимых комплектующих.
-    /// </summary>
-    [WritableCollection]
-    public IList<CompatiblePart> CompatibleParts { get; protected set; } = null!;*/
-
+    [DenyWriting]
     public MaterialKind Kind
     {
         get { return Enum.Parse<MaterialKind>(MaterialKind.Pascalize()); }
-        protected set { MaterialKind = value.ToString().Underscore(); }
+        set { MaterialKind = value.ToString().Underscore(); }
     }
 
-    //public string MaterialKindName => Kind.Description();
+    partial void OnCrossChanged(Material? value)
+    {
+        OwnerId = value?.Id;
+    }
 }
