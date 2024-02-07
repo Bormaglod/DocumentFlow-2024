@@ -505,7 +505,6 @@ public static class ContextMenuCommands
         }
     }
 
-
     private static void OnCopyIdentifier(object parameter)
     {
         if (parameter is GridRecordContextMenuInfo info)
@@ -514,7 +513,7 @@ public static class ContextMenuCommands
 
             if (grid.CurrentItem is Identifier identifier)
             {
-                Clipboard.SetText(identifier.ToString() ?? string.Empty);
+                Clipboard.SetText(identifier.Id.ToString() ?? string.Empty);
                 ToastOperations.IdentifierValueCopied(identifier.Id);
             }
         }

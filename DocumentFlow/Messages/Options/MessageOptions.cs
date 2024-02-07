@@ -4,7 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-namespace DocumentFlow.Common.Messages;
+namespace DocumentFlow.Messages.Options;
 
 public class MessageOptions
 {

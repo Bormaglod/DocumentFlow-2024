@@ -6,14 +6,14 @@
 
 using DocumentFlow.Models.Entities;
 
-namespace DocumentFlow.Common.Messages;
+namespace DocumentFlow.Messages.Options;
 
-public class DocumentEditorMessageOptions : MessageOptions
+public class DirectoryEditorMessageOptions : DocumentEditorMessageOptions
 {
-    public DocumentEditorMessageOptions(DocumentInfo? owner)
+    public DirectoryEditorMessageOptions(DocumentInfo? document, DocumentInfo? parent) : base(document)
     {
-        Owner = owner;
+        Parent = parent;
     }
 
-    public DocumentInfo? Owner { get; }
+    public DocumentInfo? Parent { get; }
 }

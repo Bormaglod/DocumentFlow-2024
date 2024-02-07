@@ -13,6 +13,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using System.Data;
+using System.Windows.Documents;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -123,6 +124,16 @@ public partial class ContractViewModel : DirectoryEditorViewModel<Contract>, ISe
 
     partial void OnItemNameChanged(string? value)
     {
-        UpdateHeader(value ?? "?");
+        UpdateHeader($"{value} {Code} от {DateContract:d}");
+    }
+
+    partial void OnCodeChanged(string value)
+    {
+        UpdateHeader($"{ItemName} {value} от {DateContract:d}");
+    }
+
+    partial void OnDateContractChanged(DateTime value)
+    {
+        UpdateHeader($"{ItemName} {Code} от {value:d}");
     }
 }

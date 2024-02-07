@@ -399,4 +399,24 @@
             </i:Interaction.Behaviors>
         </ListView>
     </DataTemplate>
+    <Style TargetType="syncfusion:GridHeaderCellControl" 
+           x:Key="headerRemainderStyle"
+           BasedOn="{StaticResource SyncfusionGridHeaderCellControlStyle}">
+        <Setter Property="Background" Value="#DAE5F5"/>
+    </Style>
+    <Style TargetType="syncfusion:GridHeaderCellControl" 
+           x:Key="headerMonetaryStyle"
+           BasedOn="{StaticResource SyncfusionGridHeaderCellControlStyle}">
+        <Setter Property="Background" Value="#FFC873"/>
+    </Style>
+    <Style TargetType="syncfusion:GridCell" 
+           x:Key="rowRemainderStyle"
+           BasedOn="{StaticResource SyncfusionGridCellStyle}">
+        <Setter Property="Background" Value="#DAE5F5"/>
+    </Style>
+    <Style TargetType="syncfusion:GridCell" 
+           x:Key="rowMonetaryStyle"
+           BasedOn="{StaticResource SyncfusionGridCellStyle}">
+        <Setter Property="Background" Value="#FFC873"/>
+    </Style>
 </ResourceDictionary>

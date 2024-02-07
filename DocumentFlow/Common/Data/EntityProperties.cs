@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Models.Entities;
+
 using Humanizer;
 
 using System.Collections.Concurrent;
@@ -22,6 +24,7 @@ internal static class EntityProperties
     private static readonly ConcurrentDictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>> DenyWritingProperties = new();
     private static readonly ConcurrentDictionary<RuntimeTypeHandle, IDictionary<PropertyInfo, string>> EnumsProperties = new();
     private static readonly ConcurrentDictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>> DenyCopyingProperties = new();
+    private static readonly ConcurrentDictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>> ForeignProperties = new();
 
     internal static string GetTableName(Type type)
     {
@@ -126,6 +129,19 @@ internal static class EntityProperties
 
         DenyCopyingProperties[type.TypeHandle] = deniesProperties;
         return deniesProperties;
+    }
+
+    internal static List<PropertyInfo> ForeignPropertiesCache(Type type)
+    {
+        if (ForeignProperties.TryGetValue(type.TypeHandle, out IEnumerable<PropertyInfo>? pi))
+        {
+            return pi.ToList();
+        }
+
+        var foreignProperties = TypePropertiesCache(type).Where(p => p.PropertyType.IsAssignableTo(typeof(DocumentInfo))).ToList();
+        
+        ForeignProperties[type.TypeHandle] = foreignProperties;
+        return foreignProperties;
     }
 
     private static bool IsWriteable(PropertyInfo pi)

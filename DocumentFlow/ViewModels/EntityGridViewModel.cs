@@ -13,7 +13,6 @@ using DocumentFlow.Common;
 using DocumentFlow.Common.Comparers;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
-using DocumentFlow.Common.Messages;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
@@ -36,6 +35,7 @@ using System.Data;
 using System.Windows;
 using System.Windows.Input;
 using Syncfusion.Windows.Tools.Controls;
+using DocumentFlow.Messages.Options;
 
 namespace DocumentFlow.ViewModels;
 
@@ -257,7 +257,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         get
         {
-            swapMarkedRow ??= new DelegateCommand(OnSwapMarkedRow);
+            swapMarkedRow ??= new DelegateCommand(OnSwapMarkedRow, CanSwapMarkedRow);
             return swapMarkedRow;
         }
     }
@@ -270,6 +270,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
+    private bool CanSwapMarkedRow(object parameter) => GetEditorViewType() != null;
+
     #endregion
 
     #region WipeRows
@@ -280,7 +282,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         get
         {
-            wipeRows ??= new DelegateCommand(OnWipeRows);
+            wipeRows ??= new DelegateCommand(OnWipeRows, CanWipeRows);
             return wipeRows;
         }
     }
@@ -302,6 +304,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
+    private bool CanWipeRows(object parameter) => GetEditorViewType() != null;
+
     #endregion
 
     #region CopyRow
@@ -312,7 +316,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         get
         {
-            copyRow ??= new DelegateCommand(OnCopyRow);
+            copyRow ??= new DelegateCommand(OnCopyRow, CanCopyRow);
             return copyRow;
         }
     }
@@ -362,6 +366,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+    private bool CanCopyRow(object parameter) => GetEditorViewType() != null;
 
     #endregion
 
@@ -571,7 +577,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         return factory.Query($"{typeof(T).Name.Underscore()} as t0");
     }
 
-    protected Query RequiredQuery(IDbConnection connection)
+    protected Query RequiredQuery(IDbConnection connection, bool includeDocumentsInfo = true)
     {
         var query = GetQuery(connection);
 
@@ -584,7 +590,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             Owner != null,
             q => q.Where($"t0.owner_id", Owner!.Id));
 
-        if (database.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
+        if (includeDocumentsInfo && database.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
         {
             query = query
                 .SelectRaw("exists(select 1 from document_refs dr where dr.owner_id = t0.id) as has_documents")

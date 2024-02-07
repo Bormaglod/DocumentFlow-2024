@@ -18,12 +18,22 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-using Windows.Foundation;
-
 namespace DocumentFlow.Common.Extensions;
 
 public static class ConnectionExtension
 {
+    public static void UpdateDependents(this IDbConnection connection, object collection, IDbTransaction? transaction = null)
+    {
+        if (collection is IDependentCollection dependent)
+        {
+            connection.Insert(dependent.NewItems, transaction);
+            connection.Update(dependent.UpdateItems, transaction);
+            connection.ExecuteCommand(SQLCommand.Wipe, dependent.RemoveItems, transaction);
+
+            dependent.CompleteChanged();
+        }
+    }
+
     public static int Insert(this IDbConnection connection, object entity, IDbTransaction? transaction = null, int? commandTimeout = null)
     {
         if (entity is IEnumerable<object> entities)

@@ -32,7 +32,7 @@ public partial class EntityInfo : UserControl
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        Clipboard.SetText(DocumentInfo.ToString() ?? string.Empty);
+        Clipboard.SetText(DocumentInfo.Id.ToString() ?? string.Empty);
         ToastOperations.IdentifierValueCopied(DocumentInfo.Id);
     }
 }

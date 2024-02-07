@@ -1,0 +1,213 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Editors.ContractApplicationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:c="clr-namespace:DocumentFlow.Controls"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="800" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:ContractApplicationViewModel, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorButtonResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="{Binding NestedWindowsHeight}"/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <ScrollViewer Grid.Row="1">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Договор"
+                           Style="{StaticResource TextBlockHeaderStyle}"
+                           Grid.Row="0"/>
+                <TextBlock Text="Номер приложения"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="1"/>
+                <TextBlock Text="Наименование"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="2"/>
+                <TextBlock Text="Дата подписания"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="3"/>
+                <TextBlock Text="Начало действия"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="4"/>
+                <TextBlock Text="Окончание действия"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="5"/>
+                <TextBlock Text="Примечание"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="8"
+                           Margin="0,10,0,0"/>
+                <TextBlock Text="{Binding Owner}"
+                           Style="{StaticResource TextBlockOwnerStyle}"
+                           Grid.Column="1"/>
+                <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}"
+                         Width="200"
+                         Grid.Row="1" Grid.Column="1"
+                         Style="{StaticResource TextBoxStyle}"
+                         MaxLength="30"
+                         HorizontalAlignment="Left"/>
+                <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
+                         Width="400"
+                         Grid.Row="2" Grid.Column="1"
+                         Style="{StaticResource TextBoxStyle}"
+                         MaxLength="255"/>
+                <syncfusion:DateTimeEdit DateTime="{Binding DocumentDate, Mode=TwoWay}"
+                                         Width="140"
+                                         Grid.Row="3" Grid.Column="1"
+                                         Style="{StaticResource DateTimeEditStyle}"
+                                         Pattern="LongDate"/>
+                <syncfusion:DateTimeEdit DateTime="{Binding DateStart, Mode=TwoWay}"
+                                         Width="140"
+                                         Grid.Row="4" Grid.Column="1"
+                                         Style="{StaticResource DateTimeEditStyle}"
+                                         Pattern="LongDate"/>
+                <syncfusion:DateTimeEdit DateTime="{Binding DateEnd, Mode=TwoWay}"
+                                         Width="140"
+                                         Grid.Row="5" Grid.Column="1"
+                                         Style="{StaticResource DateTimeEditStyle}"
+                                         Pattern="LongDate"
+                                         IsEmptyDateEnabled="True"
+                                         NoneDateText="Введите дату"
+                                         ShowMaskOnNullValue="False"/>
+                <ToolBar ToolBarTray.IsLocked="True"
+                         Grid.Row="6" Grid.ColumnSpan="3"
+                         Margin="0,10,0,0">
+                    <syncfusion:ButtonAdv Label="Добавить" 
+                                          SmallIcon="/Images/icons8-file-add-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding AddProduct}"/>
+                    <syncfusion:ButtonAdv Label="Изменить" 
+                                          SmallIcon="/Images/icons8-file-edit-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding EditProduct}"/>
+                    <syncfusion:ButtonAdv Label="Удалить" 
+                                          SmallIcon="/Images/icons8-file-delete-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding DeleteProduct}"/>
+                    <Separator/>
+                    <syncfusion:ButtonAdv Label="Копия" 
+                                          SmallIcon="/Images/icons8-copy-edit-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding CopyProduct}"/>
+                </ToolBar>
+                <syncfusion:SfDataGrid ItemsSource="{Binding Products}"
+                                       SelectedItem="{Binding ProductSelected}"
+                                       Grid.Row="7" Grid.ColumnSpan="3"
+                                       AutoGenerateColumns="False" 
+                                       AllowGrouping="False" 
+                                       NavigationMode="Row">
+                    <syncfusion:SfDataGrid.Columns>
+                        <syncfusion:GridTextColumn HeaderText="Артикул" 
+                                                   MappingName="Product.Code"
+                                                   Width="150"/>
+                        <syncfusion:GridTextColumn HeaderText="Наименование" 
+                                                   MappingName="Product.ItemName"
+                                                   ColumnSizer="AutoLastColumnFill"/>
+                        <syncfusion:GridTextColumn HeaderText="Ед. изм." 
+                                                   MappingName="Product.Measurement.Abbreviation"
+                                                   TextAlignment="Center"
+                                                   Width="100"/>
+                        <syncfusion:GridCurrencyColumn HeaderText="Цена" 
+                                                       MappingName="Price"
+                                                       Width="120"/>
+                    </syncfusion:SfDataGrid.Columns>
+                    <syncfusion:SfDataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Добавить"
+                                      Command="{Binding AddProduct}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-file-add-16.png" 
+                                           Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Изменить"
+                                      Command="{Binding EditProduct}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-file-edit-16.png" 
+                                           Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Удалить"
+                                      Command="{Binding DeleteProduct}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-delete-16.png" 
+                                           Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="Копия"
+                                      Command="{Binding CopyProduct}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-copy-edit-16.png" 
+                                           Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </syncfusion:SfDataGrid.ContextMenu>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding EditProduct}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </syncfusion:SfDataGrid>
+                <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
+                         Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2"
+                         Style="{StaticResource TextBoxStyle}"
+                         Height="75"
+                         VerticalContentAlignment="Top"
+                         Margin="0,10,0,0"/>
+            </Grid>
+        </ScrollViewer>
+        <syncfusion:SfGridSplitter Name="gridSplitter"
+                                   HorizontalAlignment="Stretch"
+                                   ResizeBehavior="PreviousAndNext"
+                                   Width="auto"
+                                   Grid.Row="2"/>
+        <syncfusion:TabControlExt Grid.Row="3"
+                                  Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Документы">
+                <c:DocumentsList Margin="5" 
+                                 DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Информация">
+                <c:EntityInfo Margin="5"
+                              DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+        </syncfusion:TabControlExt>
+    </Grid>
+</UserControl>

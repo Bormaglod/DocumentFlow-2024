@@ -6,8 +6,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using Dapper;
-
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;

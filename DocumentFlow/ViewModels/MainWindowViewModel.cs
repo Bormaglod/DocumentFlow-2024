@@ -150,9 +150,9 @@ public partial class MainWindowViewModel :
 
     public void Receive(EntityEditorOpenMessage message)
     {
-        if (message.Document != null)
+        if (message.DocumentId != null)
         {
-            if (ActivateOpenedDocument(message.EditorType, message.Document.Id))
+            if (ActivateOpenedDocument(message.EditorType, message.DocumentId))
             {
                 return;
             }
@@ -163,11 +163,11 @@ public partial class MainWindowViewModel :
         {
             if (element.DataContext is IEntityEditorViewModel model)
             {
-                if (message.Document != null)
+                if (message.DocumentId.HasValue)
                 {
                     try
                     {
-                        model.LoadDocument(message.Document, message.Options);
+                        model.LoadDocument(message.DocumentId.Value, message.Options);
                     }
                     catch (Exception e)
                     {

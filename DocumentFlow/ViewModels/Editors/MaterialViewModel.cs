@@ -11,6 +11,7 @@ using Dapper;
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Enums;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
@@ -240,6 +241,14 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
             }, entity);
 
             CompatibleParts = new DependentCollection<CompatiblePart>(entity, res);
+        }
+    }
+
+    protected override void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null)
+    {
+        if (CompatibleParts != null)
+        {
+            connection.UpdateDependents(CompatibleParts, transaction);
         }
     }
 }

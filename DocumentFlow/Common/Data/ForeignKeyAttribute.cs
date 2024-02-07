@@ -11,6 +11,7 @@ public class ForeignKeyAttribute : Attribute
 {
     public ForeignKeyAttribute() { }
 
+    public string? Name { get; set; }
     public string? ForeignFieldKey { get; set; }
     public string? ForeignFieldName { get; set; }
 }

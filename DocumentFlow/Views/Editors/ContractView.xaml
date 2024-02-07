@@ -10,6 +10,7 @@
              xmlns:enums="clr-namespace:DocumentFlow.Common.Enums"
              xmlns:c="clr-namespace:DocumentFlow.Controls"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
+             xmlns:views="clr-namespace:DocumentFlow.Views.Browsers"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
@@ -29,7 +30,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="{Binding NestedWindowsHeight}"/>
         </Grid.RowDefinitions>
         <ToolBarPanel>
             <ToolBar ToolBarTray.IsLocked="True"
@@ -158,6 +159,12 @@
                                    Grid.Row="2"/>
         <syncfusion:TabControlExt Grid.Row="3"
                                   Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Приложения">
+                <views:ContractApplicationView Margin="5"
+                                               Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                               AvailableGrouping="False"
+                                               SizeMode="Small"/>
+            </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Документы">
                 <c:DocumentsList Margin="5" 
                                  DocumentInfo="{Binding Entity}"/>

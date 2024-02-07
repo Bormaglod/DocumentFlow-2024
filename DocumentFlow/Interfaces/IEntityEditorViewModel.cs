@@ -4,7 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Common.Messages;
+using DocumentFlow.Messages.Options;
 using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Interfaces;
@@ -16,6 +16,6 @@ public interface IEntityEditorViewModel
     string Header { get; }
 
     DocumentInfo? DocumentInfo { get; }
-    void LoadDocument(DocumentInfo info, MessageOptions? options);
+    void LoadDocument(Guid id, MessageOptions? options);
     void CreateDocument(MessageOptions? options);
 }

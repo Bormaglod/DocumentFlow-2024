@@ -4,7 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Common.Messages;
+using DocumentFlow.Messages.Options;
 using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Messages;
@@ -16,15 +16,17 @@ public class EntityEditorOpenMessage
         EditorType = viewType;
     }
 
-    public EntityEditorOpenMessage(Type editorType, DocumentInfo document)
+    public EntityEditorOpenMessage(Type editorType, Guid documentId)
     {
         EditorType = editorType;
-        Document = document;
+        DocumentId = documentId;
     }
+
+    public EntityEditorOpenMessage(Type editorType, DocumentInfo document) : this(editorType, document.Id) { }
 
     public Type EditorType { get; }
 
-    public DocumentInfo? Document { get; }
+    public Guid? DocumentId { get; }
 
     public DocumentInfo? BasedDocument { get; init; }
 

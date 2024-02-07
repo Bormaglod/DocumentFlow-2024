@@ -4,16 +4,15 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
-namespace DocumentFlow.Common.Messages;
+namespace DocumentFlow.ViewModels;
 
-public class DirectoryEditorMessageOptions : DocumentEditorMessageOptions
+public abstract class DocumentViewModel<T> : EntityGridViewModel<T>
+    where T : BaseDocument
 {
-    public DirectoryEditorMessageOptions(DocumentInfo? document, DocumentInfo? parent) : base(document)
-    {
-        Parent = parent;
-    }
+    public DocumentViewModel() { }
 
-    public DocumentInfo? Parent { get; }
+    public DocumentViewModel(IDatabase database) : base(database) { }
 }

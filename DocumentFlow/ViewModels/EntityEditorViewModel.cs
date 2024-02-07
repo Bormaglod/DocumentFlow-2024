@@ -10,13 +10,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using Dapper;
 
 using DocumentFlow.Common;
-using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
-using DocumentFlow.Common.Messages;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
+using DocumentFlow.Messages.Options;
 using DocumentFlow.Models.Entities;
 
 using Humanizer;
@@ -52,6 +51,9 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     [ObservableProperty]
     private T? entity;
+
+    [ObservableProperty]
+    private int nestedWindowsHeight = 300;
 
     public EntityEditorViewModel()
     {
@@ -132,9 +134,9 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     #endregion
 
-    public void LoadDocument(DocumentInfo info, MessageOptions? options)
+    public void LoadDocument(Guid id, MessageOptions? options)
     {
-        Id = info.Id;
+        Id = id;
 
         if (options != null)
         {
@@ -287,6 +289,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     protected abstract void UpdateEntity(T entity);
 
+    protected virtual void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null) { }
+
     protected virtual Query SelectQuery(Query query) => query;
 
     protected void UpdateHeader(string details)
@@ -349,6 +353,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
                     conn.Update(Entity, transaction);
                     action = MessageAction.Refresh;
                 }
+
+                UpdateDependents(conn, transaction);
 
                 transaction.Commit();
 

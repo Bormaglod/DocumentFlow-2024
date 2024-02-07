@@ -140,7 +140,6 @@
     <Style x:Key="TabControlStyle" 
            TargetType="{x:Type syncfusion:TabControlExt}"
            BasedOn="{StaticResource SyncfusionTabControlExtStyle}">
-        <Setter Property="Height" Value="250"/>
         <Setter Property="CloseButtonType" Value="Hide"/>
     </Style>
 

@@ -27,7 +27,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="{Binding NestedWindowsHeight}"/>
         </Grid.RowDefinitions>
         <ToolBarPanel>
             <ToolBar ToolBarTray.IsLocked="True"

@@ -34,7 +34,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="{Binding NestedWindowsHeight}"/>
         </Grid.RowDefinitions>
         <ToolBarPanel>
             <ToolBar ToolBarTray.IsLocked="True"
@@ -190,6 +190,12 @@
                                    Grid.Row="2"/>
         <syncfusion:TabControlExt Grid.Row="3"
                                   Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Расчёты с контрагентом">
+                <views:BalanceContractorView Margin="5"
+                                             Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                             AvailableGrouping="False"
+                                             SizeMode="Small"/>
+            </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Договоры">
                 <views:ContractView Margin="5"
                                     Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"

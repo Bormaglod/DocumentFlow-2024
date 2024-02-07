@@ -10,9 +10,9 @@ using Dapper;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Data;
-using DocumentFlow.Common.Messages;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Messages.Options;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
@@ -213,6 +213,11 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
     {
         InitializeHierarchy();
 
+        if (!AvailableNavigation)
+        {
+            return;
+        }
+
         try
         {
             using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
@@ -253,7 +258,7 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
             new ToolBarSeparatorModel(),
             new ToolBarButtonModel("Удалить", "trash") { Command = WipeRows },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Копия", "copy-edit"),
+            new ToolBarButtonModel("Копия", "copy-edit") { Command = CopyRow },
             new ToolBarGroupingButtonModel("Группа", "folder-add") { Command = CreateGroup },
             new ToolBarSeparatorModel(),
             new ToolBarButtonComboModel("Печать", "print"),
