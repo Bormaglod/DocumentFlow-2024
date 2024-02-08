@@ -70,9 +70,15 @@ public partial class Calculation : Directory
     [EnumType("stimulating_value")]
     public string StimulType { get; set; } = "money";
 
-    /*public string? GoodsName { get; set; }
+    /// <summary>
+    /// Возвращает вес изделия изготовленного согласно данной калькуляции.
+    /// </summary>
     public decimal Weight { get; protected set; }
-    public decimal ProducedTime { get; protected set; }*/
+
+    /// <summary>
+    /// Возвращает время изготовления изделия в секундах.
+    /// </summary>
+    public decimal ProducedTime { get; protected set; }
 
     [DenyWriting]
     public CalculationState CalculationState

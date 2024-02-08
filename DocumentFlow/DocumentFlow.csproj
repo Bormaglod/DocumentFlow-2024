@@ -14,6 +14,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Images\icons8-calculation-16.png" />
+	  <None Remove="Images\icons8-calculation-30.png" />
 	  <None Remove="Images\icons8-collapse-16.png" />
 	  <None Remove="Images\icons8-contract-16.png" />
 	  <None Remove="Images\icons8-contract-30.png" />
@@ -51,6 +53,8 @@
 	  <None Remove="Images\icons8-folder-add-30.png" />
 	  <None Remove="Images\icons8-folder-delete-16.png" />
 	  <None Remove="Images\icons8-folder-open-16.png" />
+	  <None Remove="Images\icons8-goods-16.png" />
+	  <None Remove="Images\icons8-goods-30.png" />
 	  <None Remove="Images\icons8-home-16.png" />
 	  <None Remove="Images\icons8-image-16.png" />
 	  <None Remove="Images\icons8-info-16.png" />
@@ -147,6 +151,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Resource Include="Images\icons8-calculation-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-calculation-30.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-collapse-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
@@ -256,6 +266,12 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-folder-open-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-goods-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-goods-30.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-home-16.png">

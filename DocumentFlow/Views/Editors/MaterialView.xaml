@@ -282,6 +282,12 @@
                                            AvailableGrouping="False"
                                            SizeMode="Small"/>
             </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Использование материала">
+                <views:MaterialUsageView Margin="5"
+                                         Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                         AvailableGrouping="False"
+                                         SizeMode="Small"/>
+            </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Документы">
                 <c:DocumentsList Margin="5" 
                                  DocumentInfo="{Binding Entity}"/>
