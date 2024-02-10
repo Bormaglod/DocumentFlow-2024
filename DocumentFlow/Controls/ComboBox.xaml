@@ -23,7 +23,6 @@
                   Margin="0,0,5,0"
                   ItemsSource="{Binding ElementName=comboBox, Path=ItemsSource}"
                   SelectedItem="{Binding ElementName=comboBox, Path=DocumentItem, Mode=TwoWay}"
-                  DisplayMemberPath="ItemName"
                   IsReadOnly="True"/>
         <Button x:Name="buttonClear" 
                 Grid.Column="1"

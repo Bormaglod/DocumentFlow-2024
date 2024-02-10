@@ -9,6 +9,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using System.Data;
+
 namespace DocumentFlow.ViewModels.Editors;
 
 public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
@@ -38,6 +40,9 @@ public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
     [ObservableProperty]
     private IEnumerable<int> vats = new List<int>() { 0, 10, 20 };
 
+    [ObservableProperty]
+    private IEnumerable<Measurement>? measurements;
+
     public ProductViewModel() { }
 
     public ProductViewModel(IDatabase database) : base(database) { }
@@ -64,6 +69,13 @@ public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
         entity.DocName = DocName;
         entity.Weight = Weight;
         entity.Measurement = Measurement;
+    }
+
+    protected override void InitializeEntityCollections(IDbConnection connection, T? entity = null)
+    {
+        base.InitializeEntityCollections(connection, entity);
+        
+        Measurements = GetForeignData<Measurement>(connection);
     }
 
     partial void OnItemNameChanged(string? value)

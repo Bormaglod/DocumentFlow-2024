@@ -27,7 +27,7 @@ public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
         this.database = database;
     }
 
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.ContractorView);
+    public override Type? GetEditorViewType() => typeof(Views.Editors.GoodsView);
 
     protected override Query SelectQuery(Query query)
     {
@@ -41,12 +41,7 @@ public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
                 .GroupBy("reference_id");
 
             query = query
-                .Select("c.cost_price")
-                .Select("c.profit_percent")
-                .Select("c.profit_value")
                 .Select("pb.product_balance")
-                .Select("c.date_approval")
-                .LeftJoin("calculation as c", "t0.calculation_id", "c.id")
                 .LeftJoin(
                     pb.As("pb"),
                     q => q.On("pb.reference_id", "t0.id"));

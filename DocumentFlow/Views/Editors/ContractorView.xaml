@@ -118,13 +118,8 @@
                 <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
                          Width="500" Height="75"
                          Grid.Row="3" Grid.Column="1"
-                         Style="{StaticResource TextBoxStyle}"
-                         MaxLength="150"
-                         TextWrapping="Wrap"
-                         AcceptsReturn="True"
-                         HorizontalScrollBarVisibility="Disabled"
-                         VerticalScrollBarVisibility="Auto"
-                         VerticalContentAlignment="Top"/>
+                         Style="{StaticResource MultilineTextBoxStyle}"
+                         MaxLength="150"/>
                 <ComboBox SelectedItem="{Binding SubjectsCivil, Mode=TwoWay, Converter={StaticResource EnumConverter}, ConverterParameter={x:Type enums:SubjectsCivilLow}}"
                           ItemsSource="{Binding Source={common:EnumToItemsSource {x:Type enums:SubjectsCivilLow}}}"
                           Width="200"

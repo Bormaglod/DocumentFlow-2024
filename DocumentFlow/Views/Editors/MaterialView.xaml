@@ -174,8 +174,7 @@
                                       Width="150" 
                                       ItemsSource="{Binding Vats}"
                                       ItemTemplate="{StaticResource VatDataItem}"
-                                      SelectedItem="{Binding Vat}">
-                            </ComboBox>
+                                      SelectedItem="{Binding Vat}"/>
                             <syncfusion:DoubleTextBox Grid.Row="6" Grid.Column="1"
                                                       Value="{Binding MinOrder, TargetNullValue=0}"
                                                       NumberDecimalDigits="3"

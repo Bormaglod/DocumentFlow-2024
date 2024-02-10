@@ -44,9 +44,6 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
     [ObservableProperty]
     private IEnumerable<Material>? crossMaterials;
 
-    [ObservableProperty]
-    private IEnumerable<Measurement>? measurements;
-
     /// <summary>
     /// Возвращает список совместимых комплектующих.
     /// </summary>
@@ -228,8 +225,9 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
 
     protected override void InitializeEntityCollections(IDbConnection connection, Material? entity = null)
     {
+        base.InitializeEntityCollections(connection, entity);
+
         CrossMaterials = GetForeignDirectory<Material>(connection, callback: q => q.WhereNull("owner_id"));
-        Measurements = GetForeignData<Measurement>(connection);
 
         if (entity != null)
         {

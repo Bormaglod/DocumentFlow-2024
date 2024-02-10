@@ -6,8 +6,14 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
+
+using Syncfusion.Windows.Shared;
+
+using System.Data;
+using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -31,9 +37,40 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
     [ObservableProperty]
     private Calculation? calculation;
 
+    [ObservableProperty]
+    private IEnumerable<Calculation>? calculations;
+
     public GoodsViewModel() { }
 
     public GoodsViewModel(IDatabase database) : base(database) { }
+
+    #region Commands
+
+    #region CreateGroup
+
+    private ICommand? changeGoodsCode;
+
+    public ICommand ChangeGoodsCode
+    {
+        get
+        {
+            changeGoodsCode ??= new DelegateCommand(OnСhangeGoodsCode);
+            return changeGoodsCode;
+        }
+    }
+
+    private void OnСhangeGoodsCode(object parameter)
+    {
+        var dialog = new CodeGeneratorWindow();
+        if (dialog.Get(Code, out var code)) 
+        {
+            Code = code;
+        }
+    }
+
+    #endregion
+
+    #endregion
 
     protected override string GetStandardHeader() => "Изделие";
 
@@ -66,5 +103,20 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
             goods.Calculation = calculation;
             return goods;
         });
+    }
+
+    protected override void InitializeEntityCollections(IDbConnection connection, Goods? entity = null)
+    {
+        base.InitializeEntityCollections(connection, entity);
+
+        if (entity != null) 
+        {
+            Calculations = GetForeignData<Calculation>(
+                connection, 
+                entity.Id, 
+                callback: q => q
+                    .WhereRaw("state = 'approved'::calculation_state")
+                    .When(entity.Calculation != null, w => w.OrWhere("id", entity.Calculation!.Id)));
+        }
     }
 }

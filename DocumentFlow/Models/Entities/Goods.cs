@@ -45,24 +45,4 @@ public partial class Goods : Product
     /// </summary>
     [ObservableProperty]
     private int? height;
-
-    /// <summary>
-    /// Возвращает себестоимость изделия/услуги.
-    /// </summary>
-    public decimal? CostPrice { get; protected set; }
-
-    /// <summary>
-    /// Возвращает рентабельность изготовления изделия (или оказания услуги).
-    /// </summary>
-    public decimal? ProfitPercent { get; protected set; }
-
-    /// <summary>
-    /// Возвращает норму прибыли при изготовлении изделия (или оказания услуги).
-    /// </summary>
-    public decimal? ProfitValue { get; protected set; }
-
-    /// <summary>
-    /// Возвращает дату утверждения калькуляции <see cref="CalculationId"/>.
-    /// </summary>
-    public DateTime? DateApproval { get; protected set; }
 }

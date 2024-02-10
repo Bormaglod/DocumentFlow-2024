@@ -89,13 +89,13 @@
                                                HeaderText="Услуга"
                                                Width="80"
                                                HorizontalAlignment="Center"/>
-                <syncfusion:GridCurrencyColumn MappingName="CostPrice"
+                <syncfusion:GridCurrencyColumn MappingName="Calculation.CostPrice"
                                                HeaderText="Себестоимость"
                                                Width="120"/>
-                <syncfusion:GridPercentColumn MappingName="ProfitPercent"
+                <syncfusion:GridPercentColumn MappingName="Calculation.ProfitPercent"
                                                HeaderText="Прибыль, %"
                                                Width="110"/>
-                <syncfusion:GridCurrencyColumn MappingName="ProfitValue"
+                <syncfusion:GridCurrencyColumn MappingName="Calculation.ProfitValue"
                                                HeaderText="Прибыль"
                                                Width="100"/>
                 <syncfusion:GridNumericColumn MappingName="ProductBalance"
@@ -104,7 +104,7 @@
                                               NumberDecimalDigits="3"
                                               ParsingMode="Decimal"
                                               TextAlignment="Right"/>
-                <syncfusion:GridDateTimeColumn MappingName="DateApproval"
+                <syncfusion:GridDateTimeColumn MappingName="Calculation.DateApproval"
                                                HeaderText="Дата утв."
                                                CustomPattern="dd.MM.yyyy"
                                                Width="100"

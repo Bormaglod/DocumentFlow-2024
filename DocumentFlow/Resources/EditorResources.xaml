@@ -43,6 +43,16 @@
         <Setter Property="IsEnabled" Value="{Binding Path=DataContext.Enabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
     </Style>
 
+    <Style x:Key="MultilineTextBoxStyle"
+           TargetType="{x:Type TextBox}"
+           BasedOn="{StaticResource TextBoxStyle}">
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+    </Style>
+
     <Style x:Key="ComboBoxStyle"
            TargetType="{x:Type ComboBox}"
            BasedOn="{StaticResource WPFComboBoxStyle}">
