@@ -94,6 +94,7 @@
                                               HeaderText="Мин. заказ"
                                               Width="100" 
                                               NumberDecimalDigits="3"
+                                              NumberGroupSizes="3"
                                               ParsingMode="Decimal"
                                               TextAlignment="Right"/>
                 <syncfusion:GridTextColumn MappingName="ExtArticle"
@@ -112,6 +113,7 @@
                                               HeaderText="Тек. остаток"
                                               Width="120" 
                                               NumberDecimalDigits="3"
+                                              NumberGroupSizes="3"
                                               ParsingMode="Decimal"
                                               TextAlignment="Right"/>
                 <syncfusion:GridCheckBoxColumn MappingName="MaterialUsing"

@@ -102,6 +102,7 @@
                                               HeaderText="Тек. остаток"
                                               Width="120" 
                                               NumberDecimalDigits="3"
+                                              NumberGroupSizes="3"
                                               ParsingMode="Decimal"
                                               TextAlignment="Right"/>
                 <syncfusion:GridDateTimeColumn MappingName="Calculation.DateApproval"

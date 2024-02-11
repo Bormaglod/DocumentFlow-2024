@@ -65,21 +65,25 @@
                 <syncfusion:GridCurrencyColumn MappingName="OperationSumma"
                                                HeaderText="Сумма"
                                                Width="100"
-                                               CurrencyDecimalDigits="2"/>
+                                               CurrencyDecimalDigits="2"
+                                               CurrencyGroupSizes="3"/>
                 <syncfusion:GridNumericColumn MappingName="Income"
                                               HeaderText="Приход"
                                               Width="130"
                                               NumberDecimalDigits="3"
+                                              NumberGroupSizes="3"
                                               TextAlignment="Right"/>
                 <syncfusion:GridNumericColumn MappingName="Expense"
                                               HeaderText="Расход"
                                               Width="130"
                                               NumberDecimalDigits="3"
+                                              NumberGroupSizes="3"
                                               TextAlignment="Right"/>
                 <syncfusion:GridNumericColumn MappingName="Remainder"
                                               HeaderText="Остаток (кол-во)"
                                               Width="130"
                                               NumberDecimalDigits="3"
+                                              NumberGroupSizes="3"
                                               TextAlignment="Right"
                                               CellStyle="{StaticResource rowRemainderStyle}"
                                               HeaderStyle="{StaticResource headerRemainderStyle}"/>
@@ -87,6 +91,7 @@
                                                HeaderText="Остаток (сумма)"
                                                Width="100"
                                                CurrencyDecimalDigits="2"
+                                               CurrencyGroupSizes="3"
                                                CellStyle="{StaticResource rowMonetaryStyle}"
                                                HeaderStyle="{StaticResource headerMonetaryStyle}"/>
             </syncfusion:SfDataGrid.Columns>
