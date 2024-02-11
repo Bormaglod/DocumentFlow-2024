@@ -162,6 +162,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
         if (options is DocumentEditorMessageOptions documentOptions)
         {
             Owner = documentOptions.Owner;
+            Enabled = documentOptions.CanEdit;
         }
     }
 
@@ -194,7 +195,6 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
     {
         InitializeEntityCollections(connection, entity);
         RaiseAfterLoadDocument(entity);
-        Enabled = !entity.Deleted;
     }
 
     protected virtual void Load()

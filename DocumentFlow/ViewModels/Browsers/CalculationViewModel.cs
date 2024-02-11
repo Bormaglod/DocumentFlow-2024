@@ -16,4 +16,9 @@ public class CalculationViewModel : DirectoryViewModel<Calculation>, ISelfTransi
     public CalculationViewModel(IDatabase database) : base(database) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.CalculationView);
+
+    protected override bool CanEditSelected(Calculation selectedItem)
+    {
+        return base.CanEditSelected(selectedItem) && selectedItem.CalculationState != Common.Enums.CalculationState.Expired;
+    }
 }

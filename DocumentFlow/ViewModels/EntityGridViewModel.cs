@@ -467,7 +467,22 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     public virtual Type? GetEditorViewType() => null;
 
-    protected virtual MessageOptions GetEditorOptions() => new DocumentEditorMessageOptions(Owner);
+    protected virtual MessageOptions GetEditorOptions() => new DocumentEditorMessageOptions(Owner) { CanEdit = CanEditSelected() };
+
+    protected bool CanEditSelected()
+    {
+        if (SelectedItem is T item)
+        {
+            return CanEditSelected(item);
+        }
+
+        return false;
+    }
+
+    protected virtual bool CanEditSelected(T selectedItem)
+    {
+        return !selectedItem.Deleted;
+    }
 
     /// <summary>
     /// Возвращает список записей с учётом фильтров установленных в функции <see cref="DefaultQuery(IDbConnection)"/>.

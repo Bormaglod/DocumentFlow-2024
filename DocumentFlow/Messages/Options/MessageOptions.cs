@@ -8,5 +8,5 @@ namespace DocumentFlow.Messages.Options;
 
 public class MessageOptions
 {
-
+    public bool CanEdit { get; init; } = true;
 }
