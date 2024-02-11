@@ -144,7 +144,7 @@
                                          NoneDateText="Введите дату"
                                          ShowMaskOnNullValue="False"/>
                 <syncfusion:IntegerTextBox Value="{Binding PaymentPeriod}"
-                                           Width="160" Height="30"
+                                           Width="160" Height="25"
                                            Grid.Row="10" Grid.Column="1"
                                            Style="{StaticResource NullableIntegerTextBoxStyle}"/>
                 <CheckBox IsChecked="{Binding IsDefault, Mode=TwoWay}"
