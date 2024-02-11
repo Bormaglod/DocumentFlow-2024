@@ -13,6 +13,7 @@
         <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/IntegerTextBox/IntegerTextBox.xaml" />
         <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/DoubleTextBox/DoubleTextBox.xaml" />
         <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/CurrencyTextBox/CurrencyTextBox.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/PercentTextBox/PercentTextBox.xaml" />
         <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/SfMaskedEdit/SfMaskedEdit.xaml" />
     </ResourceDictionary.MergedDictionaries>
     
@@ -95,6 +96,14 @@
     <Style x:Key="DoubleTextBoxStyle" 
            TargetType="{x:Type syncfusion:DoubleTextBox}"
            BasedOn="{StaticResource SyncfusionDoubleTextBoxStyle}">
+        <Setter Property="Margin" Value="0,0,0,5"/>
+        <Setter Property="IsEnabled" Value="{Binding Path=DataContext.Enabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style x:Key="PercentTextBoxStyle" 
+       TargetType="{x:Type syncfusion:PercentTextBox}"
+       BasedOn="{StaticResource SyncfusionPercentTextBoxStyle}">
         <Setter Property="Margin" Value="0,0,0,5"/>
         <Setter Property="IsEnabled" Value="{Binding Path=DataContext.Enabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>

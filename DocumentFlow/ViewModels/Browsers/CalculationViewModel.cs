@@ -14,4 +14,6 @@ public class CalculationViewModel : DirectoryViewModel<Calculation>, ISelfTransi
     public CalculationViewModel() { }
 
     public CalculationViewModel(IDatabase database) : base(database) { }
+
+    public override Type? GetEditorViewType() => typeof(Views.Editors.CalculationView);
 }
