@@ -44,7 +44,8 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
                 AddItem<WireView>("Типы проводов"),
                 AddItem<MaterialView>("Материалы"),
                 AddItem<GoodsView>("Продукция")),
-            AddFolder("Производственные операции")));
+            AddFolder("Производственные операции"),
+            AddItem<EquipmentView>("Оборудование")));
 
         NavigatorModel reports = new() { Header = "Отчёты", ImageName = "icons8-folder-16" };
         NavigatorModel system = new() { Header = "Система", ImageName = "icons8-settings-3-16" };
