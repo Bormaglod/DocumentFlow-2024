@@ -133,14 +133,8 @@ public partial class SelectBox : UserControl
     {
         if (d is SelectBox selectBox)
         {
-            if (selectBox.SelectedItem != null)
-            {
-                selectBox.SelectedText = selectBox.SelectedItem.ToString() ?? string.Empty;
-            }
-            else
-            {
-                selectBox.SelectedText = string.Empty;
-            }
+            var id = selectBox.SelectedItem != null ? selectBox.SelectedItem.Id : selectBox.SelectedValue;
+            selectBox.SelectedItem = id == null ? null! : selectBox.ItemsSource.FirstOrDefault(x => x.Id == id)!;
         }
     }
 
