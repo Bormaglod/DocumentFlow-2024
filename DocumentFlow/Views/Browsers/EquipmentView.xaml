@@ -18,6 +18,11 @@
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridResources.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <DataTemplate x:Key="headerTemplate">
+                <TextBlock Height="32"
+                           Text="{Binding}"
+                           TextWrapping="Wrap" />
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -56,7 +61,8 @@
                                HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
                                RecordContextMenu="{StaticResource GridRecordContextMenu}"
                                GroupDropAreaContextMenu="{StaticResource GroupDropAreaContextMenu}"
-                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}">
+                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}"
+                               QueryRowHeight="GridContent_QueryRowHeight">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
@@ -69,7 +75,8 @@
                                            ColumnSizer="AutoLastColumnFill"/>
                 <syncfusion:GridTextColumn MappingName="SerialNumber"
                                            HeaderText="Серийный номер"
-                                           Width="130"/>
+                                           Width="100"
+                                           HeaderTemplate="{StaticResource headerTemplate}"/>
                 <syncfusion:GridCheckBoxColumn MappingName="IsTools"
                                                HeaderText="Инструмент"
                                                Width="100"/>
@@ -82,7 +89,9 @@
                 <syncfusion:GridNumericColumn MappingName="StartingHits"
                                               HeaderText="Кол-во опрессовок"
                                               Width="100"
-                                              IsHidden="True"/>
+                                              IsHidden="True"
+                                              NumberDecimalDigits="0"
+                                              HeaderTemplate="{StaticResource headerTemplate}"/>
             </syncfusion:SfDataGrid.Columns>
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Code" 
