@@ -18,11 +18,6 @@
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridResources.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <DataTemplate x:Key="headerTemplate">
-                <TextBlock Height="32"
-                           Text="{Binding}"
-                           TextWrapping="Wrap" />
-            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -76,7 +71,7 @@
                 <syncfusion:GridTextColumn MappingName="SerialNumber"
                                            HeaderText="Серийный номер"
                                            Width="100"
-                                           HeaderTemplate="{StaticResource headerTemplate}"/>
+                                           HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
                 <syncfusion:GridCheckBoxColumn MappingName="IsTools"
                                                HeaderText="Инструмент"
                                                Width="100"/>
@@ -91,7 +86,7 @@
                                               Width="100"
                                               IsHidden="True"
                                               NumberDecimalDigits="0"
-                                              HeaderTemplate="{StaticResource headerTemplate}"/>
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
             </syncfusion:SfDataGrid.Columns>
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Code" 

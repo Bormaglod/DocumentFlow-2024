@@ -419,4 +419,9 @@
            BasedOn="{StaticResource SyncfusionGridCellStyle}">
         <Setter Property="Background" Value="#FFC873"/>
     </Style>
+    <DataTemplate x:Key="headerWrappingTemplate">
+        <TextBlock Height="32"
+                   Text="{Binding}"
+                   TextWrapping="Wrap" />
+    </DataTemplate>
 </ResourceDictionary>

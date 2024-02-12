@@ -24,11 +24,6 @@
             </ResourceDictionary.MergedDictionaries>
             <converters:EnumConverter x:Key="enumConverter"/>
             <selectors:CalculationStateItemsSelector x:Key="stateSelector"/>
-            <DataTemplate x:Key="headerTemplate">
-                <TextBlock Height="30"
-                           Text="{Binding}"
-                           TextWrapping="Wrap" />
-            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -114,18 +109,18 @@
                 <syncfusion:GridNumericColumn MappingName="ProducedTime"
                                               HeaderText="Время изг., с"
                                               Width="80"
-                                              HeaderTemplate="{StaticResource headerTemplate}"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"
                                               NumberDecimalDigits="1"/>
                 <syncfusion:GridTextColumn MappingName="StimulatingValue"
                                            HeaderText="Способ начисления"
                                            Width="100"
                                            UseBindingValue="True"
-                                           HeaderTemplate="{StaticResource headerTemplate}"
+                                           HeaderTemplate="{StaticResource headerWrappingTemplate}"
                                            DisplayBinding="{Binding StimulatingValue, Converter={StaticResource enumConverter}, ConverterParameter={x:Type enums:StimulatingValue}}"/>
                 <syncfusion:GridNumericColumn MappingName="StimulPayment"
                                               HeaderText="Стимул. выпл."
                                               Width="80"
-                                              HeaderTemplate="{StaticResource headerTemplate}"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"
                                               NumberDecimalDigits="2"/>
                 <syncfusion:GridCurrencyColumn MappingName="CostPrice"
                                                HeaderText="Себестоимость"
