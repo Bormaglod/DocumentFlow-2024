@@ -58,14 +58,6 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
     [ObservableProperty]
     private IEnumerable<Person>? persons;
 
-#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
-    public ContractorViewModel() { }
-#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
-
-    public ContractorViewModel(IDatabase database) : base(database) 
-    {
-    }
-
     protected override string GetStandardHeader() => "Контрагент";
 
     protected override void Load()
@@ -81,6 +73,7 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
 
     protected override void InitializeEntityCollections(IDbConnection connection, Contractor? contractor)
     {
+        base.InitializeEntityCollections(connection, contractor);
         Okopfs = GetForeignData<Okopf>(connection);
         Accounts = GetForeignData<Account>(connection, Id);        
         Persons = GetForeignDirectory<Person>(connection);

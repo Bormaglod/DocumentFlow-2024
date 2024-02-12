@@ -27,10 +27,6 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
     [ObservableProperty]
     private IEnumerable<Bank>? banks;
 
-    public AccountViewModel() { }
-
-    public AccountViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "Расч. счёт";
 
     protected override void RaiseAfterLoadDocument(Account entity)
@@ -51,6 +47,7 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
 
     protected override void InitializeEntityCollections(IDbConnection connection, Account? account)
     {
+        base.InitializeEntityCollections(connection, account);
         Banks = GetForeignDirectory<Bank>(connection);
     }
 

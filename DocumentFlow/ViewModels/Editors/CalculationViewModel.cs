@@ -44,10 +44,6 @@ public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation
     [ObservableProperty]
     private CalculationState calculationState;
 
-    public CalculationViewModel() { }
-
-    public CalculationViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "Калькуляция";
 
     protected override void RaiseAfterLoadDocument(Calculation entity)

@@ -53,10 +53,6 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
     [ObservableProperty]
     private CompatiblePart? compatibleSelected;
 
-    public MaterialViewModel() { }
-
-    public MaterialViewModel(IDatabase database) : base(database) { }
-
     #region Commands
 
     #region AddCompatiblePart

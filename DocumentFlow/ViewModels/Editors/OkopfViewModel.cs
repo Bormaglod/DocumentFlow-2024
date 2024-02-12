@@ -19,10 +19,6 @@ public partial class OkopfViewModel : DirectoryEditorViewModel<Okopf>, ISelfTran
     [ObservableProperty]
     private string? itemName;
 
-    public OkopfViewModel() { }
-
-    public OkopfViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "ОКОПФ";
 
     protected override void RaiseAfterLoadDocument(Okopf entity)

@@ -31,10 +31,6 @@ public partial class PersonViewModel : DirectoryEditorViewModel<Person>, ISelfTr
     [ObservableProperty]
     private string? email;
 
-    public PersonViewModel() { }
-
-    public PersonViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "Физ. лица";
 
     protected override void RaiseAfterLoadDocument(Person entity)

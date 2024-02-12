@@ -21,11 +21,7 @@ public partial class OkpdtrViewModel : DirectoryEditorViewModel<Okpdtr>, ISelfTr
 
     [ObservableProperty]
     private string? signatoryName;
-
-    public OkpdtrViewModel() { }
-
-    public OkpdtrViewModel(IDatabase database) : base(database) { }
-
+    
     protected override string GetStandardHeader() => "ОКПДТР";
 
     protected override void RaiseAfterLoadDocument(Okpdtr entity)

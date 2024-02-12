@@ -22,10 +22,6 @@ public partial class WireViewModel : DirectoryEditorViewModel<Wire>, ISelfTransi
     [ObservableProperty]
     private decimal wsize;
 
-    public WireViewModel() { }
-
-    public WireViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "Тип провода";
 
     protected override void RaiseAfterLoadDocument(Wire entity)

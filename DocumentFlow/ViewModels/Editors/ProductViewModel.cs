@@ -6,7 +6,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using System.Data;
@@ -43,10 +42,6 @@ public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
     [ObservableProperty]
     private IEnumerable<Measurement>? measurements;
 
-    public ProductViewModel() { }
-
-    public ProductViewModel(IDatabase database) : base(database) { }
-
     protected override void RaiseAfterLoadDocument(T entity)
     {
         Code = entity.Code;
@@ -74,7 +69,6 @@ public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
     protected override void InitializeEntityCollections(IDbConnection connection, T? entity = null)
     {
         base.InitializeEntityCollections(connection, entity);
-        
         Measurements = GetForeignData<Measurement>(connection);
     }
 

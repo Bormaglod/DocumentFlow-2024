@@ -19,6 +19,7 @@ using System.Windows.Input;
 using System.Windows;
 using Syncfusion.Windows.Shared;
 using DocumentFlow.Common;
+using System.Security.Principal;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -47,10 +48,6 @@ public partial class ContractApplicationViewModel : DirectoryEditorViewModel<Con
 
     [ObservableProperty]
     private PriceApproval? productSelected;
-
-    public ContractApplicationViewModel() { }
-
-    public ContractApplicationViewModel(IDatabase database) : base(database) { }
 
     #region Commands
 
@@ -199,6 +196,7 @@ public partial class ContractApplicationViewModel : DirectoryEditorViewModel<Con
 
     protected override void InitializeEntityCollections(IDbConnection connection, ContractApplication? entity = null)
     {
+        base.InitializeEntityCollections(connection, entity);
         if (entity != null)
         {
             var prices = new List<PriceApproval>();

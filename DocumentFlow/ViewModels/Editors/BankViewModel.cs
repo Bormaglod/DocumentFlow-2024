@@ -25,10 +25,6 @@ public partial class BankViewModel : DirectoryEditorViewModel<Bank>, ISelfTransi
     [ObservableProperty]
     private string? town;
 
-    public BankViewModel() { }
-
-    public BankViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "Банк";
 
     protected override void RaiseAfterLoadDocument(Bank entity)

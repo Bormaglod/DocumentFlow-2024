@@ -31,10 +31,6 @@ public partial class EquipmentViewModel : DirectoryEditorViewModel<Equipment>, I
     [ObservableProperty]
     private bool isTools;
 
-    public EquipmentViewModel() { }
-
-    public EquipmentViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "Оборудование";
 
     protected override void RaiseAfterLoadDocument(Equipment entity)

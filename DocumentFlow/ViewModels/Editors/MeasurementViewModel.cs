@@ -22,10 +22,6 @@ public partial class MeasurementViewModel : DirectoryEditorViewModel<Measurement
     [ObservableProperty]
     private string? abbreviation;
 
-    public MeasurementViewModel() { }
-
-    public MeasurementViewModel(IDatabase database) : base(database) { }
-
     protected override string GetStandardHeader() => "Ед. изм.";
 
     protected override void RaiseAfterLoadDocument(Measurement entity)

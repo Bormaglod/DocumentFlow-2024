@@ -62,14 +62,6 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
     [ObservableProperty]
     private IEnumerable<Account>? accounts;
 
-#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
-    public OrganizationViewModel() { }
-#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
-
-    public OrganizationViewModel(IDatabase database) : base(database) 
-    {
-    }
-
     protected override string GetStandardHeader() => "Организация";
 
     protected override void Load()
@@ -82,8 +74,9 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
         });
     }
 
-    protected override void InitializeEntityCollections(IDbConnection connection, Organization? contractor)
+    protected override void InitializeEntityCollections(IDbConnection connection, Organization? org)
     {
+        base.InitializeEntityCollections(connection, org);
         Okopfs = GetForeignData<Okopf>(connection);
         Accounts = GetForeignData<Account>(connection, Id);
     }

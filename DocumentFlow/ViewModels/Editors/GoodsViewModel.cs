@@ -40,10 +40,6 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
     [ObservableProperty]
     private IEnumerable<Calculation>? calculations;
 
-    public GoodsViewModel() { }
-
-    public GoodsViewModel(IDatabase database) : base(database) { }
-
     #region Commands
 
     #region CreateGroup

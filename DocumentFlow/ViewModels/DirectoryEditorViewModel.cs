@@ -14,6 +14,8 @@ using DocumentFlow.Models.Entities;
 
 using Humanizer;
 
+using iText.Layout.Properties;
+
 using SqlKata;
 using SqlKata.Execution;
 
@@ -41,10 +43,11 @@ public abstract partial class DirectoryEditorViewModel<T> : EntityEditorViewMode
         folders = Array.Empty<T>();
     }
 
-    public DirectoryEditorViewModel(IDatabase database) : this()
+    protected override void InitializeEntityCollections(IDbConnection connection, T? entity = null)
     {
-        using var conn = database.OpenConnection();
-        folders = conn.Query<T>($"select * from {typeof(T).Name.Underscore()} where is_folder");
+        base.InitializeEntityCollections(connection, entity);
+
+        Folders = connection.Query<T>($"select * from {typeof(T).Name.Underscore()} where is_folder");
     }
 
     protected override void SetOptions(MessageOptions options)
