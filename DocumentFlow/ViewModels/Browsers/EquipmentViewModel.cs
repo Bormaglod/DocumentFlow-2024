@@ -15,7 +15,7 @@ public class EquipmentViewModel : DirectoryViewModel<Equipment>, ISelfTransientL
 
     public EquipmentViewModel(IDatabase database) : base(database) { }
 
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.MeasurementView);
+    public override Type? GetEditorViewType() => typeof(Views.Editors.EquipmentView);
 
     protected override void ConfigureColumn(IColumnInfo columnInfo)
     {
