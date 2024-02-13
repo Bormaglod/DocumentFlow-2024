@@ -48,8 +48,6 @@ public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation
 
     protected override void RaiseAfterLoadDocument(Calculation entity)
     {
-        base.RaiseAfterLoadDocument(entity);
-
         Code = entity.Code;
         CostPrice = entity.CostPrice;
         ProfitPercent = entity.ProfitPercent;

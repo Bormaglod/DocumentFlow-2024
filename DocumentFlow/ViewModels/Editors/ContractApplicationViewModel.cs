@@ -175,7 +175,6 @@ public partial class ContractApplicationViewModel : DirectoryEditorViewModel<Con
 
     protected override void RaiseAfterLoadDocument(ContractApplication entity)
     {
-        base.RaiseAfterLoadDocument(entity);
         Code = entity.Code;
         ItemName = entity.ItemName;
         DocumentDate = entity.DocumentDate;

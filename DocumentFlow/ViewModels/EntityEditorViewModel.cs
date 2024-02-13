@@ -285,7 +285,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     protected abstract string GetStandardHeader();
 
-    protected virtual void RaiseAfterLoadDocument(T entity) { }
+    protected abstract void RaiseAfterLoadDocument(T entity);
 
     protected abstract void UpdateEntity(T entity);
 

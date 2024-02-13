@@ -35,8 +35,6 @@ public partial class EquipmentViewModel : DirectoryEditorViewModel<Equipment>, I
 
     protected override void RaiseAfterLoadDocument(Equipment entity)
     {
-        base.RaiseAfterLoadDocument(entity);
-
         ParentId = entity.ParentId;
         Code = entity.Code;
         ItemName = entity.ItemName;
