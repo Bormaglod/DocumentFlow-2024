@@ -44,6 +44,7 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
                 AddItem<WireView>("Типы проводов"),
                 AddItem<MaterialView>("Материалы"),
                 AddItem<GoodsView>("Продукция")),
+            AddItem<OperationTypeView>("Виды производственных операций"),
             AddFolder("Производственные операции"),
             AddItem<EquipmentView>("Оборудование")));
 
