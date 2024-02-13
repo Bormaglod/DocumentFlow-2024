@@ -420,8 +420,19 @@
         <Setter Property="Background" Value="#FFC873"/>
     </Style>
     <DataTemplate x:Key="headerWrappingTemplate">
-        <TextBlock Height="32"
-                   Text="{Binding}"
-                   TextWrapping="Wrap" />
+        <Border BorderBrush="{x:Null}" 
+                Height="32">
+            <TextBlock TextWrapping="Wrap" 
+                       Text="{Binding}" 
+                       VerticalAlignment="Center"/>
+        </Border>
+    </DataTemplate>
+    <DataTemplate x:Key="headerWrappingTemplateHigh">
+        <Border BorderBrush="{x:Null}" 
+                Height="64">
+            <TextBlock TextWrapping="Wrap" 
+                       Text="{Binding}" 
+                       VerticalAlignment="Center"/>
+        </Border>
     </DataTemplate>
 </ResourceDictionary>
