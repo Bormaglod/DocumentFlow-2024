@@ -36,6 +36,7 @@ using System.Windows;
 using System.Windows.Input;
 using Syncfusion.Windows.Tools.Controls;
 using DocumentFlow.Messages.Options;
+using DocumentFlow.Common.Data;
 
 namespace DocumentFlow.ViewModels;
 
@@ -500,7 +501,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual IReadOnlyList<T> GetData(IDbConnection connection, Guid? id = null)
     {
-        var list = DefaultQuery(connection)
+        var list = DefaultQuery(connection, QueryParemeters.Default)
             .When(id != null, q => q.Where("t0.id", id))
             .Get<T>()
             .ToList();
@@ -520,37 +521,17 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     /// <param name="map"></param>
     /// <param name="referenceMap"></param>
     /// <returns></returns>
-    protected IReadOnlyList<T> GetData<P>(IDbConnection connection, Func<T, P, T> map, Func<string, string>? referenceMap = null, Guid? id = null)
+    protected IReadOnlyList<T> GetData<P>(IDbConnection connection, Func<T, P, T> map, Func<string, string>? referenceMap = null, Guid? id = null, QueryParemeters? parameters = null)
     {
-        var query = MappingQuery<P>(DefaultQuery(connection), referenceMap)
+        var query = MappingQuery<P>(DefaultQuery(connection, parameters ?? QueryParemeters.Default), referenceMap)
             .When(id != null, q => q.Where("t0.id", id));
 
         var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        var parameters = new DynamicParameters(compiled.NamedBindings);
-        var list = connection.Query(
-            compiled.Sql,
-            map, 
-            parameters).ToList();
-
-        if (id != null && list.Count == 0)
-        {
-            throw new RecordNotFoundException(id);
-        }
-
-        return list;
-    }
-
-    protected IReadOnlyList<T> GetData<P1, P2>(IDbConnection connection, Func<T, P1, P2, T> map, Func<string, string>? referenceMap = null, Guid? id = null)
-    {
-        var query = MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(connection), referenceMap), referenceMap)
-            .When(id != null, q => q.Where("t0.id", id));
-
-        var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        var parameters = new DynamicParameters(compiled.NamedBindings);
+        var sqlParams = new DynamicParameters(compiled.NamedBindings);
         var list = connection.Query(
             compiled.Sql,
             map,
-            parameters).ToList();
+            sqlParams).ToList();
 
         if (id != null && list.Count == 0)
         {
@@ -560,17 +541,17 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         return list;
     }
 
-    protected IReadOnlyList<T> GetData<P1, P2, P3>(IDbConnection connection, Func<T, P1, P2, P3, T> map, Func<string, string>? referenceMap = null, Guid? id = null)
+    protected IReadOnlyList<T> GetData<P1, P2>(IDbConnection connection, Func<T, P1, P2, T> map, Func<string, string>? referenceMap = null, Guid? id = null, QueryParemeters? parameters = null)
     {
-        var query = MappingQuery<P3>(MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(connection), referenceMap), referenceMap), referenceMap)
+        var query = MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(connection, parameters ?? QueryParemeters.Default), referenceMap), referenceMap)
             .When(id != null, q => q.Where("t0.id", id));
 
         var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        var parameters = new DynamicParameters(compiled.NamedBindings);
+        var sqlParams = new DynamicParameters(compiled.NamedBindings);
         var list = connection.Query(
             compiled.Sql,
             map,
-            parameters).ToList();
+            sqlParams).ToList();
 
         if (id != null && list.Count == 0)
         {
@@ -580,21 +561,50 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         return list;
     }
 
-    protected Query DefaultQuery(IDbConnection conn) => SelectQuery(RequiredQuery(conn));
+    protected IReadOnlyList<T> GetData<P1, P2, P3>(IDbConnection connection, Func<T, P1, P2, P3, T> map, Func<string, string>? referenceMap = null, Guid? id = null, QueryParemeters? parameters = null)
+    {
+        var query = MappingQuery<P3>(MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(connection, parameters ?? QueryParemeters.Default), referenceMap), referenceMap), referenceMap)
+            .When(id != null, q => q.Where("t0.id", id));
+
+        var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
+        var sqlParams = new DynamicParameters(compiled.NamedBindings);
+        var list = connection.Query(
+            compiled.Sql,
+            map,
+            sqlParams).ToList();
+
+        if (id != null && list.Count == 0)
+        {
+            throw new RecordNotFoundException(id);
+        }
+
+        return list;
+    }
+
+    protected Query DefaultQuery(IDbConnection conn, QueryParemeters parameters) => SelectQuery(RequiredQuery(conn, parameters));
 
     protected virtual Query SelectQuery(Query query) => query;
 
     protected virtual Query WipeQuery(Query query) => query;
 
-    protected Query GetQuery(IDbConnection conn)
+    protected Query GetQuery(IDbConnection conn) => GetQuery(conn, QueryParemeters.Default);
+
+    protected Query GetQuery(IDbConnection conn, QueryParemeters parameters)
     {
         var factory = new QueryFactory(conn, new PostgresCompiler());
-        return factory.Query($"{typeof(T).Name.Underscore()} as t0");
+        if (parameters.FromOnly)
+        {
+            return factory.Query().FromRaw($"only {typeof(T).Name.Underscore()} as t0");
+        }
+        else
+        {
+            return factory.Query($"{typeof(T).Name.Underscore()} as t0");
+        }
     }
 
-    protected Query RequiredQuery(IDbConnection connection, bool includeDocumentsInfo = true)
+    protected Query RequiredQuery(IDbConnection connection, QueryParemeters parameters)
     {
-        var query = GetQuery(connection);
+        var query = GetQuery(connection, parameters);
 
         if (query.Clauses.FirstOrDefault(c => c.Component == "select") == null)
         {
@@ -605,7 +615,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             Owner != null,
             q => q.Where($"t0.owner_id", Owner!.Id));
 
-        if (includeDocumentsInfo && database.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
+        if (parameters.IncludeDocumentsInfo && database.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
         {
             query = query
                 .SelectRaw("exists(select 1 from document_refs dr where dr.owner_id = t0.id) as has_documents")
@@ -680,6 +690,22 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         var table = typeof(P).Name.Underscore();
 
+        var aliases = new List<string>();
+        var joins = query.Clauses.OfType<BaseJoin>();
+        foreach (var join in joins)
+        {
+            var from = join.Join.Clauses.OfType<FromClause>().FirstOrDefault();
+            if (from != null)
+            {
+                aliases.Add(from.Alias);
+            }
+        }
+
+        string alias;
+        int n = 1;
+
+        while (aliases.Contains(alias = $"t{n++}")) ;
+
         string refName;
         if (referenceMap != null)
         {
@@ -691,8 +717,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
 
         return query
-            .Select($"{table}.*")
-            .LeftJoin(table, $"{table}.id", $"t0.{refName}");
+            .Select($"{alias}.*")
+            .LeftJoin($"{table} as {alias}", $"{alias}.id", $"t0.{refName}");
     }
 
     private T? AddRow(Guid id)
@@ -853,7 +879,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
             try
             {
-                var query = DefaultQuery(conn).WhereTrue("deleted");
+                var query = DefaultQuery(conn, QueryParemeters.Default).WhereTrue("deleted");
 
                 WipeQuery(query).Delete(transaction);
 
