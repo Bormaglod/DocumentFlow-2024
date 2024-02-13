@@ -34,4 +34,9 @@ public partial class OperationTypeViewModel : DirectoryEditorViewModel<Operation
         entity.ItemName = ItemName;
         entity.Salary = Salary;
     }
+
+    partial void OnItemNameChanged(string? value)
+    {
+        UpdateHeader(value ?? "?");
+    }
 }
