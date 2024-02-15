@@ -13,8 +13,6 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using System.Data;
-using System.Security.Principal;
-using System.Windows.Documents;
 
 namespace DocumentFlow.ViewModels.Editors;
 

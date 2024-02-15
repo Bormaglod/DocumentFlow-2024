@@ -11,7 +11,7 @@ namespace DocumentFlow.Models.Entities;
 public partial class Operation : Directory
 {
     /// <summary>
-    /// Возвращает или устанавливает выработка за указанное время <see cref="ProdTime"/>.
+    /// Возвращает или устанавливает выработку за указанное время <see cref="ProdTime"/>.
     /// </summary>
     [ObservableProperty]
     private int produced;

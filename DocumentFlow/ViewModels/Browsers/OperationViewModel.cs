@@ -20,7 +20,7 @@ public class OperationViewModel : DirectoryViewModel<Operation>, ISelfTransientL
 
     public OperationViewModel(IDatabase database) : base(database) { }
 
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.MeasurementView);
+    public override Type? GetEditorViewType() => typeof(Views.Editors.OperationView);
 
     protected override void ConfigureColumn(IColumnInfo columnInfo)
     {
