@@ -39,6 +39,7 @@ public partial class Material : Product
     /// </summary>
     [ObservableProperty]
     [property: DenyWriting]
+    [property: ForeignKey(FieldKey = "owner_id")]
     private Material? cross;
 
     /// <summary>

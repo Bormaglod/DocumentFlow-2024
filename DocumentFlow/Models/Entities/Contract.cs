@@ -31,9 +31,11 @@ public partial class Contract : Directory
     private DateTime? dateEnd;
 
     [ObservableProperty]
+    [property: ForeignKey(FieldKey = "signatory_id")]
     private Employee? signatory;
 
     [ObservableProperty]
+    [property: ForeignKey(FieldKey = "org_signatory_id")]
     private OurEmployee? orgSignatory;
 
     [ObservableProperty]

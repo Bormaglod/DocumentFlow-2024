@@ -11,9 +11,11 @@ namespace DocumentFlow.Models.Entities;
 public partial class MaterialUsage : DocumentInfo
 {
     [DenyWriting]
+    [property: ForeignKey(FieldKey = "owner_id")]
     public Calculation? Calculation { get; set; }
 
     [DenyWriting]
+    [property: ForeignKey(FieldKey = "owner_id", Table = "calculation")]
     public Goods? Goods { get; set; }
 
     [DenyWriting]

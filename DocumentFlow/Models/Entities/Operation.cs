@@ -6,6 +6,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Common.Data;
+
 namespace DocumentFlow.Models.Entities;
 
 public partial class Operation : Directory
@@ -46,6 +48,7 @@ public partial class Operation : Directory
     /// Возвращает или устанавливает тип операции <seealso cref="OperationTypes.OperationType"/>.
     /// </summary>
     [ObservableProperty]
+    [property: ForeignKey(FieldKey = "type_id")]
     private OperationType? operationType;
 
     public bool OperationUsing { get; protected set; }

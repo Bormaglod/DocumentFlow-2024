@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
@@ -22,7 +23,7 @@ public abstract class BalanceProductViewModel<T> : BalanceViewModel<T>
 
     protected override IReadOnlyList<T> GetData(IDbConnection connection, Guid? id = null)
     {
-        return GetQuery(connection)
+        return connection.GetQuery<T>()
             .Select("t0.*")
             .SelectRaw("case when amount > 0 then amount else null end as income")
             .SelectRaw("case when amount < 0 then @amount else null end as expense")

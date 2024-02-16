@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
@@ -29,6 +30,14 @@ public class ContractorViewModel : DirectoryViewModel<Contractor>, ISelfTransien
 
     protected override IReadOnlyList<Contractor> GetData(IDbConnection connection, Guid? id)
     {
-        return GetData<Okopf>(connection, (contractor, okopf) => { contractor.Okopf = okopf; return contractor; }, id: id);
+        return DefaultQuery(connection, id)
+            .MappingQuery<Contractor>(x => x.Okopf)
+            .Get<Contractor, Okopf>(
+                map: (contractor, okopf) => 
+                { 
+                    contractor.Okopf = okopf; 
+                    return contractor; 
+                })
+            .ToList();
     }
 }

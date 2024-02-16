@@ -6,9 +6,12 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
+
+using SqlKata;
 
 using Syncfusion.Windows.Shared;
 
@@ -89,6 +92,14 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
         entity.Width = Width;
         entity.Height = Height;
         entity.Calculation = Calculation;
+    }
+
+    protected override Query SelectQuery(Query query)
+    {
+        return base
+            .SelectQuery(query)
+            .MappingQuery<Goods>(x => x.Measurement)
+            .MappingQuery<Goods>(x => x.Calculation);
     }
 
     protected override void Load()

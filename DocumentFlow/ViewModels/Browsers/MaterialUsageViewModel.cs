@@ -4,10 +4,14 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
+using DocumentFlow.Views.Editors;
 
 using Syncfusion.Windows.Shared;
 
@@ -45,9 +49,9 @@ public class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfT
 
     private void OnOpenGoods(object parameter)
     {
-        if (SelectedItem is MaterialUsage item) 
+        if (SelectedItem is MaterialUsage item && item.Goods != null) 
         {
-            //WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(GoodsView), item.Goods));
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(GoodsView), item.Goods));
         }
     }
 
@@ -68,9 +72,9 @@ public class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfT
 
     private void OnOpenCalculation(object parameter)
     {
-        if (SelectedItem is MaterialUsage item)
+        if (SelectedItem is MaterialUsage item && item.Calculation != null)
         {
-            //WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(GoodsView), item.Calculation));
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(CalculationView), item.Calculation));
         }
     }
 
@@ -80,17 +84,20 @@ public class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfT
 
     protected override IReadOnlyList<MaterialUsage> GetData(IDbConnection connection, Guid? id = null)
     {
-        return GetQuery(connection)
-            .From("calculation_material as cm")
-            .Select("cm.{id, amount}")
-            .Select("cm.item_id as owner_id")
-            .Select("c.{id, code, item_name}")
-            .Select("g.{id, code, item_name}")
-            .Join("calculation as c", "c.id", "cm.owner_id")
-            .Join("goods as g", "g.id", "c.owner_id")
-            .WhereRaw("c.state = 'approved'::calculation_state")
-            .Where("cm.item_id", Owner?.Id)
-            .Get<MaterialUsage, Calculation, Goods>()
+        return connection.GetQuery<CalculationMaterial>()
+            .Select("t0.{id, amount}")
+            .Select("t0.item_id as owner_id")
+            .MappingQuery<MaterialUsage>(x => x.Calculation)
+            .MappingQuery<MaterialUsage>(x => x.Goods)
+            .WhereRaw("t1.state = 'approved'::calculation_state")
+            .Where("t0.item_id", Owner?.Id)
+            .Get<MaterialUsage, Calculation, Goods>(
+                map: (usage, calculation, goods) =>
+                {
+                    usage.Calculation = calculation;
+                    usage.Goods = goods;
+                    return usage;
+                })
             .ToList();
     }
 

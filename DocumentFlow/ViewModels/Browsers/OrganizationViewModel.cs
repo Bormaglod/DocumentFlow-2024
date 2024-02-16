@@ -4,8 +4,11 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
+
+using SqlKata;
 
 using System.Data;
 
@@ -27,8 +30,22 @@ public class OrganizationViewModel : DirectoryViewModel<Organization>, ISelfTran
         }
     }
 
+    protected override Query SelectQuery(Query query)
+    {
+        return base
+            .SelectQuery(query)
+            .MappingQuery<Organization>(x => x.Okopf);
+    }
+
     protected override IReadOnlyList<Organization> GetData(IDbConnection connection, Guid? id)
     {
-        return GetData<Okopf>(connection, (org, okopf) => { org.Okopf = okopf; return org; }, id: id);
+        return DefaultQuery(connection, id)
+            .Get<Organization, Okopf>(
+                map: (org, okopf) =>
+                {
+                    org.Okopf = okopf;
+                    return org;
+                })
+            .ToList();
     }
 }

@@ -13,6 +13,10 @@ using DocumentFlow.Models.Entities;
 
 using Humanizer;
 
+using SqlKata;
+using SqlKata.Compilers;
+using SqlKata.Execution;
+
 using System.Collections;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -22,6 +26,20 @@ namespace DocumentFlow.Common.Extensions;
 
 public static class ConnectionExtension
 {
+    public static Query GetQuery<T>(this IDbConnection connection, QueryParemeters? parameters = null, string? alias = null)
+    {
+        var factory = new QueryFactory(connection, new PostgresCompiler());
+
+        if((parameters ?? QueryParemeters.Default).FromOnly)
+        {
+            return factory.Query().FromRaw($"only {typeof(T).Name.Underscore()} as {alias ?? "t0"}");
+        }
+        else
+        {
+            return factory.Query($"{typeof(T).Name.Underscore()} as {alias ?? "t0"}");
+        }
+    }
+
     public static void UpdateDependents(this IDbConnection connection, object collection, IDbTransaction? transaction = null)
     {
         if (collection is IDependentCollection dependent)
@@ -157,7 +175,7 @@ public static class ConnectionExtension
             if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
-                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldName) ? x.Name.Underscore() + "_id" : attr.ForeignFieldName;
+                name = attr == null || string.IsNullOrEmpty(attr.FieldKey) ? x.Name.Underscore() + "_id" : attr.FieldKey;
             }
             else
             {
@@ -173,7 +191,7 @@ public static class ConnectionExtension
             if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
-                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey) ? x.Name + "Id" : attr.ForeignFieldKey;
+                name = attr == null || string.IsNullOrEmpty(attr.PropertyKey) ? x.Name + "Id" : attr.PropertyKey;
             }
             else
             {
@@ -231,7 +249,7 @@ public static class ConnectionExtension
             if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
-                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldName) ? x.Name.Underscore() + "_id" : attr.ForeignFieldName;
+                name = attr == null || string.IsNullOrEmpty(attr.FieldKey) ? x.Name.Underscore() + "_id" : attr.FieldKey;
             }
             else
             {
@@ -247,7 +265,7 @@ public static class ConnectionExtension
             if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
-                name = attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey) ? x.Name + "Id" : attr.ForeignFieldKey;
+                name = attr == null || string.IsNullOrEmpty(attr.PropertyKey) ? x.Name + "Id" : attr.PropertyKey;
             }
             else
             {
@@ -304,8 +322,8 @@ public static class ConnectionExtension
             if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
-                var fname = attr == null || string.IsNullOrEmpty(attr.ForeignFieldName) ? $"{x.Name.Underscore()}_id" : attr.ForeignFieldName;
-                var sname = attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey) ? $"{x.Name}Id" : attr.ForeignFieldKey;
+                var fname = attr == null || string.IsNullOrEmpty(attr.FieldKey) ? $"{x.Name.Underscore()}_id" : attr.FieldKey;
+                var sname = attr == null || string.IsNullOrEmpty(attr.PropertyKey) ? $"{x.Name}Id" : attr.PropertyKey;
 
                 name = $"{fname} = :{sname}";
             }
@@ -443,13 +461,13 @@ public static class ConnectionExtension
             if (val is DocumentInfo document)
             {
                 var attr = item.GetCustomAttribute<ForeignKeyAttribute>(true);
-                if (attr == null || string.IsNullOrEmpty(attr.ForeignFieldKey))
+                if (attr == null || string.IsNullOrEmpty(attr.PropertyKey))
                 {
                     parameters.Add($"{item.Name}Id", document.Id);
                 }
                 else
                 {
-                    parameters.Add(attr.ForeignFieldKey, document.Id);
+                    parameters.Add(attr.PropertyKey, document.Id);
                 }
             }
             else

@@ -16,6 +16,8 @@ using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using SqlKata;
+
 using Syncfusion.Windows.Shared;
 
 using System.Data;
@@ -199,6 +201,15 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         entity.Kind = Kind;
     }
 
+    protected override Query SelectQuery(Query query)
+    {
+        return base
+            .SelectQuery(query)
+            .MappingQuery<Material>(x => x.Measurement)
+            .MappingQuery<Material>(x => x.Wire)
+            .MappingQuery<Material>(x => x.Cross);
+    }
+
     protected override void Load()
     {
         Load<Measurement, Wire, Material>((material, measurement, wire, cross) =>
@@ -207,15 +218,6 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
             material.Wire = wire;
             material.Cross = cross;
             return material;
-        },
-        (refs) =>
-        {
-            if (refs == "material_id")
-            {
-                return "owner_id";
-            }
-
-            return refs;
         });
     }
 

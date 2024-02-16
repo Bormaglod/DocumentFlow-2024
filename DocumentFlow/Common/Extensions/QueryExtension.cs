@@ -8,56 +8,31 @@ using Dapper;
 
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Exceptions;
-using DocumentFlow.Data.Models;
+
+using Humanizer;
 
 using SqlKata;
 using SqlKata.Execution;
 
+using Syncfusion.Windows.Controls.Input.Resources;
+
 using System.Data;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace DocumentFlow.Common.Extensions;
 
 public static class QueryExtension
 {
-    public static IEnumerable<TSource> Get<TSource, T>(this Query query, string? foreignName = null, IDbTransaction? transaction = null, int? timeout = null)
+    public static IEnumerable<TSource> Get<TSource, T>(this Query query, Func<TSource, T, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
     {
         var factory = ((XQuery)query).QueryFactory;
 
-        var foreign = GetForeignProperty<TSource, T>(foreignName);
         var compiled = factory.Compiler.Compile(query);
         var parameters = new DynamicParameters(compiled.NamedBindings);
-        var list = factory.Connection.Query<TSource, T, TSource>(
+        var list = factory.Connection.Query(
             compiled.Sql,
-            (source, t1) =>
-            {
-                foreign.SetValue(source, t1);
-                return source;
-            },
-            parameters,
-            transaction, 
-            commandTimeout: timeout);
-
-        return list;
-    }
-
-    public static IEnumerable<TSource> Get<TSource, T1, T2>(this Query query, string? foreignName1 = null, string? foreignName2 = null, IDbTransaction ? transaction = null, int? timeout = null)
-    {
-        var factory = ((XQuery)query).QueryFactory;
-
-        var foreign1 = GetForeignProperty<TSource, T1>(foreignName1);
-        var foreign2 = GetForeignProperty<TSource, T2>(foreignName2);
-
-        var compiled = factory.Compiler.Compile(query);
-        var parameters = new DynamicParameters(compiled.NamedBindings);
-        var list = factory.Connection.Query<TSource, T1, T2, TSource>(
-            compiled.Sql,
-            (source, t1, t2) =>
-            {
-                foreign1.SetValue(source, t1);
-                foreign2.SetValue(source, t2);
-                return source;
-            },
+            map,
             parameters,
             transaction,
             commandTimeout: timeout);
@@ -65,29 +40,108 @@ public static class QueryExtension
         return list;
     }
 
-    private static PropertyInfo GetForeignProperty<TSource, T>(string? foreignName = null)
+    public static IEnumerable<TSource> Get<TSource, T1, T2>(this Query query, Func<TSource, T1, T2, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
     {
-        var foreigns = EntityProperties.ForeignPropertiesCache(typeof(TSource)).Where(p => p.PropertyType == typeof(T));
-        if (!foreigns.Any())
+        var factory = ((XQuery)query).QueryFactory;
+
+        var compiled = factory.Compiler.Compile(query);
+        var parameters = new DynamicParameters(compiled.NamedBindings);
+        var list = factory.Connection.Query(
+            compiled.Sql,
+            map,
+            parameters,
+            transaction,
+            commandTimeout: timeout);
+
+        return list;
+    }
+
+    public static IEnumerable<TSource> Get<TSource, T1, T2, T3>(this Query query, Func<TSource, T1, T2, T3, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
+    {
+        var factory = ((XQuery)query).QueryFactory;
+
+        var compiled = factory.Compiler.Compile(query);
+        var parameters = new DynamicParameters(compiled.NamedBindings);
+        var list = factory.Connection.Query(
+            compiled.Sql,
+            map,
+            parameters,
+            transaction,
+            commandTimeout: timeout);
+
+        return list;
+    }
+
+    public static Query MappingQuery<T>(this Query query, Expression<Func<T, object?>> memberExpression)
+    {
+        var alias = query.GenerateJoinAlias();
+
+        if (memberExpression.ToMember() is PropertyInfo prop)
         {
-            throw new ForeignKeyMissing();
+            var table = prop.PropertyType.Name.Underscore();
+
+            var refName = $"{table}_id";
+            var refTable = "t0";
+
+            var attr = prop.GetCustomAttribute<ForeignKeyAttribute>();
+            if (attr != null)
+            {
+                if (!string.IsNullOrEmpty(attr.FieldKey))
+                {
+                    refName = attr.FieldKey;
+                }
+
+                if (!string.IsNullOrEmpty(attr.Table))
+                {
+                    refTable = query.GetJoinRefAlias(attr.Table);
+                }
+            }
+
+            return query
+                .Select($"{alias}.*")
+                .LeftJoin($"{table} as {alias}", $"{alias}.id", $"{refTable}.{refName}");
         }
 
-        PropertyInfo? foreign = null;
-        if (foreignName != null)
+        throw new Exception("memberExpression должен быть свойством.");
+    }
+
+    private static string GenerateJoinAlias(this Query query)
+    {
+        var aliases = new List<string>();
+        var joins = query.Clauses.OfType<BaseJoin>();
+        foreach (var join in joins)
         {
-            foreign = foreigns.FirstOrDefault(p => p.PropertyType.GetCustomAttributes<ForeignKeyAttribute>().FirstOrDefault(a => a.Name == foreignName) != null);
-        }
-        else
-        {
-            foreign = foreigns.FirstOrDefault();
+            var from = join.Join.Clauses.OfType<FromClause>().FirstOrDefault();
+            if (from != null)
+            {
+                aliases.Add(from.Alias);
+            }
         }
 
-        if (foreign == null)
+        string alias;
+        int n = 1;
+
+        while (aliases.Contains(alias = $"t{n++}")) ;
+
+        return alias;
+    }
+
+    private static string GetJoinRefAlias(this Query query, string refTable)
+    {
+        var joins = query.Clauses.OfType<BaseJoin>();
+        foreach (var join in joins)
         {
-            throw new ForeignKeyNotFound();
+            var from = join.Join.Clauses.OfType<FromClause>().FirstOrDefault();
+            if (from != null)
+            {
+                var t = from.Table.Split("as", StringSplitOptions.TrimEntries);
+                if (t.Length > 0 && t[0] == refTable) 
+                {
+                    return from.Alias;
+                }
+            }
         }
 
-        return foreign;
+        throw new Exception($"Join для таблицы {refTable} не найден.");
     }
 }

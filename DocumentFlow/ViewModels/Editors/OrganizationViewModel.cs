@@ -8,8 +8,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using Dapper;
 
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
+
+using SqlKata;
 
 using System.Data;
 
@@ -63,6 +66,15 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
     private IEnumerable<Account>? accounts;
 
     protected override string GetStandardHeader() => "Организация";
+
+
+    protected override Query SelectQuery(Query query)
+    {
+        return base
+            .SelectQuery(query)
+            .MappingQuery<Organization>(x => x.Okopf)
+            .MappingQuery<Organization>(x => x.Account);
+    }
 
     protected override void Load()
     {

@@ -6,8 +6,11 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
+
+using SqlKata;
 
 using System.Data;
 
@@ -49,6 +52,13 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
     {
         base.InitializeEntityCollections(connection, account);
         Banks = GetForeignDirectory<Bank>(connection);
+    }
+
+    protected override Query SelectQuery(Query query)
+    {
+        return base
+            .SelectQuery(query)
+            .MappingQuery<Account>(x => x.Bank);
     }
 
     protected override void Load()

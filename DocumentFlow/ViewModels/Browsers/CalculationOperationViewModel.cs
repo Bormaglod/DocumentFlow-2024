@@ -14,13 +14,13 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class AccountViewModel : DirectoryViewModel<Account>, ISelfTransientLifetime
+public class CalculationOperationViewModel : DirectoryViewModel<CalculationOperation>, ISelfTransientLifetime
 {
-    public AccountViewModel() { }
+    public CalculationOperationViewModel() { }
 
-    public AccountViewModel(IDatabase database) : base(database) { }
+    public CalculationOperationViewModel(IDatabase database) : base(database) { }
 
-    public override Type? GetEditorViewType() => typeof(Views.Editors.AccountView);
+    //public override Type? GetEditorViewType() => typeof(Views.Editors.ContractApplicationView);
 
     protected override void ConfigureColumn(IColumnInfo columnInfo)
     {
@@ -34,19 +34,21 @@ public class AccountViewModel : DirectoryViewModel<Account>, ISelfTransientLifet
     {
         return base
             .SelectQuery(query)
-            .MappingQuery<Account>(x => x.Bank)
-            .MappingQuery<Account>(x => x.Company);
+            .MappingQuery<CalculationOperation>(x => x.Equipment)
+            .MappingQuery<CalculationOperation>(x => x.Tools)
+            .MappingQuery<CalculationOperation>(x => x.Material);
     }
 
-    protected override IReadOnlyList<Account> GetData(IDbConnection connection, Guid? id)
+    protected override IReadOnlyList<CalculationOperation> GetData(IDbConnection connection, Guid? id = null)
     {
         return DefaultQuery(connection, id)
-            .Get<Account, Bank, Contractor>(
-                map: (account, bank, contractor) =>
+            .Get<CalculationOperation, Equipment, Equipment, Material>(
+                map: (op, equipment, tools, material) =>
                 {
-                    account.Bank = bank;
-                    account.Company = contractor;
-                    return account;
+                    op.Equipment = equipment;
+                    op.Tools = tools;
+                    op.Material = material;
+                    return op;
                 })
             .ToList();
     }

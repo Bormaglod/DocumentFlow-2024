@@ -20,5 +20,6 @@ public partial class Account : Directory
 
     [ObservableProperty]
     [property: DenyWriting]
+    [property: ForeignKey(FieldKey = "owner_id")]
     private Contractor? company;
 }

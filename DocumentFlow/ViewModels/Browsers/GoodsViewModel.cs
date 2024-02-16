@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Common.Enums;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
@@ -31,7 +32,10 @@ public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 
     protected override Query SelectQuery(Query query)
     {
-        query = base.SelectQuery(query);
+        query = base
+            .SelectQuery(query)
+            .MappingQuery<Goods>(x => x.Measurement)
+            .MappingQuery<Goods>(x => x.Calculation);
 
         if (database.HasPrivilege("calculation", Privilege.Select))
         {
@@ -52,12 +56,14 @@ public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 
     protected override IReadOnlyList<Goods> GetData(IDbConnection connection, Guid? id)
     {
-        return GetData<Measurement, Calculation>(connection, (goods, measurement, calculation) => 
-        { 
-            goods.Measurement = measurement;
-            goods.Calculation = calculation;
-            return goods; 
-        },
-        id: id);
+        return DefaultQuery(connection, id)
+            .Get<Goods, Measurement, Calculation>(
+                map: (goods, measurement, calculation) =>
+                {
+                    goods.Measurement = measurement;
+                    goods.Calculation = calculation;
+                    return goods;
+                })
+            .ToList();
     }
 }

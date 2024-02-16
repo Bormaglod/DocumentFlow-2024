@@ -214,13 +214,35 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
         
     }
 
-    protected void Load<P>(Func<T, P, T> map, Func<string, string>? referenceMap = null)
+    protected void Load<P>(Func<T, P, T> map)
     {
         try
         {
             using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
-            var query = MappingQuery<P>(DefaultQuery(conn), referenceMap);
+            var query = DefaultQuery(conn);
+            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
+            var parameters = new DynamicParameters(compiled.NamedBindings);
+            Entity = conn.Query(
+                compiled.Sql,
+                map,
+                parameters).First();
+
+            RaiseAfterLoad(conn, Entity);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    protected void Load<P1, P2>(Func<T, P1, P2, T> map)
+    {
+        try
+        {
+            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+
+            var query = DefaultQuery(conn);
 
             var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
             var parameters = new DynamicParameters(compiled.NamedBindings);
@@ -237,36 +259,13 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
         }
     }
 
-    protected void Load<P1, P2>(Func<T, P1, P2, T> map, Func<string, string>? referenceMap = null)
+    protected void Load<P1, P2, P3>(Func<T, P1, P2, P3, T> map)
     {
         try
         {
             using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
-            var query = MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(conn), referenceMap), referenceMap);
-
-            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-            var parameters = new DynamicParameters(compiled.NamedBindings);
-            Entity = conn.Query(
-                compiled.Sql,
-                map,
-                parameters).First();
-
-            RaiseAfterLoad(conn, Entity);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
-    protected void Load<P1, P2, P3>(Func<T, P1, P2, P3, T> map, Func<string, string>? referenceMap = null)
-    {
-        try
-        {
-            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
-
-            var query = MappingQuery<P3>(MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(conn), referenceMap), referenceMap), referenceMap);
+            var query = DefaultQuery(conn);
 
             var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
             var parameters = new DynamicParameters(compiled.NamedBindings);
@@ -317,12 +316,6 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
         {
             headerDetails = details;
         }
-    }
-
-    private static Query GetQuery(IDbConnection conn)
-    {
-        var factory = new QueryFactory(conn, new PostgresCompiler());
-        return factory.Query($"{EntityProperties.GetTableName(typeof(T))} as t0");
     }
 
     private void UpdateHeader() => UpdateHeader(headerDetails ?? string.Empty);
@@ -384,7 +377,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
     private Query DefaultQuery(IDbConnection connection)
     {
         var query = SelectQuery(
-            GetQuery(connection)
+            connection.GetQuery<T>()
                 .Select("t0.*")
                 .Select("u1.name as user_created")
                 .Select("u2.name as user_updated")
@@ -392,25 +385,6 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
                 .Join("user_alias as u2", "t0.user_updated_id", "u2.id")
                 .Where("t0.id", Id));
         return query;
-    }
-
-    private static Query MappingQuery<P>(Query query, Func<string, string>? referenceMap = null)
-    {
-        var table = typeof(P).Name.Underscore();
-
-        string refName;
-        if (referenceMap != null)
-        {
-            refName = referenceMap($"{table}_id");
-        }
-        else
-        {
-            refName = $"{table}_id";
-        }
-
-        return query
-            .Select($"{table}.*")
-            .LeftJoin(table, $"{table}.id", $"t0.{refName}");
     }
 
     partial void OnHeaderChanging(string value)

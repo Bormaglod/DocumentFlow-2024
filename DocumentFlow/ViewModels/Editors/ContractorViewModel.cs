@@ -7,8 +7,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common.Enums;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
+
+using SqlKata;
 
 using System.Data;
 
@@ -59,6 +62,16 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
     private IEnumerable<Person>? persons;
 
     protected override string GetStandardHeader() => "Контрагент";
+
+    protected override Query SelectQuery(Query query)
+    {
+        return base
+            .SelectQuery(query)
+            .MappingQuery<Contractor>(x => Okopf)
+            .MappingQuery<Contractor>(x => Account)
+            .MappingQuery<Contractor>(x => Person);
+    }
+
 
     protected override void Load()
     {

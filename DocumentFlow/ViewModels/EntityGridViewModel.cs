@@ -11,32 +11,32 @@ using Dapper;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Comparers;
+using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
+using DocumentFlow.Common.Exceptions;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
+using DocumentFlow.Messages.Options;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
-using DocumentFlow.Common.Exceptions;
+
 using Humanizer;
 
 using SqlKata;
-using SqlKata.Compilers;
 using SqlKata.Execution;
 
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Utility;
 using Syncfusion.Windows.Shared;
+using Syncfusion.Windows.Tools.Controls;
 
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Input;
-using Syncfusion.Windows.Tools.Controls;
-using DocumentFlow.Messages.Options;
-using DocumentFlow.Common.Data;
 
 namespace DocumentFlow.ViewModels;
 
@@ -492,119 +492,44 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     /// </summary>
     /// <param name="id">Идентификатор записи, которую необходимо получить.</param>
     /// <returns></returns>
-    protected IReadOnlyList<T> GetData(Guid? id = null)
+    protected T GetDataById(Guid id)
     {
         using var conn = database.OpenConnection();
 
-        return GetData(conn, id);
+        return GetDataById(conn, id);
+    }
+
+    protected T GetDataById(IDbConnection connection, Guid id)
+    {
+        var rows = GetData(connection, id);
+        if (rows.Count == 0)
+        {
+            throw new RecordNotFoundException(id);
+        }
+
+        return rows[0];
     }
 
     protected virtual IReadOnlyList<T> GetData(IDbConnection connection, Guid? id = null)
     {
-        var list = DefaultQuery(connection, QueryParemeters.Default)
-            .When(id != null, q => q.Where("t0.id", id))
+        return DefaultQuery(connection, id)
             .Get<T>()
             .ToList();
-
-        if (id != null && list.Count == 0)
-        {
-            throw new RecordNotFoundException(id);
-        }
-
-        return list;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="P"></typeparam>
-    /// <param name="map"></param>
-    /// <param name="referenceMap"></param>
-    /// <returns></returns>
-    protected IReadOnlyList<T> GetData<P>(IDbConnection connection, Func<T, P, T> map, Func<string, string>? referenceMap = null, Guid? id = null, QueryParemeters? parameters = null)
+    protected Query DefaultQuery(IDbConnection conn, Guid? id = null, QueryParemeters? parameters = null)
     {
-        var query = MappingQuery<P>(DefaultQuery(connection, parameters ?? QueryParemeters.Default), referenceMap)
+        return SelectQuery(RequiredQuery(conn, parameters ?? QueryParemeters.Default))
             .When(id != null, q => q.Where("t0.id", id));
-
-        var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        var sqlParams = new DynamicParameters(compiled.NamedBindings);
-        var list = connection.Query(
-            compiled.Sql,
-            map,
-            sqlParams).ToList();
-
-        if (id != null && list.Count == 0)
-        {
-            throw new RecordNotFoundException(id);
-        }
-
-        return list;
     }
-
-    protected IReadOnlyList<T> GetData<P1, P2>(IDbConnection connection, Func<T, P1, P2, T> map, Func<string, string>? referenceMap = null, Guid? id = null, QueryParemeters? parameters = null)
-    {
-        var query = MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(connection, parameters ?? QueryParemeters.Default), referenceMap), referenceMap)
-            .When(id != null, q => q.Where("t0.id", id));
-
-        var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        var sqlParams = new DynamicParameters(compiled.NamedBindings);
-        var list = connection.Query(
-            compiled.Sql,
-            map,
-            sqlParams).ToList();
-
-        if (id != null && list.Count == 0)
-        {
-            throw new RecordNotFoundException(id);
-        }
-
-        return list;
-    }
-
-    protected IReadOnlyList<T> GetData<P1, P2, P3>(IDbConnection connection, Func<T, P1, P2, P3, T> map, Func<string, string>? referenceMap = null, Guid? id = null, QueryParemeters? parameters = null)
-    {
-        var query = MappingQuery<P3>(MappingQuery<P2>(MappingQuery<P1>(DefaultQuery(connection, parameters ?? QueryParemeters.Default), referenceMap), referenceMap), referenceMap)
-            .When(id != null, q => q.Where("t0.id", id));
-
-        var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        var sqlParams = new DynamicParameters(compiled.NamedBindings);
-        var list = connection.Query(
-            compiled.Sql,
-            map,
-            sqlParams).ToList();
-
-        if (id != null && list.Count == 0)
-        {
-            throw new RecordNotFoundException(id);
-        }
-
-        return list;
-    }
-
-    protected Query DefaultQuery(IDbConnection conn, QueryParemeters parameters) => SelectQuery(RequiredQuery(conn, parameters));
 
     protected virtual Query SelectQuery(Query query) => query;
 
     protected virtual Query WipeQuery(Query query) => query;
 
-    protected Query GetQuery(IDbConnection conn) => GetQuery(conn, QueryParemeters.Default);
-
-    protected Query GetQuery(IDbConnection conn, QueryParemeters parameters)
-    {
-        var factory = new QueryFactory(conn, new PostgresCompiler());
-        if (parameters.FromOnly)
-        {
-            return factory.Query().FromRaw($"only {typeof(T).Name.Underscore()} as t0");
-        }
-        else
-        {
-            return factory.Query($"{typeof(T).Name.Underscore()} as t0");
-        }
-    }
-
     protected Query RequiredQuery(IDbConnection connection, QueryParemeters parameters)
     {
-        var query = GetQuery(connection, parameters);
+        var query = connection.GetQuery<T>(parameters);
 
         if (query.Clauses.FirstOrDefault(c => c.Component == "select") == null)
         {
@@ -686,41 +611,6 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual bool CheckCopyRow(T row) => true;
 
-    private static Query MappingQuery<P>(Query query, Func<string, string>? referenceMap = null)
-    {
-        var table = typeof(P).Name.Underscore();
-
-        var aliases = new List<string>();
-        var joins = query.Clauses.OfType<BaseJoin>();
-        foreach (var join in joins)
-        {
-            var from = join.Join.Clauses.OfType<FromClause>().FirstOrDefault();
-            if (from != null)
-            {
-                aliases.Add(from.Alias);
-            }
-        }
-
-        string alias;
-        int n = 1;
-
-        while (aliases.Contains(alias = $"t{n++}")) ;
-
-        string refName;
-        if (referenceMap != null)
-        {
-            refName = referenceMap($"{table}_id");
-        }
-        else
-        {
-            refName = $"{table}_id";
-        }
-
-        return query
-            .Select($"{alias}.*")
-            .LeftJoin($"{table} as {alias}", $"{alias}.id", $"t0.{refName}");
-    }
-
     private T? AddRow(Guid id)
     {
         using var conn = database.OpenConnection();
@@ -733,7 +623,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             try
             {
-                T row = GetData(connection, id)[0];
+                T row = GetDataById(connection, id);
                 DataSource.Add(row);
 
                 return row;
@@ -769,7 +659,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             var row = DataSource.FirstOrDefault(x => x.Id == id);
             try
             {
-                var refreshDoc = GetData(id)[0];
+                var refreshDoc = GetDataById(id);
                 if (row != null)
                 {
                     DataSource[DataSource.IndexOf(row)] = refreshDoc;
@@ -811,7 +701,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
                     if (DataSource != null)
                     {
-                        DataSource[DataSource.IndexOf(row)] = GetData(row.Id)[0];
+                        DataSource[DataSource.IndexOf(row)] = GetDataById(row.Id);
                     }
                 }
                 catch
@@ -879,7 +769,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
             try
             {
-                var query = DefaultQuery(conn, QueryParemeters.Default).WhereTrue("deleted");
+                var query = DefaultQuery(conn).WhereTrue("deleted");
 
                 WipeQuery(query).Delete(transaction);
 
