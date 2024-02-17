@@ -10,6 +10,7 @@
              xmlns:enums="clr-namespace:DocumentFlow.Common.Enums"
              xmlns:c="clr-namespace:DocumentFlow.Controls"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
+             xmlns:views="clr-namespace:DocumentFlow.Views.Browsers"
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="800" d:DesignWidth="800"
@@ -167,6 +168,12 @@
                                    Grid.Row="2"/>
         <syncfusion:TabControlExt Grid.Row="3"
                                   Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Операция">
+                <views:CalculationOperationView Margin="5"
+                                                Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                                AvailableGrouping="False"
+                                                SizeMode="Small"/>
+            </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Документы">
                 <c:DocumentsList Margin="5" 
                                  DocumentInfo="{Binding Entity}"/>

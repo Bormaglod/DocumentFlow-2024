@@ -1,0 +1,139 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Browsers.CalculationOperationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:commands="clr-namespace:DocumentFlow.Commands"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Browsers"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:CalculationOperationViewModel}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:ArrayStringConverter x:Key="arrayStringConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.Copy}}"/>
+        <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
+        <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <syncfusion:SfDataGrid x:Name="gridContent" 
+                               Grid.Row="2"
+                               ShowBusyIndicator="True"
+                               ItemsSource="{Binding DataSource}"
+                               SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                               HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
+                               RecordContextMenu="{StaticResource GridRecordContextMenu}"
+                               GroupDropAreaContextMenu="{StaticResource GroupDropAreaContextMenu}"
+                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="Id"
+                                           Width="180"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="Code"
+                                           HeaderText="Код"
+                                           Width="70"/>
+                <syncfusion:GridTextColumn MappingName="ItemName"
+                                           HeaderText="Наименование"
+                                           ColumnSizer="AutoLastColumnFill"/>
+                <syncfusion:GridTextColumn MappingName="Operation"
+                                           HeaderText="Производственная операция"
+                                           Width="300"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="PreviousOperation"
+                                           HeaderText="Пред. операция"
+                                           Width="150"
+                                           DisplayBinding="{Binding PreviousOperation, Converter={StaticResource arrayStringConverter}}"/>
+                <syncfusion:GridTextColumn MappingName="UsingOperations"
+                                           HeaderText="Используется в..."
+                                           Width="130"
+                                           DisplayBinding="{Binding UsingOperations, Converter={StaticResource arrayStringConverter}}"/>
+                <syncfusion:GridTextColumn MappingName="Material.Code"
+                                           HeaderText="Материал"
+                                           Width="140"/>
+                <syncfusion:GridNumericColumn MappingName="MaterialAmount"
+                                              HeaderText="Количество"
+                                              Width="100"
+                                              NumberDecimalDigits="3"/>
+                <syncfusion:GridCurrencyColumn MappingName="Price"
+                                               HeaderText="Расценка"
+                                               Width="90"
+                                               CurrencyDecimalDigits="4"/>
+                <syncfusion:GridNumericColumn MappingName="Repeats"
+                                              HeaderText="Повторов"
+                                              Width="100"
+                                              NumberDecimalDigits="0"/>
+                <syncfusion:GridCurrencyColumn MappingName="StimulCost"
+                                               HeaderText="Стимул. выпл."
+                                               Width="110"
+                                               CurrencyDecimalDigits="2"/>
+                <syncfusion:GridNumericColumn MappingName="ProducedTime"
+                                              HeaderText="Время, с"
+                                              Width="80"
+                                              NumberDecimalDigits="1"/>
+                <syncfusion:GridNumericColumn MappingName="TotalMaterial"
+                                              HeaderText="Количество"
+                                              Width="100"
+                                              NumberDecimalDigits="3"/>
+                <syncfusion:GridCurrencyColumn MappingName="ItemCost"
+                                               HeaderText="Стоимость"
+                                               Width="100"
+                                               CurrencyDecimalDigits="2"/>
+                <syncfusion:GridTextColumn MappingName="Equipment"
+                                           HeaderText="Оборудование"
+                                           Width="250"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="Tools"
+                                           HeaderText="Инструмент"
+                                           Width="250"
+                                           IsHidden="True"/>
+            </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.StackedHeaderRows>
+                <syncfusion:StackedHeaderRow>
+                    <syncfusion:StackedHeaderRow.StackedColumns>
+                        <syncfusion:StackedColumn ChildColumns="Material,MaterialAmount" 
+                                                  HeaderText="Использование материала" 
+                                                  MappingName="MaterialUsing"/>
+                        <syncfusion:StackedColumn ChildColumns="Repeats,StimulCost,ProducedTime,TotalMaterial,ItemCost" 
+                                                  HeaderText="С учётом повторов за ед. изм." 
+                                                  MappingName="AccountRepetitions"/>
+                    </syncfusion:StackedHeaderRow.StackedColumns>
+                </syncfusion:StackedHeaderRow>
+            </syncfusion:SfDataGrid.StackedHeaderRows>
+            <syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="Code" 
+                                                  SortDirection="Descending"/>
+            </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding SelectCurrentRow}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="GridContextMenuOpening">
+                    <i:InvokeCommandAction Command="{Binding PopulateListDocuments}"
+                                           CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</UserControl>

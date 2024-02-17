@@ -80,14 +80,14 @@
                                               TextAlignment="Right"
                                               NumberDecimalDigits="0"
                                               NumberGroupSizes="3"
-                                              HeaderTemplate="{StaticResource headerWrappingTemplateHigh}"/>
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
                 <syncfusion:GridNumericColumn MappingName="ProductionRate"
                                               HeaderText="Норма выработки, ед./час"
                                               Width="100"
                                               TextAlignment="Right"
                                               NumberDecimalDigits="0"
                                               NumberGroupSizes="3"
-                                              HeaderTemplate="{StaticResource headerWrappingTemplateHigh}"/>
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
                 <syncfusion:GridTextColumn MappingName="OperationType"
                                            HeaderText="Тип операции"
                                            Width="200"/>
@@ -95,7 +95,7 @@
                                                HeaderText="Зар. плата, руб."
                                                Width="100"
                                                CurrencyDecimalDigits="4"
-                                               HeaderTemplate="{StaticResource headerWrappingTemplateHigh}"/>
+                                               HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
                 <syncfusion:GridCheckBoxColumn MappingName="OperationUsing"
                                                HeaderText="Используется"
                                                Width="120"/>

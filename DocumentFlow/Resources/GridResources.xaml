@@ -420,16 +420,14 @@
         <Setter Property="Background" Value="#FFC873"/>
     </Style>
     <DataTemplate x:Key="headerWrappingTemplate">
-        <Border BorderBrush="{x:Null}" 
-                Height="32">
+        <Border BorderBrush="{x:Null}">
             <TextBlock TextWrapping="Wrap" 
                        Text="{Binding}" 
                        VerticalAlignment="Center"/>
         </Border>
     </DataTemplate>
     <DataTemplate x:Key="headerWrappingTemplateHigh">
-        <Border BorderBrush="{x:Null}" 
-                Height="64">
+        <Border BorderBrush="{x:Null}">
             <TextBlock TextWrapping="Wrap" 
                        Text="{Binding}" 
                        VerticalAlignment="Center"/>

@@ -72,9 +72,25 @@ public static class QueryExtension
         return list;
     }
 
-    public static Query MappingQuery<T>(this Query query, Expression<Func<T, object?>> memberExpression)
+    public static IEnumerable<TSource> Get<TSource, T1, T2, T3, T4>(this Query query, Func<TSource, T1, T2, T3, T4, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
     {
-        var alias = query.GenerateJoinAlias();
+        var factory = ((XQuery)query).QueryFactory;
+
+        var compiled = factory.Compiler.Compile(query);
+        var parameters = new DynamicParameters(compiled.NamedBindings);
+        var list = factory.Connection.Query(
+            compiled.Sql,
+            map,
+            parameters,
+            transaction,
+            commandTimeout: timeout);
+
+        return list;
+    }
+
+    public static Query MappingQuery<T>(this Query query, Expression<Func<T, object?>> memberExpression, string? alias = null)
+    {
+        alias ??= query.GenerateJoinAlias();
 
         if (memberExpression.ToMember() is PropertyInfo prop)
         {
