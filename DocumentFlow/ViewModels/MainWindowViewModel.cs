@@ -137,11 +137,6 @@ public partial class MainWindowViewModel :
         var view = services.GetRequiredService(message.ViewType);
         if (view is FrameworkElement element && element is IGridPageView pageView)
         {
-            if (element.DataContext is IEntityGridViewModel model)
-            {
-                model.View = pageView;
-            }
-
             DocumentContainer.SetHeader(element, message.Text);
 
             Windows.Add(pageView);

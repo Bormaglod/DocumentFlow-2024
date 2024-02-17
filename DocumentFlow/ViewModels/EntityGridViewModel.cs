@@ -63,7 +63,6 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     private readonly IDatabase database;
 
-    private IGridPageView? view;
     private readonly List<GridColumn> alwaysVisibleColumns = new();
 
     [ObservableProperty]
@@ -397,16 +396,11 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     #endregion
 
-    public IGridPageView? View
+    public void SetView(IGridPageView view)
     {
-        get => view;
-        set
+        if (view is FrameworkElement control)
         {
-            if (view != value)
-            {
-                view = value;
-                OnPageViewChanged();
-            }
+            control.Loaded += Control_Loaded;
         }
     }
 
@@ -556,49 +550,6 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     }
 
     protected virtual void OnAfterRefreshDataSource() { }
-
-    protected virtual void OnPageViewChanged()
-    {
-        var grid = View?.DataGrid;
-        if (grid == null)
-        {
-            return;
-        }
-
-        foreach (var column in grid.Columns.Where(c => !string.IsNullOrEmpty(c.HeaderText)))
-        {
-            grid.SortComparers.Add(
-                new SortComparer()
-                {
-                    Comparer = new CustomComparer(typeof(T), column.MappingName),
-                    PropertyName = column.MappingName
-                });
-
-            ColumnInfo info = new(column);
-            ConfigureColumn(info);
-
-            column.Width = info.Width;
-            column.IsHidden = info.IsHidden;
-
-            if (info.AlwaysVisible)
-            {
-                alwaysVisibleColumns.Add(column);
-            }
-
-            var item = new MenuItemModel()
-            {
-                Header = column.HeaderText,
-                IsChecked = !column.IsHidden,
-                IsEnabled = !alwaysVisibleColumns.Contains(column),
-                Tag = column,
-                PlacementTarget = this
-            };
-
-            VisibleColumnsMenuItems.Add(item);
-        }
-
-        RefreshDataSource();
-    }
 
     protected virtual void ConfigureColumn(IColumnInfo columnInfo) { }
 
@@ -787,6 +738,54 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private void Control_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not IGridPageView view)
+        {
+            return;
+        }
+
+        var grid = view.DataGrid;
+        if (grid == null)
+        {
+            return;
+        }
+
+        foreach (var column in grid.Columns.Where(c => !string.IsNullOrEmpty(c.HeaderText)))
+        {
+            grid.SortComparers.Add(
+                new SortComparer()
+                {
+                    Comparer = new CustomComparer(typeof(T), column.MappingName),
+                    PropertyName = column.MappingName
+                });
+
+            ColumnInfo info = new(column);
+            ConfigureColumn(info);
+
+            column.Width = info.Width;
+            column.IsHidden = info.IsHidden;
+
+            if (info.AlwaysVisible)
+            {
+                alwaysVisibleColumns.Add(column);
+            }
+
+            var item = new MenuItemModel()
+            {
+                Header = column.HeaderText,
+                IsChecked = !column.IsHidden,
+                IsEnabled = !alwaysVisibleColumns.Contains(column),
+                Tag = column,
+                PlacementTarget = this
+            };
+
+            VisibleColumnsMenuItems.Add(item);
+        }
+
+        RefreshDataSource();
     }
 
     partial void OnOwnerChanged(DocumentInfo? oldValue, DocumentInfo? newValue)

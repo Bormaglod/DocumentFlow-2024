@@ -12,9 +12,9 @@ namespace DocumentFlow.Interfaces;
 
 public interface IEntityGridViewModel
 {
-    IGridPageView? View { get; set; }
     DocumentInfo? Owner { get; set; }
     bool AvailableNavigation { get; set; }
     bool AvailableGrouping { get; set; }
     SizeMode SizeMode { get; set; }
+    void SetView(IGridPageView view);
 }
