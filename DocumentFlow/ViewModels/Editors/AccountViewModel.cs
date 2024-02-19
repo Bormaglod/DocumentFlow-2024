@@ -61,9 +61,9 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
             .MappingQuery<Account>(x => x.Bank);
     }
 
-    protected override void Load()
+    protected override void Load(IDbConnection connection)
     {
-        Load<Bank>((account, bank) =>
+        Load<Bank>(connection , (account, bank) =>
         {
             account.Bank = bank;
             return account;

@@ -8,6 +8,14 @@ using System.ComponentModel;
 
 namespace DocumentFlow.Common.Enums;
 
+public enum EntityEditStatus
+{
+    Created,
+    Loading,
+    Loaded,
+    Error
+}
+
 public enum GraphicsUnit 
 { 
     Inch, 

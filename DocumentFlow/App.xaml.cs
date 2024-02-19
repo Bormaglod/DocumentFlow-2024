@@ -108,6 +108,7 @@ public partial class App : Application
     private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
     {
         services.Configure<LocalSettings>(configuration.GetSection("LocalSettings"));
+        services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
         services.AddAdvancedDependencyInjection();
 

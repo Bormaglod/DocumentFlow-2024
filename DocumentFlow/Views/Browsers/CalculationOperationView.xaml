@@ -112,7 +112,7 @@
             <syncfusion:SfDataGrid.StackedHeaderRows>
                 <syncfusion:StackedHeaderRow>
                     <syncfusion:StackedHeaderRow.StackedColumns>
-                        <syncfusion:StackedColumn ChildColumns="Material,MaterialAmount" 
+                        <syncfusion:StackedColumn ChildColumns="Material.Code,MaterialAmount" 
                                                   HeaderText="Использование материала" 
                                                   MappingName="MaterialUsing"/>
                         <syncfusion:StackedColumn ChildColumns="Repeats,StimulCost,ProducedTime,TotalMaterial,ItemCost" 

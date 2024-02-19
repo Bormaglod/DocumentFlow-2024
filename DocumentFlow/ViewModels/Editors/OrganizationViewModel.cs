@@ -76,9 +76,9 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
             .MappingQuery<Organization>(x => x.Account);
     }
 
-    protected override void Load()
+    protected override void Load(IDbConnection connection)
     {
-        Load<Okopf, Account>((org, okopf, account) => 
+        Load<Okopf, Account>(connection, (org, okopf, account) => 
         { 
             org.Okopf = okopf; 
             org.Account = account;

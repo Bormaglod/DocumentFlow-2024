@@ -70,13 +70,13 @@ public partial class MainWindowViewModel :
     {
     }
 
-    public MainWindowViewModel(IServiceProvider services, IDatabase database, IOptionsMonitor<AppSettings> appOptions, IOptionsSnapshot<LocalSettings> localOptions)
+    public MainWindowViewModel(IServiceProvider services, IDatabase database, IOptionsSnapshot<AppSettings> appOptions, IOptionsSnapshot<LocalSettings> localOptions)
     {
         this.services = services;
         this.database = database;
         
         localSettings = localOptions.Value;
-        appSettings = appOptions.CurrentValue;
+        appSettings = appOptions.Value;
 
         WeakReferenceMessenger.Default.RegisterAll(this);
 

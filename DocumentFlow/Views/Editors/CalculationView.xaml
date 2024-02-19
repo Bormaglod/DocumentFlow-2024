@@ -48,7 +48,6 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -64,30 +63,27 @@
                 <TextBlock Text="Код"
                            Style="{StaticResource TextBlockStyle}"
                            Grid.Row="2"/>
-                <TextBlock Text="Способ расчёта"
-                           Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="3"/>
                 <TextBlock Text="Стимул. выплата"
                            Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="4"/>
+                           Grid.Row="3"/>
                 <TextBlock Text="Себестоимость"
                            Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="5"/>
+                           Grid.Row="4"/>
                 <TextBlock Text="Рентабельность"
                            Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="6"/>
+                           Grid.Row="5"/>
                 <TextBlock Text="Прибыль"
                            Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="7"/>
+                           Grid.Row="6"/>
                 <TextBlock Text="Цена"
                            Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="8"/>
+                           Grid.Row="7"/>
                 <TextBlock Text="Дата утверждения"
                            Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="9"/>
+                           Grid.Row="8"/>
                 <TextBlock Text="Полное наименование"
                            Style="{StaticResource TextBlockStyle}"
-                           Grid.Row="10"/>
+                           Grid.Row="9"/>
                 <TextBlock Text="{Binding Owner.ItemName}"
                            Style="{StaticResource TextBlockOwnerStyle}"
                            Grid.Column="1"/>
@@ -116,46 +112,50 @@
                          Grid.Row="2" Grid.Column="1"
                          Style="{StaticResource TextBoxStyle}"
                          MaxLength="30"/>
-                <ComboBox SelectedItem="{Binding StimulatingValue, Mode=TwoWay, Converter={StaticResource enumConverter}, ConverterParameter={x:Type enums:StimulatingValue}}"
-                          ItemsSource="{Binding Source={common:EnumToItemsSource {x:Type enums:StimulatingValue}}}"
-                          Style="{StaticResource ComboBoxStyle}"
-                          Width="200"
-                          Grid.Row="3" Grid.Column="1"/>
-                <syncfusion:DoubleTextBox Value="{Binding StimulPayment}"
-                                          Style="{StaticResource DoubleTextBoxStyle}"
-                                          Width="100"
-                                          Grid.Row="4" Grid.Column="1"
-                                          Height="25"/>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="3" Grid.Column="1">
+                    <syncfusion:DoubleTextBox Value="{Binding StimulPayment, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource DoubleTextBoxStyle}"
+                                              Width="100"
+                                              Height="25"/>
+                    <Separator/>
+                    <ComboBox SelectedItem="{Binding StimulatingValue, Mode=TwoWay, Converter={StaticResource enumConverter}, ConverterParameter={x:Type enums:StimulatingValue}}"
+                              ItemsSource="{Binding Source={common:EnumToItemsSource {x:Type enums:StimulatingValue}}}"
+                              Style="{StaticResource ComboBoxStyle}"
+                              Width="80"/>
+                </StackPanel>
                 <syncfusion:CurrencyTextBox Value="{Binding CostPrice}"
                                             Style="{StaticResource CurrencyTextBoxStyle}"
+                                            IsReadOnly="True"
                                             Width="100"
-                                            Grid.Row="5" Grid.Column="1"
+                                            Grid.Row="4" Grid.Column="1"
                                             Height="25"/>
-                <syncfusion:PercentTextBox PercentValue="{Binding ProfitPercent}"
+                <syncfusion:PercentTextBox PercentValue="{Binding ProfitPercent, UpdateSourceTrigger=PropertyChanged}"
                                            Style="{StaticResource PercentTextBoxStyle}"
+                                           PercentDecimalDigits="2"
                                            Width="100"
-                                           Grid.Row="6" Grid.Column="1"
-                                           Height="25"/>
-                <syncfusion:CurrencyTextBox Value="{Binding ProfitValue}"
+                                           Height="25"
+                                           Grid.Row="5" Grid.Column="1"/>
+                <syncfusion:CurrencyTextBox Value="{Binding ProfitValue, UpdateSourceTrigger=PropertyChanged}"
                                             Style="{StaticResource CurrencyTextBoxStyle}"
                                             Width="100"
-                                            Grid.Row="7" Grid.Column="1"
+                                            Grid.Row="6" Grid.Column="1"
                                             Height="25"/>
-                <syncfusion:CurrencyTextBox Value="{Binding Price}"
-                                            Style="{StaticResource CurrencyTextBoxStyle}"
+                <syncfusion:CurrencyTextBox Value="{Binding Price, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true}"
+                                            Style="{StaticResource CurrencyTextBoxErrorStyle}"
                                             Width="100"
-                                            Grid.Row="8" Grid.Column="1"
-                                            Height="25"/>
+                                            Height="25"
+                                            Grid.Row="7" Grid.Column="1"/>
                 <syncfusion:DateTimeEdit DateTime="{Binding DateApproval, Mode=TwoWay}"
                                          Width="140"
-                                         Grid.Row="9" Grid.Column="1"
+                                         Grid.Row="8" Grid.Column="1"
                                          Style="{StaticResource DateTimeEditStyle}"
                                          Pattern="LongDate"
                                          IsEmptyDateEnabled="True"
                                          NoneDateText="Введите дату"
                                          ShowMaskOnNullValue="False"/>
                 <TextBox Text="{Binding Note}"
-                         Grid.Row="10" Grid.Column="1"
+                         Grid.Row="9" Grid.Column="1"
                          Width="500"
                          Style="{StaticResource MultilineTextBoxStyle}"
                          Height="75"/>

@@ -210,9 +210,9 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
             .MappingQuery<Material>(x => x.Cross);
     }
 
-    protected override void Load()
+    protected override void Load(IDbConnection connection)
     {
-        Load<Measurement, Wire, Material>((material, measurement, wire, cross) =>
+        Load<Measurement, Wire, Material>(connection, (material, measurement, wire, cross) =>
         {
             material.Measurement = measurement;
             material.Wire = wire;

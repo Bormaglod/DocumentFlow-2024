@@ -73,9 +73,9 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
     }
 
 
-    protected override void Load()
+    protected override void Load(IDbConnection connection)
     {
-        Load<Okopf, Account, Person>((contractor, okopf, account, person) => 
+        Load<Okopf, Account, Person>(connection, (contractor, okopf, account, person) => 
         { 
             contractor.Okopf = okopf; 
             contractor.Account = account;

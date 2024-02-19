@@ -102,9 +102,9 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
             .MappingQuery<Goods>(x => x.Calculation);
     }
 
-    protected override void Load()
+    protected override void Load(IDbConnection connection)
     {
-        Load<Measurement, Calculation>((goods, measurement, calculation) =>
+        Load<Measurement, Calculation>(connection, (goods, measurement, calculation) =>
         {
             goods.Measurement = measurement;
             goods.Calculation = calculation;

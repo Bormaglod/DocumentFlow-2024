@@ -110,9 +110,9 @@ public partial class ContractViewModel : DirectoryEditorViewModel<Contract>, ISe
             .MappingQuery<Contract>(x => x.OrgSignatory);
     }
 
-    protected override void Load()
+    protected override void Load(IDbConnection connection)
     {
-        Load<Employee, OurEmployee>((contract, emp, orgEmp) =>
+        Load<Employee, OurEmployee>(connection, (contract, emp, orgEmp) =>
         {
             contract.Signatory = emp;
             contract.OrgSignatory = orgEmp;

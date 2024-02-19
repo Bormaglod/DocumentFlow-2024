@@ -426,11 +426,4 @@
                        VerticalAlignment="Center"/>
         </Border>
     </DataTemplate>
-    <DataTemplate x:Key="headerWrappingTemplateHigh">
-        <Border BorderBrush="{x:Null}">
-            <TextBlock TextWrapping="Wrap" 
-                       Text="{Binding}" 
-                       VerticalAlignment="Center"/>
-        </Border>
-    </DataTemplate>
 </ResourceDictionary>

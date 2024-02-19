@@ -218,9 +218,9 @@ public partial class OperationViewModel : DirectoryEditorViewModel<Operation>, I
             .MappingQuery<Operation>(x => x.OperationType);
     }
 
-    protected override void Load()
+    protected override void Load(IDbConnection connection)
     {
-        Load<OperationType>((operation, type) => 
+        Load<OperationType>(connection, (operation, type) => 
         { 
             operation.OperationType = type; 
             return operation; 

@@ -10,10 +10,14 @@ using DocumentFlow.Common.Enums;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using System.ComponentModel;
+
 namespace DocumentFlow.ViewModels.Editors;
 
-public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation>, ISelfTransientLifetime
+public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation>, ISelfTransientLifetime, IDataErrorInfo
 {
+    private bool lockUpdate = false;
+
     [ObservableProperty]
     private string code = string.Empty;
 
@@ -44,6 +48,25 @@ public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation
     [ObservableProperty]
     private CalculationState calculationState;
 
+    public string Error => string.Empty;
+
+    public string this[string name]
+    {
+        get
+        {
+            string result = null!;
+
+            if (name == "Price")
+            {
+                if (Price < CostPrice)
+                {
+                    result = "Цена изделия должна быть больше себестоимости. Установка данного значения цены приводит к отрицательному значению рентабельности.";
+                }
+            }
+            return result;
+        }
+    }
+
     protected override string GetStandardHeader() => "Калькуляция";
 
     protected override void RaiseAfterLoadDocument(Calculation entity)
@@ -56,6 +79,7 @@ public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation
         Note = entity.Note;
         DateApproval = entity.DateApproval;
         StimulatingValue = entity.StimulatingValue;
+        StimulPayment = entity.StimulPayment;
         CalculationState = entity.CalculationState;
     }
 
@@ -69,10 +93,74 @@ public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation
         entity.Note = Note;
         entity.DateApproval = DateApproval;
         entity.StimulatingValue = StimulatingValue;
+        entity.StimulPayment = StimulPayment;
     }
 
     partial void OnCodeChanged(string value)
     {
         UpdateHeader(value);
+    }
+
+    partial void OnProfitPercentChanged(decimal value)
+    {
+        if (Status != EntityEditStatus.Loaded || lockUpdate)
+        {
+            return;
+        }
+
+        try
+        {
+            lockUpdate = true;
+
+            ProfitValue = CostPrice * value / 100;
+            Price = CostPrice + ProfitValue;
+        }
+        finally
+        {
+            lockUpdate = false;
+        }
+        
+    }
+
+
+    partial void OnProfitValueChanged(decimal value)
+    {
+        if (Status != EntityEditStatus.Loaded || lockUpdate)
+        {
+            return;
+        }
+
+        try
+        {
+            lockUpdate = true;
+
+            Price = CostPrice + value;
+            ProfitPercent = value * 100 / CostPrice;
+        }
+        finally
+        {
+            lockUpdate = false;
+        }
+        
+    }
+
+    partial void OnPriceChanged(decimal value)
+    {
+        if (Status != EntityEditStatus.Loaded || lockUpdate)
+        {
+            return;
+        }
+
+        try
+        {
+            lockUpdate = true;
+
+            ProfitValue = value - CostPrice;
+            ProfitPercent = ProfitValue * 100 / CostPrice;
+        }
+        finally
+        {
+            lockUpdate = false;
+        }
     }
 }

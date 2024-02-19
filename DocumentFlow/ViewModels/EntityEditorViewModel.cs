@@ -32,10 +32,11 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
-public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEntityEditorViewModel
+public abstract partial class EntityEditorViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IEntityEditorViewModel
     where T : DocumentInfo, new()
 {
     private string? headerDetails;
+    private EntityEditStatus entityEditStatus = EntityEditStatus.Created;
 
     [ObservableProperty]
     private Guid id;
@@ -58,6 +59,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
     public EntityEditorViewModel()
     {
         UpdateHeader();
+
+        WeakReferenceMessenger.Default.Register(this);
     }
 
     public ToolBarViewModel ToolBarItems { get; } = new();
@@ -65,6 +68,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
     public IEditorPageView? View { get; set; }
 
     public DocumentInfo? DocumentInfo => Entity;
+
+    protected EntityEditStatus Status => entityEditStatus;
 
     #region Commands
 
@@ -85,7 +90,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
     {
         if (Id != Guid.Empty)
         {
-            Load();
+            LoadEntity();
         }
     }
 
@@ -134,7 +139,19 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     #endregion
 
-    public void LoadDocument(Guid id, MessageOptions? options)
+    #region Receives
+
+    public void Receive(EntityActionMessage message)
+    {
+        if (message.EntityName == typeof(T).Name.Underscore() && message.Action == MessageAction.Refresh && message.Destination == MessageDestination.Object)
+        {
+            LoadDocument(message.ObjectId);
+        }
+    }
+
+    #endregion
+
+    public void LoadDocument(Guid id, MessageOptions? options = null)
     {
         Id = id;
 
@@ -143,7 +160,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
             SetOptions(options);
         }
 
-        Load();
+        LoadEntity();
     }
 
     public void CreateDocument(MessageOptions? options)
@@ -197,89 +214,60 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
         RaiseAfterLoadDocument(entity);
     }
 
-    protected virtual void Load()
+    protected void LoadEntity()
     {
         try
         {
-            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
-            Entity = DefaultQuery(conn).First<T>();
+            entityEditStatus = EntityEditStatus.Loading;
 
-            RaiseAfterLoad(conn, Entity);
+            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+            Load(conn);
+
+            if (Entity != null)
+            {
+                RaiseAfterLoad(conn, Entity);
+            }
+
+            entityEditStatus = EntityEditStatus.Loaded;
 
         }
         catch (Exception e)
         {
-            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        
-    }
-
-    protected void Load<P>(Func<T, P, T> map)
-    {
-        try
-        {
-            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
-
-            var query = DefaultQuery(conn);
-            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-            var parameters = new DynamicParameters(compiled.NamedBindings);
-            Entity = conn.Query(
-                compiled.Sql,
-                map,
-                parameters).First();
-
-            RaiseAfterLoad(conn, Entity);
-        }
-        catch (Exception e)
-        {
+            entityEditStatus = EntityEditStatus.Error;
             MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
-    protected void Load<P1, P2>(Func<T, P1, P2, T> map)
+    protected virtual void Load(IDbConnection connection)
     {
-        try
-        {
-            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
-
-            var query = DefaultQuery(conn);
-
-            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-            var parameters = new DynamicParameters(compiled.NamedBindings);
-            Entity = conn.Query(
-                compiled.Sql,
-                map,
-                parameters).First();
-
-            RaiseAfterLoad(conn, Entity);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+        Entity = DefaultQuery(connection).First<T>();
     }
 
-    protected void Load<P1, P2, P3>(Func<T, P1, P2, P3, T> map)
+    protected void Load<P>(IDbConnection connection, Func<T, P, T> map)
     {
-        try
-        {
-            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+        PrepareQuery(connection, out var compiled, out var parameters);
+        Entity = connection.Query(
+            compiled.Sql,
+            map,
+            parameters).First();
+    }
 
-            var query = DefaultQuery(conn);
+    protected void Load<P1, P2>(IDbConnection connection, Func<T, P1, P2, T> map)
+    {
+        PrepareQuery(connection, out var compiled, out var parameters);
+        Entity = connection.Query(
+            compiled.Sql,
+            map,
+            parameters).First();
+    }
 
-            var compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-            var parameters = new DynamicParameters(compiled.NamedBindings);
-            Entity = conn.Query(
-                compiled.Sql,
-                map,
-                parameters).First();
-
-            RaiseAfterLoad(conn, Entity);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+    protected void Load<P1, P2, P3>(IDbConnection connection, Func<T, P1, P2, P3, T> map)
+    {
+        PrepareQuery(connection, out var compiled, out var parameters);
+        Entity = connection.Query(
+            compiled.Sql,
+            map,
+            parameters).First();
     }
 
     protected abstract string GetStandardHeader();
@@ -320,6 +308,13 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
     private void UpdateHeader() => UpdateHeader(headerDetails ?? string.Empty);
 
+    private void PrepareQuery(IDbConnection connection, out SqlResult compiled, out DynamicParameters parameters)
+    {
+        var query = DefaultQuery(connection);
+        compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
+        parameters = new DynamicParameters(compiled.NamedBindings);
+    }
+
     private void OnSave()
     {
         try
@@ -353,7 +348,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IEnti
 
                 Id = Entity.Id;
 
-                Load();
+                LoadEntity();
                 UpdateHeader();
 
                 if (Id != Guid.Empty)
