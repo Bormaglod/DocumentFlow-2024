@@ -124,14 +124,11 @@ public static class QueryExtension
     private static string GenerateJoinAlias(this Query query)
     {
         var aliases = new List<string>();
-        var joins = query.Clauses.OfType<BaseJoin>();
+        var joins = query.GetComponents<BaseJoin>("join");
         foreach (var join in joins)
         {
-            var from = join.Join.Clauses.OfType<FromClause>().FirstOrDefault();
-            if (from != null)
-            {
-                aliases.Add(from.Alias);
-            }
+            var from = join.Join.GetOneComponent<FromClause>("from");
+            aliases.Add(from.Alias);
         }
 
         string alias;
@@ -144,17 +141,14 @@ public static class QueryExtension
 
     private static string GetJoinRefAlias(this Query query, string refTable)
     {
-        var joins = query.Clauses.OfType<BaseJoin>();
+        var joins = query.GetComponents<BaseJoin>("join");
         foreach (var join in joins)
         {
-            var from = join.Join.Clauses.OfType<FromClause>().FirstOrDefault();
-            if (from != null)
+            var from = join.Join.GetOneComponent<FromClause>("from");
+            var t = from.Table.Split("as", StringSplitOptions.TrimEntries);
+            if (t.Length > 0 && t[0] == refTable)
             {
-                var t = from.Table.Split("as", StringSplitOptions.TrimEntries);
-                if (t.Length > 0 && t[0] == refTable) 
-                {
-                    return from.Alias;
-                }
+                return from.Alias;
             }
         }
 
