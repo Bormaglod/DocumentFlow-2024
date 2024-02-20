@@ -1,0 +1,167 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Browsers.CuttingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:commands="clr-namespace:DocumentFlow.Commands"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Browsers"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:CuttingViewModel}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.Copy}}"/>
+        <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
+        <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <syncfusion:HierarchyNavigator ItemsSource="{Binding HierarchyItemsSource}" 
+                                       Grid.Row="1" 
+                                       Height="30"
+                                       ItemTemplate="{StaticResource DirectoryHierarchy}"
+                                       SelectedItem="{Binding SelectedFolder, Mode=TwoWay}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="HierarchyNavigatorRefreshButtonClick">
+                    <i:InvokeCommandAction Command="{Binding Refresh}"
+                                           CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </syncfusion:HierarchyNavigator>
+        <syncfusion:SfDataGrid x:Name="gridContent" 
+                               Grid.Row="2"
+                               ShowBusyIndicator="True"
+                               ItemsSource="{Binding DataSource}"
+                               SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                               HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
+                               RecordContextMenu="{StaticResource GridRecordContextMenu}"
+                               GroupDropAreaContextMenu="{StaticResource GroupDropAreaContextMenu}"
+                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}" 
+                               QueryRowHeight="GridContent_QueryRowHeight">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="Id"
+                                           Width="180"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="Code"
+                                           HeaderText="Код"
+                                           Width="150"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="ItemName"
+                                           HeaderText="Наименование"
+                                           ColumnSizer="AutoLastColumnFill"/>
+                <syncfusion:GridNumericColumn MappingName="Produced"
+                                              HeaderText="Выработка"
+                                              Width="100"
+                                              TextAlignment="Right"
+                                              NumberDecimalDigits="0"
+                                              NumberGroupSizes="3"/>
+                <syncfusion:GridNumericColumn MappingName="ProdTime"
+                                              HeaderText="Время выработки, сек."
+                                              Width="100"
+                                              TextAlignment="Right"
+                                              NumberDecimalDigits="0"
+                                              NumberGroupSizes="3"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
+                <syncfusion:GridNumericColumn MappingName="ProductionRate"
+                                              HeaderText="Норма выработки, ед./час"
+                                              Width="100"
+                                              TextAlignment="Right"
+                                              NumberDecimalDigits="0"
+                                              NumberGroupSizes="3"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
+                <syncfusion:GridNumericColumn MappingName="SegmentLength"
+                                              HeaderText="Длина резки"
+                                              Width="100"
+                                              NumberDecimalDigits="0"
+                                              NumberGroupSizes="3"
+                                              TextAlignment="Right"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
+                <syncfusion:GridNumericColumn MappingName="LeftCleaning"
+                                              HeaderText="Длина зачистки слева"
+                                              Width="100"
+                                              NumberDecimalDigits="1"
+                                              NumberGroupSizes="3"
+                                              TextAlignment="Right"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"
+                                              IsHidden="True"/>
+                <syncfusion:GridNumericColumn MappingName="LeftSweep"
+                                              HeaderText="Ширина окна слева"
+                                              Width="100"
+                                              NumberDecimalDigits="0"
+                                              NumberGroupSizes="3"
+                                              TextAlignment="Right"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"
+                                              IsHidden="True"/>
+                <syncfusion:GridNumericColumn MappingName="RightCleaning"
+                                              HeaderText="Длина зачистки справа"
+                                              Width="100"
+                                              NumberDecimalDigits="1"
+                                              NumberGroupSizes="3"
+                                              TextAlignment="Right"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"
+                                              IsHidden="True"/>
+                <syncfusion:GridNumericColumn MappingName="RightSweep"
+                                              HeaderText="Ширина окна справа"
+                                              Width="100"
+                                              NumberDecimalDigits="0"
+                                              NumberGroupSizes="3"
+                                              TextAlignment="Right"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"
+                                              IsHidden="True"/>
+                <syncfusion:GridNumericColumn MappingName="ProgramNumber"
+                                              HeaderText="Программа"
+                                              Width="100"
+                                              NumberDecimalDigits="0"
+                                              TextAlignment="Right"/>
+                <syncfusion:GridCurrencyColumn MappingName="Salary"
+                                               HeaderText="Зар. плата, руб."
+                                               Width="100"
+                                               CurrencyDecimalDigits="4"
+                                               HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
+                <syncfusion:GridCheckBoxColumn MappingName="OperationUsing"
+                                               HeaderText="Используется"
+                                               Width="120"/>
+                <syncfusion:GridDateTimeColumn MappingName="DateNorm"
+                                               HeaderText="Дата нормир."
+                                               Width="100"
+                                               CustomPattern="dd.MM.yyyy"
+                                               Pattern="CustomPattern"
+                                               TextAlignment="Right"
+                                               IsHidden="True"/>
+            </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="SegmentLength" 
+                                                  SortDirection="Ascending"/>
+            </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding SelectCurrentRow}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="GridContextMenuOpening">
+                    <i:InvokeCommandAction Command="{Binding PopulateListDocuments}"
+                                           CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</UserControl>

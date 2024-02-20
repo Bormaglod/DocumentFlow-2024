@@ -46,7 +46,8 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
                 AddItem<GoodsView>("Продукция")),
             AddItem<OperationTypeView>("Виды производственных операций"),
             AddFolder("Производственные операции",
-                AddItem<OperationView>("Операция")),
+                AddItem<OperationView>("Операция"),
+                AddItem<CuttingView>("Резка")),
             AddItem<EquipmentView>("Оборудование")));
 
         NavigatorModel reports = new() { Header = "Отчёты", ImageName = "icons8-folder-16" };

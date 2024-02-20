@@ -35,7 +35,7 @@ public class OperationViewModel : DirectoryViewModel<Operation>, ISelfTransientL
     {
         return base
             .SelectQuery(query)
-            .SelectRaw("exists(select 1 from calculation_operation co join calculation c ON c.id = co.owner_id where co.item_id = t0.id and c.state = 'approved'::calculation_state) as operation_using")
+            .SelectRaw("exists(select 1 from calculation_operation co join calculation c on c.id = co.owner_id where co.item_id = t0.id and c.state = 'approved'::calculation_state) as operation_using")
             .MappingQuery<Operation>(x => x.OperationType);
     }
 
