@@ -43,7 +43,7 @@ public class CalculationOperationViewModel : DirectoryViewModel<CalculationOpera
             .Select(using_operations, "using_operations")
             .SelectRaw("round((3600 * t0.repeats)::numeric / op.production_rate, 1) as produced_time")
             .SelectRaw("t0.material_amount * t0.repeats as total_material")
-            .MappingQuery<CalculationOperation>(x => x.Operation, "op")
+            .MappingQuery<CalculationOperation>(x => x.Operation, alias: "op")
             .MappingQuery<CalculationOperation>(x => x.Equipment)
             .MappingQuery<CalculationOperation>(x => x.Tools)
             .MappingQuery<CalculationOperation>(x => x.Material);
