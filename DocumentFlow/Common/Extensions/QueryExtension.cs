@@ -7,6 +7,7 @@
 using Dapper;
 
 using DocumentFlow.Common.Data;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Exceptions;
 
 using Humanizer;
@@ -88,7 +89,7 @@ public static class QueryExtension
         return list;
     }
 
-    public static Query MappingQuery<T>(this Query query, Expression<Func<T, object?>> memberExpression, string? alias = null)
+    public static Query MappingQuery<T>(this Query query, Expression<Func<T, object?>> memberExpression, QuantityInformation information = QuantityInformation.Full, string? alias = null)
     {
         alias ??= query.GenerateJoinAlias();
 
@@ -97,7 +98,7 @@ public static class QueryExtension
             var table = prop.PropertyType.Name.Underscore();
 
             var refName = $"{table}_id";
-            var refTable = "t0";
+            var refTable = query.GetOneComponent<AbstractFrom>("from").Alias ?? "t0";
 
             var attr = prop.GetCustomAttribute<ForeignKeyAttribute>();
             if (attr != null)
@@ -113,8 +114,16 @@ public static class QueryExtension
                 }
             }
 
+            var select = information switch
+            {
+                QuantityInformation.Full => "*",
+                QuantityInformation.Directory => "{id, code, item_name}",
+                QuantityInformation.DirectoryExt => "{id, code, item_name, parent_id}",
+                _ => throw new NotImplementedException()
+            };
+
             return query
-                .Select($"{alias}.*")
+                .Select($"{alias}.{select}")
                 .LeftJoin($"{table} as {alias}", $"{alias}.id", $"{refTable}.{refName}");
         }
 
