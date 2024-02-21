@@ -6,28 +6,48 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using DocumentFlow.Common;
+using Dapper;
+
 using DocumentFlow.Common.Collections;
-using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
-using SqlKata;
-
-using Syncfusion.Windows.Shared;
-
 using System.Data;
-using System.Windows;
 using System.Windows.Input;
+using System.Windows;
+using Syncfusion.Windows.Shared;
+using DocumentFlow.Common;
+using SqlKata;
 
 namespace DocumentFlow.ViewModels.Editors;
 
-public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISelfTransientLifetime
+public partial class OperationViewModel : DirectoryEditorViewModel<Operation>, ISelfTransientLifetime
 {
     [ObservableProperty]
+    private string code = string.Empty;
+
+    [ObservableProperty]
+    private string? itemName;
+
+    [ObservableProperty]
     private OperationType? operationType;
+
+    [ObservableProperty]
+    private int produced;
+
+    [ObservableProperty]
+    private int prodTime;
+
+    [ObservableProperty]
+    private int productionRate;
+
+    [ObservableProperty]
+    private DateTime? dateNorm;
+
+    [ObservableProperty]
+    private decimal salary;
 
     [ObservableProperty]
     private IList<OperationGoods>? operationGoods;
@@ -167,14 +187,28 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
 
     protected override void RaiseAfterLoadDocument(Operation entity)
     {
-        base.RaiseAfterLoadDocument(entity);
+        Code = entity.Code;
+        ParentId = entity.ParentId;
+        ItemName = entity.ItemName;
         OperationType = entity.OperationType;
+        Produced = entity.Produced;
+        ProdTime = entity.ProdTime;
+        ProductionRate = entity.ProductionRate;
+        DateNorm = entity.DateNorm;
+        Salary = entity.Salary;
     }
 
     protected override void UpdateEntity(Operation entity)
     {
-        base.UpdateEntity(entity);
+        entity.Code = Code;
+        entity.ParentId = ParentId;
+        entity.ItemName = ItemName;
         entity.OperationType = OperationType;
+        entity.Produced = Produced;
+        entity.ProdTime = ProdTime;
+        entity.ProductionRate = ProductionRate;
+        entity.DateNorm = DateNorm;
+        entity.Salary = Salary;
     }
 
     protected override Query SelectQuery(Query query)
@@ -201,17 +235,12 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
 
         if (entity != null)
         {
-            var res = connection.GetQuery<OperationGoods>(alias: "og")
-                .Select("og.*")
-                .MappingQuery<OperationGoods>(x => x.Goods, QuantityInformation.Directory)
-                .Where("og.owner_id", entity.Id)
-                .Get<OperationGoods, Goods>(
-                    map: (og, goods) =>
-                    {
-                        og.Goods = goods;
-                        return og;
-                    }
-                );
+            var sql = "select og.*, g.id, g.code, g.item_name from operation_goods as og left join goods g on g.id = og.goods_id where og.owner_id = :Id";
+            var res = connection.Query<OperationGoods, Goods, OperationGoods>(sql, (og, goods) =>
+            {
+                og.Goods = goods;
+                return og;
+            }, entity);
 
             OperationGoods = new DependentCollection<OperationGoods>(entity, res);
         }
@@ -223,5 +252,10 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         {
             connection.UpdateDependents(OperationGoods, transaction);
         }
+    }
+
+    partial void OnItemNameChanged(string? value)
+    {
+        UpdateHeader(value ?? "?");
     }
 }
