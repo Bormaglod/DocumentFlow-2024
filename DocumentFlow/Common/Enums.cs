@@ -8,6 +8,13 @@ using System.ComponentModel;
 
 namespace DocumentFlow.Common.Enums;
 
+public enum QuantityInformation
+{
+    Full,
+    Directory,
+    DirectoryExt
+}
+
 public enum EntityEditStatus
 {
     Created,
