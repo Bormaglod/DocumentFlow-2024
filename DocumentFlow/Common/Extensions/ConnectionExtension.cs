@@ -13,6 +13,8 @@ using DocumentFlow.Models.Entities;
 
 using Humanizer;
 
+using Microsoft.VisualBasic;
+
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
@@ -26,18 +28,37 @@ namespace DocumentFlow.Common.Extensions;
 
 public static class ConnectionExtension
 {
-    public static Query GetQuery<T>(this IDbConnection connection, QueryParemeters? parameters = null, string? alias = null)
+    public static Query GetQuery<T>(this IDbConnection connection, QueryParemeters? parameters = null)
     {
         var factory = new QueryFactory(connection, new PostgresCompiler());
 
-        if((parameters ?? QueryParemeters.Default).FromOnly)
+        parameters ??= QueryParemeters.Default;
+
+        var table = parameters.Table ?? typeof(T).Name.Underscore();
+
+        Query query;
+        if (parameters.FromOnly)
         {
-            return factory.Query().FromRaw($"only {typeof(T).Name.Underscore()} as {alias ?? "t0"}");
+            query = factory.Query().FromRaw($"only {table} as {parameters.Alias}");
         }
         else
         {
-            return factory.Query($"{typeof(T).Name.Underscore()} as {alias ?? "t0"}");
+            query = factory.Query($"{table} as {parameters.Alias}");
         }
+
+        var select = parameters.Quantity switch
+        {
+            QuantityInformation.Full => "*",
+            QuantityInformation.Id => "id",
+            QuantityInformation.Directory => "{id, code, item_name}",
+            QuantityInformation.DirectoryExt => "{id, code, item_name, parent_id}",
+            QuantityInformation.None => string.Empty,
+            _ => throw new NotImplementedException()
+        };
+
+        query.When(!string.IsNullOrEmpty(select), q => q.Select($"{parameters.Alias}.{select}"));
+
+        return query;
     }
 
     public static void UpdateDependents(this IDbConnection connection, object collection, IDbTransaction? transaction = null)

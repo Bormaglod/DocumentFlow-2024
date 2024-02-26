@@ -21,7 +21,6 @@ public class BalanceContractorViewModel : BalanceViewModel<BalanceContractor>, I
     protected override IReadOnlyList<BalanceContractor> GetData(IDbConnection connection, Guid? id = null)
     {
         return connection.GetQuery<BalanceContractor>()
-            .Select("t0.*")
             .SelectRaw("case when amount > 0 then operation_summa else null end as contractor_debt")
             .SelectRaw("case when amount < 0 then operation_summa else null end as organization_debt")
             .SelectRaw("sum(operation_summa * sign(amount)) over (order by t0.document_date, t0.document_number) as debt")

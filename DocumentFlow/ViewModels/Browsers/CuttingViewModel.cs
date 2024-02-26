@@ -17,7 +17,7 @@ public class CuttingViewModel : DirectoryViewModel<Cutting>, ISelfTransientLifet
 
     public CuttingViewModel(IDatabase database) : base(database) { }
 
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.OperationView);
+    public override Type? GetEditorViewType() => typeof(Views.Editors.CuttingView);
 
     protected override void ConfigureColumn(IColumnInfo columnInfo)
     {

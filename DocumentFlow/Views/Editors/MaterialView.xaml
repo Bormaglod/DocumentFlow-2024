@@ -272,7 +272,6 @@
                 <views:CustomerView Margin="5"
                         Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
                         AvailableGrouping="False"
-                        AvailableNavigation="False"
                         SizeMode="Small"/>
             </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Остатки">

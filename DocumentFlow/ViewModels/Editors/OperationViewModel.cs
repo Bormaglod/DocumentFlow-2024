@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
+using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
@@ -201,8 +202,12 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
 
         if (entity != null)
         {
-            var res = connection.GetQuery<OperationGoods>(alias: "og")
-                .Select("og.*")
+            var parameters = new QueryParemeters() 
+            { 
+                Alias = "og"
+            };
+
+            var res = connection.GetQuery<OperationGoods>(parameters)
                 .MappingQuery<OperationGoods>(x => x.Goods, QuantityInformation.Directory)
                 .Where("og.owner_id", entity.Id)
                 .Get<OperationGoods, Goods>(

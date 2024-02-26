@@ -471,7 +471,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             return CanEditSelected(item);
         }
 
-        return false;
+        return true;
     }
 
     protected virtual bool CanEditSelected(T selectedItem)
@@ -513,8 +513,9 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected Query DefaultQuery(IDbConnection conn, Guid? id = null, QueryParemeters? parameters = null)
     {
-        return SelectQuery(RequiredQuery(conn, parameters ?? QueryParemeters.Default))
-            .When(id != null, q => q.Where("t0.id", id));
+        parameters ??= QueryParemeters.Default;
+        return SelectQuery(RequiredQuery(conn, parameters))
+            .When(id != null, q => q.Where($"{parameters.Alias}.id", id));
     }
 
     protected virtual Query SelectQuery(Query query) => query;
@@ -525,24 +526,19 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         var query = connection.GetQuery<T>(parameters);
 
-        if (query.Clauses.FirstOrDefault(c => c.Component == "select") == null)
-        {
-            query = query.Select("t0.*");
-        }
-
         query.When(
             Owner != null,
-            q => q.Where($"t0.owner_id", Owner!.Id));
+            q => q.Where($"{parameters.Alias}.{parameters.OwnerIdName}", Owner!.Id));
 
         if (parameters.IncludeDocumentsInfo && database.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
         {
             query = query
-                .SelectRaw("exists(select 1 from document_refs dr where dr.owner_id = t0.id) as has_documents")
-                .SelectRaw("(exists (select 1 from document_refs dr where ((dr.owner_id = t0.id) and (dr.thumbnail IS not null)))) AS has_thumbnails");
+                .SelectRaw($"exists(select 1 from document_refs dr where dr.owner_id = {parameters.Alias}.id) as has_documents")
+                .SelectRaw($"(exists (select 1 from document_refs dr where ((dr.owner_id = {parameters.Alias}.id) and (dr.thumbnail is not null)))) AS has_thumbnails");
             var grp = query.Clauses.Where(c => c.Component == "group").OfType<Column>();
-            if (grp.Any() && grp.FirstOrDefault(x => x.Name == "t0.id") == null)
+            if (grp.Any() && grp.FirstOrDefault(x => x.Name == $"{parameters.Alias}.id") == null)
             {
-                query = query.GroupBy("t0.id");
+                query = query.GroupBy($"{parameters.Alias}.id");
             }
         }
 
@@ -786,13 +782,5 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
 
         RefreshDataSource();
-    }
-
-    partial void OnOwnerChanged(DocumentInfo? oldValue, DocumentInfo? newValue)
-    {
-        if (oldValue?.Id != newValue?.Id) 
-        {
-            RefreshDataSource();
-        }
     }
 }

@@ -23,7 +23,7 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class CustomerViewModel : DirectoryViewModel<Customer>, ISelfTransientLifetime
+public class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTransientLifetime
 {
     public CustomerViewModel() 
     {
@@ -98,9 +98,9 @@ public class CustomerViewModel : DirectoryViewModel<Customer>, ISelfTransientLif
 
     private void OnOpenAppContract(object parameter)
     {
-        if (SelectedItem is Customer customer && customer.ContractId.HasValue)
+        if (SelectedItem is Customer customer && customer.ApplicationId.HasValue)
         {
-            //WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ContractorView), customer.ContractId.Value));
+            WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ContractApplicationView), customer.ApplicationId.Value));
         }
     }
 

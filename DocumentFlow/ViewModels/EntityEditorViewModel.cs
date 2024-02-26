@@ -369,16 +369,16 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         }
     }
 
-    private Query DefaultQuery(IDbConnection connection)
+    private Query DefaultQuery(IDbConnection connection, QueryParemeters? parameters = null)
     {
+        parameters ??= QueryParemeters.Default;
         var query = SelectQuery(
-            connection.GetQuery<T>()
-                .Select("t0.*")
+            connection.GetQuery<T>(parameters)
                 .Select("u1.name as user_created")
                 .Select("u2.name as user_updated")
                 .Join("user_alias as u1", "t0.user_created_id", "u1.id")
                 .Join("user_alias as u2", "t0.user_updated_id", "u2.id")
-                .Where("t0.id", Id));
+                .Where($"{parameters.Alias}.id", Id));
         return query;
     }
 

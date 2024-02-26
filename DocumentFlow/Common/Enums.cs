@@ -11,8 +11,10 @@ namespace DocumentFlow.Common.Enums;
 public enum QuantityInformation
 {
     Full,
+    Id,
     Directory,
-    DirectoryExt
+    DirectoryExt,
+    None
 }
 
 public enum EntityEditStatus

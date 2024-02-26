@@ -6,6 +6,8 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 
+using DocumentFlow.Common.Data;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
@@ -84,7 +86,7 @@ public class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfT
 
     protected override IReadOnlyList<MaterialUsage> GetData(IDbConnection connection, Guid? id = null)
     {
-        return connection.GetQuery<CalculationMaterial>()
+        return connection.GetQuery<CalculationMaterial>(new QueryParemeters() { Quantity = QuantityInformation.None })
             .Select("t0.{id, amount}")
             .Select("t0.item_id as owner_id")
             .MappingQuery<MaterialUsage>(x => x.Calculation)

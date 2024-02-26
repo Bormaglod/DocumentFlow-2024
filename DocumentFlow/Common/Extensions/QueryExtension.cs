@@ -8,14 +8,11 @@ using Dapper;
 
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
-using DocumentFlow.Common.Exceptions;
 
 using Humanizer;
 
 using SqlKata;
 using SqlKata.Execution;
-
-using Syncfusion.Windows.Controls.Input.Resources;
 
 using System.Data;
 using System.Linq.Expressions;
@@ -117,13 +114,16 @@ public static class QueryExtension
             var select = information switch
             {
                 QuantityInformation.Full => "*",
+                QuantityInformation.Id => "id",
                 QuantityInformation.Directory => "{id, code, item_name}",
                 QuantityInformation.DirectoryExt => "{id, code, item_name, parent_id}",
+                QuantityInformation.None => string.Empty,
                 _ => throw new NotImplementedException()
             };
 
             return query
-                .Select($"{alias}.{select}")
+                .When(!string.IsNullOrEmpty(select), q => q
+                    .Select($"{alias}.{select}"))
                 .LeftJoin($"{table} as {alias}", $"{alias}.id", $"{refTable}.{refName}");
         }
 

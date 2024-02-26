@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
@@ -26,7 +27,6 @@ public class MaterialViewModel : ProductViewModel<Material>, ISelfTransientLifet
     {
         return base
             .SelectQuery(query)
-            .From("material_ext as t0")
             .MappingQuery<Material>(x => x.Measurement)
             .MappingQuery<Material>(x => x.Wire)
             .MappingQuery<Material>(x => x.Cross);
@@ -34,6 +34,11 @@ public class MaterialViewModel : ProductViewModel<Material>, ISelfTransientLifet
 
     protected override IReadOnlyList<Material> GetData(IDbConnection connection, Guid? id)
     {
+        var parameters = new QueryParemeters()
+        {
+            Table = "material_ext"
+        };
+
         return DefaultQuery(connection, id)
             .Get<Material, Measurement, Wire, Material>(
                 map: (material, measurement, wire, cross) =>

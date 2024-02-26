@@ -24,7 +24,6 @@ public abstract class BalanceProductViewModel<T> : BalanceViewModel<T>
     protected override IReadOnlyList<T> GetData(IDbConnection connection, Guid? id = null)
     {
         return connection.GetQuery<T>()
-            .Select("t0.*")
             .SelectRaw("case when amount > 0 then amount else null end as income")
             .SelectRaw("case when amount < 0 then @amount else null end as expense")
             .SelectRaw("sum(amount) over (order by document_date, document_number) as remainder")

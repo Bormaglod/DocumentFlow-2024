@@ -6,9 +6,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:local="clr-namespace:DocumentFlow"
-             xmlns:common="clr-namespace:DocumentFlow.Common"
-             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
-             xmlns:enums="clr-namespace:DocumentFlow.Common.Enums"
              xmlns:c="clr-namespace:DocumentFlow.Controls"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
              xmlns:views="clr-namespace:DocumentFlow.Views.Browsers"
@@ -231,6 +228,12 @@
                                    Grid.Row="2"/>
         <syncfusion:TabControlExt Grid.Row="3"
                                   Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Использование операции">
+                <views:OperationUsageView Margin="5"
+                                          Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                          AvailableGrouping="False"
+                                          SizeMode="Small"/>
+            </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Документы">
                 <c:DocumentsList Margin="5" 
                                  DocumentInfo="{Binding Entity}"/>

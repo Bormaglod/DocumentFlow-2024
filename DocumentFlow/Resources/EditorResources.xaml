@@ -86,11 +86,23 @@
     </Style>
 
     <Style x:Key="IntegerTextBoxStyle" 
-       TargetType="{x:Type syncfusion:IntegerTextBox}"
-       BasedOn="{StaticResource SyncfusionIntegerTextBoxStyle}">
+           TargetType="{x:Type syncfusion:IntegerTextBox}"
+           BasedOn="{StaticResource SyncfusionIntegerTextBoxStyle}">
         <Setter Property="Margin" Value="0,0,0,5"/>
         <Setter Property="IsEnabled" Value="{Binding Path=DataContext.Enabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style x:Key="IntegerTextBoxErrorStyle"
+           TargetType="{x:Type syncfusion:IntegerTextBox}"
+           BasedOn="{StaticResource IntegerTextBoxStyle}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" 
+                     Value="true">
+                <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="DoubleTextBoxStyle" 
@@ -99,6 +111,18 @@
         <Setter Property="Margin" Value="0,0,0,5"/>
         <Setter Property="IsEnabled" Value="{Binding Path=DataContext.Enabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style x:Key="DoubleTextBoxErrorStyle"
+           TargetType="{x:Type syncfusion:DoubleTextBox}"
+           BasedOn="{StaticResource DoubleTextBoxStyle}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" 
+                     Value="true">
+                <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="PercentTextBoxStyle" 

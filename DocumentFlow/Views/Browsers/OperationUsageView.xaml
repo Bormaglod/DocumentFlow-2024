@@ -1,8 +1,7 @@
-﻿<UserControl x:Class="DocumentFlow.Views.Browsers.CustomerView"
+﻿<UserControl x:Class="DocumentFlow.Views.Browsers.OperationUsageView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:local="clr-namespace:DocumentFlow"
@@ -11,7 +10,7 @@
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:CustomerViewModel}">
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:OperationUsageViewModel}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -46,38 +45,35 @@
                                GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
+                                           HeaderText="Идентификатор"
                                            Width="180"
                                            IsHidden="True"/>
-                <syncfusion:GridTextColumn MappingName="Code"
-                                           HeaderText="Наименование"
+                <syncfusion:GridTextColumn MappingName="Goods.Code"
+                                           HeaderText="Артикул"
+                                           Width="140"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="Goods.Id"
+                                           HeaderText="Идентификатор изделия"
+                                           Width="180"
+                                           IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="Goods"
+                                           HeaderText="Изделие"
                                            ColumnSizer="AutoLastColumnFill"/>
-                <syncfusion:GridTextColumn MappingName="DocName"
-                                           HeaderText="Наименование документа"
-                                           Width="400"/>
-                <syncfusion:GridTextColumn MappingName="DocNumber"
-                                           HeaderText="Номер документа"
+                <syncfusion:GridTextColumn MappingName="Calculation"
+                                           HeaderText="Калькуляция"
                                            Width="150"/>
-                <syncfusion:GridDateTimeColumn MappingName="DateStart"
-                                               HeaderText="Начиная с..."
-                                               Width="120"
-                                               CustomPattern="dd.MM.yyyy"
-                                               Pattern="CustomPattern"
-                                               TextAlignment="Right"/>
-                <syncfusion:GridCurrencyColumn MappingName="Price"
-                                               HeaderText="Цена"
-                                               Width="100"
-                                               CurrencyDecimalDigits="2"/>
+                <syncfusion:GridNumericColumn MappingName="Amount"
+                                              HeaderText="Количество"
+                                              Width="120"
+                                              NumberDecimalDigits="3"
+                                              TextAlignment="Right"/>
             </syncfusion:SfDataGrid.Columns>
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="Code" 
+                <syncfusion:SortColumnDescription ColumnName="Goods" 
+                                                  SortDirection="Ascending"/>
+                <syncfusion:SortColumnDescription ColumnName="Calculation" 
                                                   SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="GridContextMenuOpening">
-                    <i:InvokeCommandAction Command="{Binding PopulateListDocuments}"
-                                           CommandParameter="{Binding}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
         </syncfusion:SfDataGrid>
     </Grid>
 </UserControl>

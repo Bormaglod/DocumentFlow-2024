@@ -16,11 +16,11 @@ using System.Windows.Controls;
 namespace DocumentFlow.Views.Browsers;
 
 /// <summary>
-/// Логика взаимодействия для CustomerView.xaml
+/// Логика взаимодействия для OperationUsageView.xaml
 /// </summary>
-public partial class CustomerView : UserControl, IGridPageView, ISelfTransientLifetime
+public partial class OperationUsageView : UserControl, IGridPageView, ISelfTransientLifetime
 {
-    public CustomerView()
+    public OperationUsageView()
     {
         InitializeComponent();
     }
@@ -48,19 +48,19 @@ public partial class CustomerView : UserControl, IGridPageView, ISelfTransientLi
     public static readonly DependencyProperty OwnerProperty = DependencyProperty.Register(
         nameof(Owner),
         typeof(object),
-        typeof(CustomerView),
+        typeof(OperationUsageView),
         new FrameworkPropertyMetadata(OnOwnerChanged));
 
     public static readonly DependencyProperty AvailableGroupingProperty = DependencyProperty.Register(
         nameof(AvailableGrouping),
         typeof(bool),
-        typeof(CustomerView),
+        typeof(OperationUsageView),
         new FrameworkPropertyMetadata(true, OnAvailableGroupingChanged));
 
     public static readonly DependencyProperty SizeModeProperty = DependencyProperty.Register(
         nameof(SizeMode),
         typeof(SizeMode),
-        typeof(CustomerView),
+        typeof(OperationUsageView),
         new FrameworkPropertyMetadata(SizeMode.Normal, OnSizeModeChanged));
 
     private static void OnOwnerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
