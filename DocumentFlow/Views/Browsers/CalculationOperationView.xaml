@@ -123,7 +123,7 @@
             </syncfusion:SfDataGrid.StackedHeaderRows>
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Code" 
-                                                  SortDirection="Descending"/>
+                                                  SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
