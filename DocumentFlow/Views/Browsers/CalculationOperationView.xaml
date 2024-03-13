@@ -6,6 +6,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:selectors="clr-namespace:DocumentFlow.Common.Selectors"
              xmlns:commands="clr-namespace:DocumentFlow.Commands"
              xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Browsers"
@@ -20,6 +22,8 @@
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <converters:ArrayStringConverter x:Key="arrayStringConverter"/>
+            <common:DocumentInfoAggregate x:Key="infoAggregate"/>
+            <selectors:TableSummaryStyleSelector x:Key="tableSummaryStyleSelector"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -46,7 +50,8 @@
                                HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
                                RecordContextMenu="{StaticResource GridRecordContextMenu}"
                                GroupDropAreaContextMenu="{StaticResource GroupDropAreaContextMenu}"
-                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}">
+                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}"
+                               TableSummaryCellStyleSelector="{StaticResource tableSummaryStyleSelector}">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
@@ -125,6 +130,32 @@
                 <syncfusion:SortColumnDescription ColumnName="Code" 
                                                   SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <syncfusion:SfDataGrid.TableSummaryRows>
+                <syncfusion:GridTableSummaryRow ShowSummaryInRow="False">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="ItemsCount" 
+                                                      MappingName="ItemName"
+                                                      Format="'Всего наименований: {Count:d}'"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom"/>
+                        <syncfusion:GridSummaryColumn Name="StimulCost" 
+                                                      MappingName="StimulCost"
+                                                      Format="'{Sum:c}'"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom"/>
+                        <syncfusion:GridSummaryColumn Name="ProducedTime" 
+                                                      Format="'{Sum}'"
+                                                      MappingName="ProducedTime"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom" />
+                        <syncfusion:GridSummaryColumn Name="ItemCost" 
+                                                      MappingName="ItemCost"
+                                                      Format="'{Sum:c}'"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom" />
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridTableSummaryRow>
+            </syncfusion:SfDataGrid.TableSummaryRows>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding SelectCurrentRow}"/>

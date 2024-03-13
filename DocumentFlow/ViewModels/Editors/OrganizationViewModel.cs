@@ -10,6 +10,7 @@ using Dapper;
 
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
@@ -20,6 +21,9 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class OrganizationViewModel : DirectoryEditorViewModel<Organization>, ISelfTransientLifetime
 {
+    private readonly IOkopfRepository okopfRepository = null!;
+    private readonly IOurAccountRepository ourAccountRepository = null!;
+
     [ObservableProperty]
     private string code = string.Empty;
 
@@ -63,10 +67,17 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
     private IEnumerable<Okopf>? okopfs;
 
     [ObservableProperty]
-    private IEnumerable<Account>? accounts;
+    private IEnumerable<OurAccount>? accounts;
+
+    public OrganizationViewModel() { }
+
+    public OrganizationViewModel(IOkopfRepository okopfRepository, IOurAccountRepository ourAccountRepository) : base()
+    {
+        this.okopfRepository = okopfRepository;
+        this.ourAccountRepository = ourAccountRepository;
+    }
 
     protected override string GetStandardHeader() => "Организация";
-
 
     protected override Query SelectQuery(Query query)
     {
@@ -78,7 +89,7 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
 
     protected override void Load(IDbConnection connection)
     {
-        Load<Okopf, Account>(connection, (org, okopf, account) => 
+        Load<Okopf, OurAccount>(connection, (org, okopf, account) => 
         { 
             org.Okopf = okopf; 
             org.Account = account;
@@ -89,8 +100,8 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
     protected override void InitializeEntityCollections(IDbConnection connection, Organization? org)
     {
         base.InitializeEntityCollections(connection, org);
-        Okopfs = GetForeignData<Okopf>(connection);
-        Accounts = GetForeignData<Account>(connection, Id);
+        Okopfs = okopfRepository.GetSlim(connection);
+        Accounts = ourAccountRepository.GetAccounts(connection);
     }
 
     protected override void RaiseAfterLoadDocument(Organization entity)

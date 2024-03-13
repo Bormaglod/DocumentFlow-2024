@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Editors.CalculationDeductionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:c="clr-namespace:DocumentFlow.Controls"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
+             xmlns:editors="clr-namespace:DocumentFlow.Views.Editors"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:enums="clr-namespace:DocumentFlow.Common.Enums"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="800" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:CalculationDeductionViewModel, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorButtonResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:InverseEnumToRowVisibleConverter x:Key="inverseEnumToRowVisibleConverter"/>
+            <converters:DeductionCostEnabledConverter x:Key="deductionCostEnabledConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="{Binding NestedWindowsHeight}"/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <ScrollViewer Grid.Row="1" >
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="{Binding Deduction.BaseDeduction, Converter={StaticResource inverseEnumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}"/>
+                    <RowDefinition Height="{Binding Deduction.BaseDeduction, Converter={StaticResource inverseEnumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Калькуляция"
+                           Style="{StaticResource TextBlockHeaderStyle}"
+                           Grid.Row="0"/>
+                <TextBlock Text="Удержание"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="1"/>
+                <TextBlock Text="Сумма с которой произв. удерж."
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="2"/>
+                <TextBlock Text="Процент"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="3"/>
+                <TextBlock Text="Сумма удержания"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="4"/>
+                <TextBlock Text="{Binding Owner}"
+                           Style="{StaticResource TextBlockOwnerStyle}"
+                           Grid.Row="0" Grid.Column="1"/>
+                <c:ComboBox SelectedItem="{Binding Deduction}"
+                            ItemsSource="{Binding Deductions}"
+                            Width="400"
+                            Grid.Row="1" Grid.Column="1"
+                            Style="{StaticResource ExtComboBoxStyle}"
+                            EditorType="{x:Type editors:DeductionView}"/>
+                <syncfusion:CurrencyTextBox Value="{Binding Price, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="100"
+                                            Grid.Row="2" Grid.Column="1"
+                                            Style="{StaticResource CurrencyTextBoxStyle}"
+                                            CurrencyDecimalDigits="2"/>
+                <syncfusion:PercentTextBox PercentValue="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                           Width="100"
+                                           Grid.Row="3" Grid.Column="1"
+                                           Style="{StaticResource PercentTextBoxStyle}"/>
+                <syncfusion:CurrencyTextBox Value="{Binding ItemCost, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="100"
+                                            Grid.Row="4" Grid.Column="1"
+                                            Style="{StaticResource CurrencyTextBoxDisabledStyle}"
+                                            CurrencyDecimalDigits="2">
+                    <syncfusion:CurrencyTextBox.IsEnabled>
+                        <MultiBinding Converter="{StaticResource deductionCostEnabledConverter}">
+                            <Binding Path="Enabled"/>
+                            <Binding Path="Deduction"/>
+                        </MultiBinding>
+                    </syncfusion:CurrencyTextBox.IsEnabled>   
+                </syncfusion:CurrencyTextBox>
+            </Grid>
+        </ScrollViewer>
+        <syncfusion:SfGridSplitter Name="gridSplitter"
+                                   HorizontalAlignment="Stretch"
+                                   ResizeBehavior="PreviousAndNext"
+                                   Width="auto"
+                                   Grid.Row="2"/>
+        <syncfusion:TabControlExt Grid.Row="3"
+                                  Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Документы">
+                <c:DocumentsList Margin="5" 
+                                 DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Информация">
+                <c:EntityInfo Margin="5"
+                              DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+        </syncfusion:TabControlExt>
+    </Grid>
+</UserControl>

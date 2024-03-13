@@ -9,11 +9,14 @@
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Version>5.0.0.40227</Version>
+		<Version>5.0.0.40313</Version>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Images\icons8-add-16.png" />
+	  <None Remove="Images\icons8-calculate-16.png" />
+	  <None Remove="Images\icons8-calculate-30.png" />
 	  <None Remove="Images\icons8-calculation-16.png" />
 	  <None Remove="Images\icons8-calculation-30.png" />
 	  <None Remove="Images\icons8-collapse-16.png" />
@@ -28,6 +31,8 @@
 	  <None Remove="Images\icons8-copy-edit-30.png" />
 	  <None Remove="Images\icons8-crop-16.png" />
 	  <None Remove="Images\icons8-delete-16.png" />
+	  <None Remove="Images\icons8-discount-16.png" />
+	  <None Remove="Images\icons8-discount-30.png" />
 	  <None Remove="Images\icons8-document-16.png" />
 	  <None Remove="Images\icons8-document-attached-16.png" />
 	  <None Remove="Images\icons8-document-attached-images-16.png" />
@@ -67,6 +72,8 @@
 	  <None Remove="Images\icons8-redo-16.png" />
 	  <None Remove="Images\icons8-rescan-document-16.png" />
 	  <None Remove="Images\icons8-rescan-document-30.png" />
+	  <None Remove="Images\icons8-robot-16.png" />
+	  <None Remove="Images\icons8-robot-30.png" />
 	  <None Remove="Images\icons8-rotate-180-16.png" />
 	  <None Remove="Images\icons8-rotate-back90-16.png" />
 	  <None Remove="Images\icons8-rotate-clockwise-16.png" />
@@ -79,6 +86,8 @@
 	  <None Remove="Images\icons8-settings-16.png" />
 	  <None Remove="Images\icons8-settings-3-16.png" />
 	  <None Remove="Images\icons8-settings-30.png" />
+	  <None Remove="Images\icons8-sigma-16.png" />
+	  <None Remove="Images\icons8-sigma-30.png" />
 	  <None Remove="Images\icons8-sort-by-asc-16.png" />
 	  <None Remove="Images\icons8-sort-by-desc-16.png" />
 	  <None Remove="Images\icons8-sort-clear-16.png" />
@@ -89,13 +98,14 @@
 	  <None Remove="Images\icons8-trash2-16.png" />
 	  <None Remove="Images\icons8-undo-16.png" />
 	  <None Remove="Images\insufficient.png" />
+	  <None Remove="Images\pencil-16.png" />
 	  <None Remove="Images\perfect.png" />
 	  <None Remove="Images\sufficient.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="Dapper" Version="2.1.28" />
+		<PackageReference Include="Dapper" Version="2.1.35" />
 		<PackageReference Include="FastReport.Data.Postgres" Version="2024.1.0" />
 		<PackageReference Include="FastReport.OpenSource" Version="2024.1.7" />
 		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
@@ -151,6 +161,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Resource Include="Images\icons8-add-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-calculate-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-calculate-30.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-calculation-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
@@ -191,6 +210,12 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-delete-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-discount-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-discount-30.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-document-16.png">
@@ -310,6 +335,12 @@
 	  <Resource Include="Images\icons8-rescan-document-30.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
+	  <Resource Include="Images\icons8-robot-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-robot-30.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-rotate-180-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
@@ -346,6 +377,12 @@
 	  <Resource Include="Images\icons8-settings-30.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
+	  <Resource Include="Images\icons8-sigma-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-sigma-30.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-sort-by-asc-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
@@ -371,6 +408,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\insufficient.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\pencil-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\perfect.png">

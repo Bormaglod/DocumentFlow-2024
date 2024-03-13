@@ -7,6 +7,7 @@
 using Dapper;
 
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Xaml.Behaviors;
@@ -39,26 +40,14 @@ public class CalculationStateEndEditTrigger : TargetedTriggerAction<SfDataGrid>
             {
                 try
                 {
-                    using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
-                    var transaction = conn.BeginTransaction();
+                    ServiceLocator.Context.GetService<ICalculationRepository>().SetState(calculation);
 
-                    try
-                    {
-                        conn.Execute("update calculation set state = :State::calculation_state where id = :Id", calculation, transaction);
-                        transaction.Commit();
-
-                        datarow.Element.DataContext = null;
-                        Target.UpdateDataRow(args.RowColumnIndex.RowIndex);
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        calculation.CancelEdit();
-                        throw;
-                    }
+                    datarow.Element.DataContext = null;
+                    Target.UpdateDataRow(args.RowColumnIndex.RowIndex);
                 }
                 catch (Exception e)
                 {
+                    calculation.CancelEdit();
                     MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }

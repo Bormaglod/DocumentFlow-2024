@@ -9,7 +9,11 @@
                               SmallIcon="{Binding SmallIcon}"
                               Command="{Binding Command}"
                               CommandParameter="{Binding}"
-                              SizeMode="{Binding PlacementTarget.SizeMode}"/>
+                              SizeMode="{Binding PlacementTarget.SizeMode}">
+            <syncfusion:ButtonAdv.ToolTip>
+                <TextBlock Text="{Binding Hint}"/>
+            </syncfusion:ButtonAdv.ToolTip>
+        </syncfusion:ButtonAdv>
     </DataTemplate>
     <DataTemplate DataType="{x:Type m:ToolBarSeparatorModel}">
         <Separator/>
@@ -18,7 +22,11 @@
         <syncfusion:DropDownButtonAdv Label="{Binding Label}"
                                       LargeIcon="{Binding LargeIcon}"
                                       SmallIcon="{Binding SmallIcon}"
-                                      SizeMode="{Binding PlacementTarget.SizeMode}"/>
+                                      SizeMode="{Binding PlacementTarget.SizeMode}">
+            <syncfusion:DropDownButtonAdv.ToolTip>
+                <TextBlock Text="{Binding Hint}"/>
+            </syncfusion:DropDownButtonAdv.ToolTip>
+        </syncfusion:DropDownButtonAdv>
     </DataTemplate>
     <DataTemplate DataType="{x:Type m:ToolBarGroupingButtonModel}">
         <syncfusion:ButtonAdv Label="{Binding Label}"
@@ -27,6 +35,10 @@
                               Command="{Binding Command}"
                               CommandParameter="{Binding}"
                               SizeMode="{Binding PlacementTarget.SizeMode}"
-                              Visibility="{Binding PlacementTarget.AvailableNavigation, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                              Visibility="{Binding PlacementTarget.AvailableNavigation, Converter={StaticResource BoolToVisibilityConverter}}">
+            <syncfusion:ButtonAdv.ToolTip>
+                <TextBlock Text="{Binding Hint}"/>
+            </syncfusion:ButtonAdv.ToolTip>
+        </syncfusion:ButtonAdv>
     </DataTemplate>
 </ResourceDictionary>

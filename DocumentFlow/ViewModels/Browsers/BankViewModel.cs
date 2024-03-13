@@ -9,7 +9,7 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class BankViewModel : DirectoryViewModel<Bank>, ISelfTransientLifetime
+public sealed class BankViewModel : DirectoryViewModel<Bank>, ISelfTransientLifetime
 {
     public BankViewModel() { }
 

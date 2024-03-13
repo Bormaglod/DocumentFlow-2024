@@ -61,8 +61,6 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         public bool AlwaysVisible { get; set; }
     }
 
-    private readonly IDatabase database;
-
     private readonly List<GridColumn> alwaysVisibleColumns = new();
 
     [ObservableProperty]
@@ -93,12 +91,15 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     private SizeMode sizeMode = SizeMode.Normal;
 
 #pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
-    public EntityGridViewModel() { }
+    public EntityGridViewModel() 
+    {
+        InitializeToolBar();
+    }
 #pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
     public EntityGridViewModel(IDatabase database)
     {
-        this.database = database;
+        CurrentDatabase = database;
 
         foreach (var context in CreationBasedManager.GetEditors(GetType()))
         {
@@ -113,9 +114,13 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
 
         WeakReferenceMessenger.Default.Register(this);
+
+        InitializeToolBar(database);
     }
 
     public ToolBarViewModel ToolBarItems { get; } = new();
+
+    protected IDatabase CurrentDatabase { get; private set; }
 
     #region Commands
 
@@ -139,7 +144,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             try
             {
-                using var conn = database.OpenConnection();
+                using var conn = CurrentDatabase.OpenConnection();
                 var docs = conn.Query<DocumentRefs>("select * from document_refs where owner_id = :Id", info).ToList();
 
                 foreach (var doc in docs)
@@ -332,7 +337,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             if (CheckCopyRow(row))
             {
-                using var conn = database.OpenConnection();
+                using var conn = CurrentDatabase.OpenConnection();
                 using var transaction = conn.BeginTransaction();
 
                 try
@@ -449,10 +454,10 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         try
         {
-            using var conn = database.OpenConnection();
+            using var conn = CurrentDatabase.OpenConnection();
 
             DataSource = new ObservableCollection<T>(GetData(conn));
-            OnAfterRefreshDataSource();
+            OnAfterRefreshDataSource(conn);
         }
         catch (Exception e)
         {
@@ -461,6 +466,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     }
 
     public virtual Type? GetEditorViewType() => null;
+
+    protected virtual void InitializeToolBar(IDatabase? database = null) { }
 
     protected virtual MessageOptions GetEditorOptions() => new DocumentEditorMessageOptions(Owner) { CanEdit = CanEditSelected() };
 
@@ -488,7 +495,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     /// <returns></returns>
     protected T GetDataById(Guid id)
     {
-        using var conn = database.OpenConnection();
+        using var conn = CurrentDatabase.OpenConnection();
 
         return GetDataById(conn, id);
     }
@@ -511,9 +518,9 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             .ToList();
     }
 
-    protected Query DefaultQuery(IDbConnection conn, Guid? id = null, QueryParemeters? parameters = null)
+    protected Query DefaultQuery(IDbConnection conn, Guid? id = null, QueryParameters? parameters = null)
     {
-        parameters ??= QueryParemeters.Default;
+        parameters ??= QueryParameters.Default;
         return SelectQuery(RequiredQuery(conn, parameters))
             .When(id != null, q => q.Where($"{parameters.Alias}.id", id));
     }
@@ -522,7 +529,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual Query WipeQuery(Query query) => query;
 
-    protected Query RequiredQuery(IDbConnection connection, QueryParemeters parameters)
+    protected Query RequiredQuery(IDbConnection connection, QueryParameters parameters)
     {
         var query = connection.GetQuery<T>(parameters);
 
@@ -530,7 +537,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             Owner != null,
             q => q.Where($"{parameters.Alias}.{parameters.OwnerIdName}", Owner!.Id));
 
-        if (parameters.IncludeDocumentsInfo && database.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
+        if (parameters.IncludeDocumentsInfo && CurrentDatabase.HasPrivilege("document_refs", Privilege.Select) && typeof(T).IsAssignableTo(typeof(DocumentInfo)))
         {
             query = query
                 .SelectRaw($"exists(select 1 from document_refs dr where dr.owner_id = {parameters.Alias}.id) as has_documents")
@@ -545,7 +552,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         return query;
     }
 
-    protected virtual void OnAfterRefreshDataSource() { }
+    protected virtual void OnAfterRefreshDataSource(IDbConnection connection) { }
 
     protected virtual void ConfigureColumn(IColumnInfo columnInfo) { }
 
@@ -560,7 +567,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     private T? AddRow(Guid id)
     {
-        using var conn = database.OpenConnection();
+        using var conn = CurrentDatabase.OpenConnection();
         return AddRow(conn, id);
     }
 
@@ -636,7 +643,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             try
             {
-                using var conn = database.OpenConnection();
+                using var conn = CurrentDatabase.OpenConnection();
                 using var transaction = conn.BeginTransaction();
 
                 try
@@ -681,7 +688,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             {
                 try
                 {
-                    using var conn = database.OpenConnection();
+                    using var conn = CurrentDatabase.OpenConnection();
                     using var transaction = conn.BeginTransaction();
 
                     try
@@ -711,7 +718,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         try
         {
-            using var conn = database.OpenConnection();
+            using var conn = CurrentDatabase.OpenConnection();
             using var transaction = conn.BeginTransaction();
 
             try

@@ -6,9 +6,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using Dapper;
-
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Syncfusion.Windows.Shared;
@@ -21,6 +20,8 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class CuttingViewModel : BaseOperationViewModel<Cutting>, ISelfTransientLifetime, IDataErrorInfo
 {
+    private readonly ICuttingRepository repoCutting = null!;
+
     [ObservableProperty]
     private int segmentLength;
 
@@ -41,6 +42,13 @@ public partial class CuttingViewModel : BaseOperationViewModel<Cutting>, ISelfTr
 
     [ObservableProperty]
     private IEnumerable<int>? programs;
+
+    public CuttingViewModel() { }
+
+    public CuttingViewModel(ICuttingRepository repoCutting) : base()
+    {
+        this.repoCutting = repoCutting;
+    }
 
     #region Commands
 
@@ -72,7 +80,7 @@ public partial class CuttingViewModel : BaseOperationViewModel<Cutting>, ISelfTr
     {
         get
         {
-            string result = null!;
+            string result = string.Empty;
 
             switch (name)
             {
@@ -141,19 +149,10 @@ public partial class CuttingViewModel : BaseOperationViewModel<Cutting>, ISelfTr
         entity.ProgramNumber = ProgramNumber;
     }
 
-    protected override void InitializeEntityCollections(IDbConnection connection, Cutting? entity = null)
+    protected override void InitializeEntityCollections(IDbConnection connection, Cutting? cutting = null)
     {
-        base.InitializeEntityCollections(connection, entity);
+        base.InitializeEntityCollections(connection, cutting);
 
-        if (entity != null && entity.ProgramNumber.HasValue) 
-        {
-            var sql = $"with all_programs as ( select generate_series(1, 99) as id ) select a.id from all_programs a left join cutting on (program_number = a.id and not deleted) where program_number is null or program_number = :ProgramNumber order by a.id";
-            Programs = connection.Query<int>(sql, entity);
-        }
-        else
-        {
-            var sql = $"with all_programs as ( select generate_series(1, 99) as id ) select a.id from all_programs a left join cutting on (program_number = a.id and not deleted) where program_number is null order by a.id";
-            Programs = connection.Query<int>(sql);
-        }
+        Programs = repoCutting.GetAvailableProgram(connection, cutting);
     }
 }

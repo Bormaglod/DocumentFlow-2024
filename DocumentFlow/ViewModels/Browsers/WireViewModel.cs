@@ -9,7 +9,7 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class WireViewModel : DirectoryViewModel<Wire>, ISelfTransientLifetime
+public sealed class WireViewModel : DirectoryViewModel<Wire>, ISelfTransientLifetime
 {
     public WireViewModel() { }
 

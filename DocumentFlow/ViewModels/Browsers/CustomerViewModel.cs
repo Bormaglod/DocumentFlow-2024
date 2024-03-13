@@ -23,17 +23,11 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTransientLifetime
+public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTransientLifetime
 {
-    public CustomerViewModel() 
-    {
-        InitializeToolBar();
-    }
+    public CustomerViewModel() { }
 
-    public CustomerViewModel(IDatabase database) : base(database) 
-    {
-        InitializeToolBar();
-    }
+    public CustomerViewModel(IDatabase database) : base(database) { }
 
     #region Commands
 
@@ -138,7 +132,7 @@ public class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTransientLi
             .ToList();
     }
 
-    private void InitializeToolBar()
+    protected override void InitializeToolBar(IDatabase? database = null)
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Контрагент", "contractor") { Command = OpenContractor },

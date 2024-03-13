@@ -9,7 +9,7 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class OkopfViewModel : DirectoryViewModel<Okopf>, ISelfTransientLifetime
+public sealed class OkopfViewModel : DirectoryViewModel<Okopf>, ISelfTransientLifetime
 {
     public OkopfViewModel() { }
 

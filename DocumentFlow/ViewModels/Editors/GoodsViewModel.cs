@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
@@ -22,6 +23,8 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 {
+    private readonly ICalculationRepository calculationRepository = null!;
+
     [ObservableProperty]
     private bool isService;
 
@@ -42,6 +45,13 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
 
     [ObservableProperty]
     private IEnumerable<Calculation>? calculations;
+
+    public GoodsViewModel() { }
+
+    public GoodsViewModel(IMeasurementRepository measurementRepository, ICalculationRepository calculationRepository) : base(measurementRepository)
+    {
+        this.calculationRepository = calculationRepository;
+    }
 
     #region Commands
 
@@ -112,18 +122,13 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
         });
     }
 
-    protected override void InitializeEntityCollections(IDbConnection connection, Goods? entity = null)
+    protected override void InitializeEntityCollections(IDbConnection connection, Goods? goods = null)
     {
-        base.InitializeEntityCollections(connection, entity);
+        base.InitializeEntityCollections(connection, goods);
 
-        if (entity != null) 
+        if (goods != null) 
         {
-            Calculations = GetForeignData<Calculation>(
-                connection, 
-                entity.Id, 
-                callback: q => q
-                    .WhereRaw("state = 'approved'::calculation_state")
-                    .When(entity.Calculation != null, w => w.OrWhere("id", entity.Calculation!.Id)));
+            Calculations = calculationRepository.GetCalculations(connection, goods);
         }
     }
 }

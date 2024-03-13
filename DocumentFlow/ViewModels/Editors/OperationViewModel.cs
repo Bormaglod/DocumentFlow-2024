@@ -7,12 +7,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common;
-using DocumentFlow.Common.Collections;
-using DocumentFlow.Common.Data;
-using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
@@ -27,6 +25,10 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISelfTransientLifetime
 {
+    private readonly IGoodsRepository repoGoods = null!;
+    private readonly IOperationTypeRepository repoOperationTypes = null!;
+    private readonly IOperationRepository repoOperation = null!;
+
     [ObservableProperty]
     private OperationType? operationType;
 
@@ -38,6 +40,15 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
 
     [ObservableProperty]
     private IEnumerable<OperationType>? operationTypes;
+
+    public OperationViewModel() { }
+
+    public OperationViewModel(IGoodsRepository repoGoods, IOperationTypeRepository repoOperationType, IOperationRepository repoOperation) : base()
+    {
+        this.repoGoods = repoGoods;
+        this.repoOperationTypes = repoOperationType;
+        this.repoOperation = repoOperation;
+    }
 
     #region Commands
 
@@ -64,9 +75,9 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
         var dialog = new DirectoryItemWindow();
-        if (dialog.Get(GetForeignDirectory<Goods>(conn), null, out var goods))
+        if (dialog.Get(repoGoods.GetSlim(conn), null, out var product))
         {
-            OperationGoods.Add(new OperationGoods() { Goods = goods });
+            OperationGoods.Add(new OperationGoods() { Goods = product });
         }
     }
 
@@ -95,9 +106,9 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
         var dialog = new DirectoryItemWindow();
-        if (dialog.Get(GetForeignDirectory<Goods>(conn), OperationGoodsSelected.Goods, out var goods))
+        if (dialog.Get(repoGoods.GetSlim(conn), OperationGoodsSelected.Goods, out var product))
         {
-            OperationGoodsSelected.Goods = goods;
+            OperationGoodsSelected.Goods = product;
         }
     }
 
@@ -154,9 +165,9 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
         var dialog = new DirectoryItemWindow();
-        if (dialog.Get(GetForeignDirectory<Goods>(conn), OperationGoodsSelected.Goods, out var goods))
+        if (dialog.Get(repoGoods.GetSlim(conn), OperationGoodsSelected.Goods, out var product))
         {
-            OperationGoods.Add(new OperationGoods() { Goods = goods });
+            OperationGoods.Add(new OperationGoods() { Goods = product });
         }
     }
 
@@ -194,31 +205,15 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         });
     }
 
-    protected override void InitializeEntityCollections(IDbConnection connection, Operation? entity = null)
+    protected override void InitializeEntityCollections(IDbConnection connection, Operation? operation = null)
     {
-        base.InitializeEntityCollections(connection, entity);
+        base.InitializeEntityCollections(connection, operation);
 
-        OperationTypes = GetForeignData<OperationType>(connection);
-
-        if (entity != null)
+        OperationTypes = repoOperationTypes.GetSlim(connection);
+        
+        if (operation != null)
         {
-            var parameters = new QueryParemeters() 
-            { 
-                Alias = "og"
-            };
-
-            var res = connection.GetQuery<OperationGoods>(parameters)
-                .MappingQuery<OperationGoods>(x => x.Goods, QuantityInformation.Directory)
-                .Where("og.owner_id", entity.Id)
-                .Get<OperationGoods, Goods>(
-                    map: (og, goods) =>
-                    {
-                        og.Goods = goods;
-                        return og;
-                    }
-                );
-
-            OperationGoods = new DependentCollection<OperationGoods>(entity, res);
+            OperationGoods = repoOperation.GetGoods(connection, operation);
         }
     }
 

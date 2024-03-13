@@ -9,7 +9,7 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class MeasurementViewModel : DirectoryViewModel<Measurement>, ISelfTransientLifetime
+public sealed class MeasurementViewModel : DirectoryViewModel<Measurement>, ISelfTransientLifetime
 {
     public MeasurementViewModel() { }
 

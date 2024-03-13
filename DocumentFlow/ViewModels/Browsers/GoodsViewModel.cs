@@ -15,18 +15,11 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
+public sealed class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 {
-    private readonly IDatabase database;
-
-#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public GoodsViewModel() { }
-#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
-    public GoodsViewModel(IDatabase database) : base(database) 
-    {
-        this.database = database;
-    }
+    public GoodsViewModel(IDatabase database) : base(database) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.GoodsView);
 
@@ -37,7 +30,7 @@ public class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
             .MappingQuery<Goods>(x => x.Measurement)
             .MappingQuery<Goods>(x => x.Calculation);
 
-        if (database.HasPrivilege("calculation", Privilege.Select))
+        if (CurrentDatabase.HasPrivilege("calculation", Privilege.Select))
         {
             Query pb = new Query("balance_product")
                 .Select("reference_id")

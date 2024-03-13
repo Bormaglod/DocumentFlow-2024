@@ -11,7 +11,7 @@ using SqlKata;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class CuttingViewModel : DirectoryViewModel<Cutting>, ISelfTransientLifetime
+public sealed class CuttingViewModel : DirectoryViewModel<Cutting>, ISelfTransientLifetime
 {
     public CuttingViewModel() { }
 

@@ -34,14 +34,14 @@ public static class ExceptionHelper
         public string Text { get; set; } = string.Empty;
     }
 
-    public static string Message(Exception exception, IDatabase? database = null)
+    public static string Message(Exception exception)
     {
         StringBuilder stringBuilder = new();
-        CreateMessage(stringBuilder, exception, database);
+        CreateMessage(stringBuilder, exception);
         return stringBuilder.ToString();
     }
 
-    private static void CreateMessage(StringBuilder strings, Exception exception, IDatabase? database = null)
+    private static void CreateMessage(StringBuilder strings, Exception exception)
     {
         if (exception is PostgresException pgException)
         {
@@ -66,13 +66,8 @@ public static class ExceptionHelper
             }
             else if (pgException.SqlState == "23514")
             {
-                string? msg = string.Empty;
-
-                if (database != null)
-                {
-                    using var conn = database.OpenConnection();
-                    msg = conn.QuerySingleOrDefault<string>($"select d.description from pg_catalog.pg_constraint c join pg_catalog.pg_description d on (d.objoid = c.oid) where conname = '{pgException.ConstraintName}'");
-                }
+                using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+                var msg = conn.QuerySingleOrDefault<string>($"select d.description from pg_catalog.pg_constraint c join pg_catalog.pg_description d on (d.objoid = c.oid) where conname = '{pgException.ConstraintName}'");
 
                 if (string.IsNullOrEmpty(msg))
                 {

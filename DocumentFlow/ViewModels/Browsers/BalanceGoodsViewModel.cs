@@ -9,7 +9,7 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class BalanceGoodsViewModel : BalanceProductViewModel<BalanceGoods>, ISelfTransientLifetime
+public sealed class BalanceGoodsViewModel : BalanceProductViewModel<BalanceGoods>, ISelfTransientLifetime
 {
     public BalanceGoodsViewModel() { }
 

@@ -91,12 +91,14 @@
                                Grid.Column="1" Grid.Row="6"
                                Margin="0,5,5,0"
                                Width="100" 
-                               HorizontalAlignment="Left"/>
+                               HorizontalAlignment="Left"
+                               NumberDecimalDigits="0"/>
             <syncfusion:UpDown Value="{Binding Mod}"
                                Grid.Column="1" Grid.Row="7"
                                Margin="0,5,5,0"
                                Width="100" 
-                               HorizontalAlignment="Left"/>
+                               HorizontalAlignment="Left"
+                               NumberDecimalDigits="0"/>
         </Grid>
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Right"

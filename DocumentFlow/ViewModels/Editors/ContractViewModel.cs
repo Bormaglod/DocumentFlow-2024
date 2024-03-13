@@ -11,6 +11,7 @@ using Dapper;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
@@ -21,6 +22,9 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class ContractViewModel : DirectoryEditorViewModel<Contract>, ISelfTransientLifetime
 {
+    private readonly IEmployeeRepository employeeRepository = null!;
+    private readonly IOurEmployeeRepository ourEmployeeRepository = null!;
+
     [ObservableProperty]
     private ContractorType contractorType;
 
@@ -60,6 +64,14 @@ public partial class ContractViewModel : DirectoryEditorViewModel<Contract>, ISe
     [ObservableProperty]
     private IEnumerable<OurEmployee>? ourEmployees;
 
+    public ContractViewModel() { }
+
+    public ContractViewModel(IEmployeeRepository employeeRepository, IOurEmployeeRepository ourEmployeeRepository) : base()
+    {
+        this.employeeRepository = employeeRepository;
+        this.ourEmployeeRepository = ourEmployeeRepository;
+    }
+
     protected override string GetStandardHeader() => "Договор";
 
     protected override void RaiseAfterLoadDocument(Contract entity)
@@ -97,9 +109,12 @@ public partial class ContractViewModel : DirectoryEditorViewModel<Contract>, ISe
     protected override void InitializeEntityCollections(IDbConnection connection, Contract? contract)
     {
         base.InitializeEntityCollections(connection, contract);
-        var orgId = (contract?.OrganizationId) ?? connection.QuerySingleOrDefault<Guid>("select id from organization where default_org");
-        Employees = GetForeignDirectory<Employee>(connection, Owner?.Id);
-        OurEmployees = GetForeignDirectory<OurEmployee>(connection, orgId);
+        if (Owner is Contractor contractor)
+        {
+            Employees = employeeRepository.GetEmployees(connection, contractor);
+        }
+
+        OurEmployees = ourEmployeeRepository.GetEmployees(connection);
     }
 
     protected override Query SelectQuery(Query query)

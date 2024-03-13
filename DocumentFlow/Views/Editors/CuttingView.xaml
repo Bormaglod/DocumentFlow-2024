@@ -79,16 +79,14 @@
                         <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}"
                                  Width="200"
                                  Grid.Row="0" Grid.Column="1"
-                                 Style="{StaticResource TextBoxStyle}"
+                                 Style="{StaticResource TextBoxDisabledStyle}"
                                  MaxLength="30"
-                                 HorizontalAlignment="Left"
-                                 IsEnabled="False"/>
+                                 HorizontalAlignment="Left"/>
                         <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
                                  Width="400"
                                  Grid.Row="1" Grid.Column="1"
-                                 Style="{StaticResource TextBoxStyle}"
-                                 MaxLength="255"
-                                 IsEnabled="False"/>
+                                 Style="{StaticResource TextBoxDisabledStyle}"
+                                 MaxLength="255"/>
                         <c:SelectBox SelectedValue="{Binding ParentId, Mode=TwoWay}"
                                      ItemsSource="{Binding Folders}"
                                      Grid.Row="2" Grid.Column="1"
@@ -97,8 +95,7 @@
                                     Orientation="Horizontal">
                             <syncfusion:IntegerTextBox Value="{Binding Produced, UpdateSourceTrigger=PropertyChanged}"
                                                        Width="100"
-                                                       Style="{StaticResource IntegerTextBoxStyle}" 
-                                                       IsEnabled="False"/>
+                                                       Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
                             <TextBlock Text="шт."
                                        Margin="5,0,0,0"/>
                         </StackPanel>
@@ -106,8 +103,7 @@
                                     Orientation="Horizontal">
                             <syncfusion:IntegerTextBox Value="{Binding ProdTime, UpdateSourceTrigger=PropertyChanged}"
                                                        Width="100"
-                                                       Style="{StaticResource IntegerTextBoxStyle}"
-                                                       IsEnabled="False"/>
+                                                       Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
                             <TextBlock Text="сек."
                                        Margin="5,0,0,0"/>
                         </StackPanel>
@@ -115,8 +111,7 @@
                                     Orientation="Horizontal">
                             <syncfusion:IntegerTextBox Value="{Binding ProductionRate, UpdateSourceTrigger=PropertyChanged}"
                                                        Width="100"
-                                                       Style="{StaticResource IntegerTextBoxStyle}"
-                                                       IsEnabled="False"/>
+                                                       Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
                             <TextBlock Text="ед./час"
                                        Margin="5,0,0,0"/>
                         </StackPanel>
@@ -131,9 +126,8 @@
                         <syncfusion:CurrencyTextBox Value="{Binding Salary, UpdateSourceTrigger=PropertyChanged}"
                                                     Width="100"
                                                     Grid.Row="7" Grid.Column="1"
-                                                    Style="{StaticResource CurrencyTextBoxStyle}"
-                                                    CurrencyDecimalDigits="4"
-                                                    IsEnabled="False"/>
+                                                    Style="{StaticResource CurrencyTextBoxDisabledStyle}"
+                                                    CurrencyDecimalDigits="4"/>
                     </Grid>
                 </syncfusion:TabItemExt>
                 <syncfusion:TabItemExt Header="Параметры резки">

@@ -99,15 +99,17 @@
                             Command="{Binding ChangeGoodsCode}"/>
                 </StackPanel>
                 <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
-                         Width="400"
+                         Width="500"
                          Grid.Row="1" Grid.Column="1"
                          Style="{StaticResource TextBoxStyle}"
-                         MaxLength="255"/>
+                         MaxLength="255"
+                         HorizontalAlignment="Left"/>
                 <TextBox Text="{Binding DocName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
-                         Width="400"
+                         Width="500"
                          Grid.Row="2" Grid.Column="1"
                          Style="{StaticResource TextBoxStyle}" 
-                         MaxLength="255"/>
+                         MaxLength="255"
+                         HorizontalAlignment="Left"/>
                 <c:SelectBox SelectedValue="{Binding ParentId, Mode=TwoWay}"
                              ItemsSource="{Binding Folders}"
                              Grid.Row="3" Grid.Column="1"

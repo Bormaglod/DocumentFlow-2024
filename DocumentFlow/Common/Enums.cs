@@ -167,3 +167,30 @@ public enum StimulatingValue
     [Description("Процент")]
     Percent
 }
+
+public enum PriceSettingMethod
+{
+    [Description("Средняя цена")]
+    Average,
+
+    [Description("Справочник")]
+    Dictionary,
+
+    [Description("Ручной ввод")]
+    Manual,
+
+    [Description("Давальческое сырьё")]
+    IsGiving
+}
+
+public enum BaseDeduction
+{
+    [Description("Заработная плата")]
+    Salary,
+
+    [Description("Материалы")]
+    Material,
+
+    [Description("Фикс. сумма")]
+    Person
+}

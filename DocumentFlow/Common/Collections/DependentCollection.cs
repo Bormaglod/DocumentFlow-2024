@@ -45,7 +45,7 @@ public sealed class DependentCollection<T> : ObservableCollection<T>, IDependent
 
         if (owner.Id != default)
         {
-            item.OwnerId = owner.Id;
+            item.SetOwner(owner);
         }
 
         if (item.Id == 0)
@@ -107,7 +107,7 @@ public sealed class DependentCollection<T> : ObservableCollection<T>, IDependent
         {
             foreach (var part in Items)
             {
-                part.OwnerId = owner.Id;
+                part.SetOwner(owner);
             }
         }
     }

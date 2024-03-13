@@ -58,6 +58,7 @@
         <syncfusion:SfDataGrid x:Name="gridContent" 
                                Grid.Row="2"
                                ShowBusyIndicator="True"
+                               EditTrigger="OnTap"
                                ItemsSource="{Binding DataSource}"
                                SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                                HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
@@ -86,7 +87,7 @@
                                 <DataTrigger Binding="{Binding CalculationState}" Value="{x:Static enums:CalculationState.Prepare}">
                                     <Setter Property="Foreground" Value="#3465A4"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=CalculationState}" Value="{x:Static enums:CalculationState.Approved}">
+                                <DataTrigger Binding="{Binding CalculationState}" Value="{x:Static enums:CalculationState.Approved}">
                                     <Setter Property="Foreground" Value="#127622"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding CalculationState}" Value="{x:Static enums:CalculationState.Expired}">

@@ -21,7 +21,6 @@ using DocumentFlow.Models.Entities;
 using Humanizer;
 
 using SqlKata;
-using SqlKata.Compilers;
 using SqlKata.Execution;
 
 using Syncfusion.Windows.Shared;
@@ -185,29 +184,6 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
     protected virtual void InitializeEntityCollections(IDbConnection connection, T? entity = null) { }
 
-    protected IEnumerable<P> GetForeignData<P>(IDbConnection connection, Guid? ownerId = null, Func<Query, Query>? callback = null)
-        where P : DocumentInfo
-    {
-        return GetForeignQuery<P>(connection, ownerId, callback).Get<P>();
-    }
-
-    protected Query GetForeignQuery<P>(IDbConnection connection, Guid? ownerId = null, Func<Query, Query>? callback = null)
-    {
-        var factory = new QueryFactory(connection, new PostgresCompiler());
-        var query = factory.Query(typeof(P).Name.Underscore())
-            .Select("id", "code", "item_name")
-            .WhereFalse("deleted")
-            .When(ownerId != null, q => q.Where("owner_id", ownerId))
-            .OrderBy("item_name");
-
-        if (callback != null)
-        {
-            query = callback(query);
-        }
-
-        return query;
-    }
-
     private void RaiseAfterLoad(IDbConnection connection, T entity)
     {
         InitializeEntityCollections(connection, entity);
@@ -243,31 +219,40 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         Entity = DefaultQuery(connection).First<T>();
     }
 
-    protected void Load<P>(IDbConnection connection, Func<T, P, T> map)
+    protected void Load<P>(IDbConnection connection, Func<T, P, T> map, QueryParameters? parameters = null)
     {
-        PrepareQuery(connection, out var compiled, out var parameters);
+        PrepareQuery(connection, out var compiled, out var sqlParameters, parameters);
         Entity = connection.Query(
             compiled.Sql,
             map,
-            parameters).First();
+            sqlParameters).First();
     }
 
-    protected void Load<P1, P2>(IDbConnection connection, Func<T, P1, P2, T> map)
+    protected void Load<P1, P2>(IDbConnection connection, Func<T, P1, P2, T> map, QueryParameters? parameters = null)
     {
-        PrepareQuery(connection, out var compiled, out var parameters);
+        PrepareQuery(connection, out var compiled, out var sqlParameters, parameters);
         Entity = connection.Query(
             compiled.Sql,
             map,
-            parameters).First();
+            sqlParameters).First();
     }
 
-    protected void Load<P1, P2, P3>(IDbConnection connection, Func<T, P1, P2, P3, T> map)
+    protected void Load<P1, P2, P3>(IDbConnection connection, Func<T, P1, P2, P3, T> map, QueryParameters? parameters = null)
     {
-        PrepareQuery(connection, out var compiled, out var parameters);
+        PrepareQuery(connection, out var compiled, out var sqlParameters, parameters);
         Entity = connection.Query(
             compiled.Sql,
             map,
-            parameters).First();
+            sqlParameters).First();
+    }
+
+    protected void Load<P1, P2, P3, P4>(IDbConnection connection, Func<T, P1, P2, P3, P4, T> map, QueryParameters? parameters = null)
+    {
+        PrepareQuery(connection, out var compiled, out var sqlParameters, parameters);
+        Entity = connection.Query(
+            compiled.Sql,
+            map,
+            sqlParameters).First();
     }
 
     protected abstract string GetStandardHeader();
@@ -308,11 +293,11 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
     private void UpdateHeader() => UpdateHeader(headerDetails ?? string.Empty);
 
-    private void PrepareQuery(IDbConnection connection, out SqlResult compiled, out DynamicParameters parameters)
+    private void PrepareQuery(IDbConnection connection, out SqlResult compiled, out DynamicParameters sqlParameters, QueryParameters? parameters = null)
     {
-        var query = DefaultQuery(connection);
+        var query = DefaultQuery(connection, parameters);
         compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        parameters = new DynamicParameters(compiled.NamedBindings);
+        sqlParameters = new DynamicParameters(compiled.NamedBindings);
     }
 
     private void OnSave()
@@ -369,15 +354,15 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         }
     }
 
-    private Query DefaultQuery(IDbConnection connection, QueryParemeters? parameters = null)
+    private Query DefaultQuery(IDbConnection connection, QueryParameters? parameters = null)
     {
-        parameters ??= QueryParemeters.Default;
+        parameters ??= QueryParameters.Default;
         var query = SelectQuery(
             connection.GetQuery<T>(parameters)
                 .Select("u1.name as user_created")
                 .Select("u2.name as user_updated")
-                .Join("user_alias as u1", "t0.user_created_id", "u1.id")
-                .Join("user_alias as u2", "t0.user_updated_id", "u2.id")
+                .Join("user_alias as u1", $"{parameters.Alias}.user_created_id", "u1.id")
+                .Join("user_alias as u2", $"{parameters.Alias}.user_updated_id", "u2.id")
                 .Where($"{parameters.Alias}.id", Id));
         return query;
     }

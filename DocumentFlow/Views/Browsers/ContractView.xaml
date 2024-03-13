@@ -20,7 +20,7 @@
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridResources.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:EnumConverter x:Key="EnumConverter"/>
+            <converters:EnumConverter x:Key="enumConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -84,7 +84,7 @@
                                            HeaderText="Вид договора"
                                            Width="150" 
                                            UseBindingValue="True"
-                                           DisplayBinding="{Binding ContractorType, Converter={StaticResource EnumConverter}, ConverterParameter={x:Type enums:ContractorType}}"/>
+                                           DisplayBinding="{Binding ContractorType, Converter={StaticResource enumConverter}, ConverterParameter={x:Type enums:ContractorType}}"/>
                 <syncfusion:GridDateTimeColumn MappingName="DateStart"
                                                HeaderText="Дата начала"
                                                Width="120"

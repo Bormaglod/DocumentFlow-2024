@@ -118,11 +118,11 @@
                                               Style="{StaticResource DoubleTextBoxStyle}"
                                               Width="100"
                                               Height="25"/>
-                    <Separator/>
                     <ComboBox SelectedItem="{Binding StimulatingValue, Mode=TwoWay, Converter={StaticResource enumConverter}, ConverterParameter={x:Type enums:StimulatingValue}}"
                               ItemsSource="{Binding Source={common:EnumToItemsSource {x:Type enums:StimulatingValue}}}"
                               Style="{StaticResource ComboBoxStyle}"
-                              Width="80"/>
+                              Width="80"
+                              Margin="5,0,0,5"/>
                 </StackPanel>
                 <syncfusion:CurrencyTextBox Value="{Binding CostPrice}"
                                             Style="{StaticResource CurrencyTextBoxStyle}"
@@ -168,8 +168,26 @@
                                    Grid.Row="2"/>
         <syncfusion:TabControlExt Grid.Row="3"
                                   Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Резка">
+                <views:CalculationCuttingView Margin="5"
+                                              Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                              AvailableGrouping="False"
+                                              SizeMode="Small"/>
+            </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Операция">
                 <views:CalculationOperationView Margin="5"
+                                                Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                                AvailableGrouping="False"
+                                                SizeMode="Small"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Материалы">
+                <views:CalculationMaterialView Margin="5"
+                                               Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                               AvailableGrouping="False"
+                                               SizeMode="Small"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Удержания">
+                <views:CalculationDeductionView Margin="5"
                                                 Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
                                                 AvailableGrouping="False"
                                                 SizeMode="Small"/>

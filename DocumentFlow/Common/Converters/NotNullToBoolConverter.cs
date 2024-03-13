@@ -9,7 +9,7 @@ using System.Windows.Data;
 
 namespace DocumentFlow.Common.Converters;
 
-class NotNullToBoolConverter : IValueConverter
+public class NotNullToBoolConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

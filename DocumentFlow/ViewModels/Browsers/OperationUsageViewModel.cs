@@ -23,17 +23,11 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class OperationUsageViewModel : EntityGridViewModel<OperationUsage>, ISelfTransientLifetime
+public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage>, ISelfTransientLifetime
 {
-    public OperationUsageViewModel()
-    {
-        InitializeToolBar();
-    }
+    public OperationUsageViewModel() { }
 
-    public OperationUsageViewModel(IDatabase database) : base(database)
-    {
-        InitializeToolBar();
-    }
+    public OperationUsageViewModel(IDatabase database) : base(database) { }
 
     #region Commands
 
@@ -101,7 +95,7 @@ public class OperationUsageViewModel : EntityGridViewModel<OperationUsage>, ISel
 
     protected override IReadOnlyList<OperationUsage> GetData(IDbConnection connection, Guid? id = null)
     {
-        var parameters = new QueryParemeters()
+        var parameters = new QueryParameters()
         {
             Alias = "co",
             Table = "calculation_operation",
@@ -129,7 +123,7 @@ public class OperationUsageViewModel : EntityGridViewModel<OperationUsage>, ISel
             .ToList();
     }
 
-    private void InitializeToolBar()
+    protected override void InitializeToolBar(IDatabase? database = null)
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Изделие", "goods") { Command = OpenGoods },

@@ -14,7 +14,7 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class AccountViewModel : DirectoryViewModel<Account>, ISelfTransientLifetime
+public sealed class AccountViewModel : DirectoryViewModel<Account>, ISelfTransientLifetime
 {
     public AccountViewModel() { }
 

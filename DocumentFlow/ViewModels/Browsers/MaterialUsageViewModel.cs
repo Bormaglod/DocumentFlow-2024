@@ -22,17 +22,11 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfTransientLifetime
+public sealed class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfTransientLifetime
 {
-    public MaterialUsageViewModel() 
-    {
-        InitializeToolBar();
-    }
+    public MaterialUsageViewModel() { }
 
-    public MaterialUsageViewModel(IDatabase database) : base(database) 
-    {
-        InitializeToolBar();
-    }
+    public MaterialUsageViewModel(IDatabase database) : base(database) { }
 
     #region Commands
 
@@ -86,7 +80,7 @@ public class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfT
 
     protected override IReadOnlyList<MaterialUsage> GetData(IDbConnection connection, Guid? id = null)
     {
-        return connection.GetQuery<CalculationMaterial>(new QueryParemeters() { Quantity = QuantityInformation.None })
+        return connection.GetQuery<CalculationMaterial>(new QueryParameters() { Quantity = QuantityInformation.None })
             .Select("t0.{id, amount}")
             .Select("t0.item_id as owner_id")
             .MappingQuery<MaterialUsage>(x => x.Calculation)
@@ -103,7 +97,7 @@ public class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfT
             .ToList();
     }
 
-    private void InitializeToolBar()
+    protected override void InitializeToolBar(IDatabase? database = null)
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Изделие", "goods") { Command = OpenGoods },

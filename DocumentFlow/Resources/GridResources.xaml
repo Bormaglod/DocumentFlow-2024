@@ -232,7 +232,7 @@
     </ContextMenu>
     <DataTemplate x:Key="RootItem">
         <Image Source="/Images/icons8-home-16.png" 
-               Margin="10,0,0,0"
+               Margin="10,0,5,0"
                Width="16"
                Height="16"/>
     </DataTemplate>
@@ -426,4 +426,10 @@
                        VerticalAlignment="Center"/>
         </Border>
     </DataTemplate>
+    <Style x:Key="TableSummaryStyleDefault" TargetType="syncfusion:GridTableSummaryCell">
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
+    <Style x:Key="TableSummaryStyleNumeric" TargetType="syncfusion:GridTableSummaryCell">
+        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+    </Style>
 </ResourceDictionary>

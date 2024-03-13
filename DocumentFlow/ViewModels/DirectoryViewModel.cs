@@ -21,6 +21,7 @@ using SqlKata;
 using Syncfusion.Windows.Shared;
 
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Input;
@@ -41,13 +42,11 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
     public DirectoryViewModel()
     {
         InitializeHierarchy();
-        InitializeToolBar();
     }
 
     public DirectoryViewModel(IDatabase database) : base(database)
     {
-        InitializeHierarchy();
-        InitializeToolBar();
+        InitializeHierarchy(database);
     }
 
     public T? Parent => parent;
@@ -203,33 +202,11 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
 
     protected override Query SelectQuery(Query query)
     {
+        var refTable = query.GetOneComponent<AbstractFrom>("from").Alias ?? "t0";
         return base.SelectQuery(query).When(
             Parent == null,
-            q => q.WhereNull("t0.parent_id"),
-            q => q.Where("t0.parent_id", Parent!.Id));
-    }
-
-    protected override void OnAfterRefreshDataSource()
-    {
-        InitializeHierarchy();
-
-        if (!AvailableNavigation)
-        {
-            return;
-        }
-
-        try
-        {
-            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
-
-            var folders = conn.Query<T>($"select * from {EntityProperties.GetTableName(typeof(T))} where is_folder and not deleted order by item_name");
-
-            PopulateHierarchyNode(folders, HierarchyItemsSource[0]);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+            q => q.WhereNull($"{refTable}.parent_id"),
+            q => q.Where($"{refTable}.parent_id", Parent!.Id));
     }
 
     private static void PopulateHierarchyNode(IEnumerable<T> folders, HierarchyItemModel hierarchyItem, Guid? parent = null)
@@ -243,13 +220,31 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
         }
     }
 
-    private void InitializeHierarchy()
+    private void InitializeHierarchy(IDatabase? database = null)
     {
-        HierarchyItemsSource.Clear();
-        HierarchyItemsSource.Add(new HierarchyItemModel("Домой"));
+        HierarchyItemsSource = new()
+        {
+            new HierarchyItemModel("Домой")
+        };
+
+        if (database != null)
+        {
+            using var conn = database.OpenConnection();
+
+            try
+            {
+                var folders = conn.Query<T>($"select * from {EntityProperties.GetTableName(typeof(T))} where is_folder and not deleted order by item_name");
+
+                PopulateHierarchyNode(folders, HierarchyItemsSource[0]);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 
-    private void InitializeToolBar()
+    protected override void InitializeToolBar(IDatabase? database = null)
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Создать", "file-add") { Command = CreateRow },

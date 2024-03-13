@@ -6,6 +6,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using System.Data;
@@ -15,6 +16,8 @@ namespace DocumentFlow.ViewModels.Editors;
 public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
     where T : Product, new()
 {
+    private readonly IMeasurementRepository measurementRepository = null!;
+
     [ObservableProperty]
     private string code = string.Empty;
 
@@ -41,6 +44,13 @@ public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
 
     [ObservableProperty]
     private IEnumerable<Measurement>? measurements;
+
+    public ProductViewModel() { }
+
+    public ProductViewModel(IMeasurementRepository measurementRepository) : base()
+    {
+        this.measurementRepository = measurementRepository;
+    }
 
     protected override void RaiseAfterLoadDocument(T entity)
     {
@@ -69,7 +79,7 @@ public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
     protected override void InitializeEntityCollections(IDbConnection connection, T? entity = null)
     {
         base.InitializeEntityCollections(connection, entity);
-        Measurements = GetForeignData<Measurement>(connection);
+        Measurements = measurementRepository.GetSlim(connection);
     }
 
     partial void OnItemNameChanged(string? value)

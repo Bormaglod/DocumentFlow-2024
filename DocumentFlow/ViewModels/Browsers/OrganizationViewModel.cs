@@ -14,7 +14,7 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class OrganizationViewModel : DirectoryViewModel<Organization>, ISelfTransientLifetime
+public sealed class OrganizationViewModel : DirectoryViewModel<Organization>, ISelfTransientLifetime
 {
     public OrganizationViewModel() { }
 

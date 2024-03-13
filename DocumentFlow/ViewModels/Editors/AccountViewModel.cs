@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
@@ -18,6 +19,8 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelfTransientLifetime
 {
+    private readonly IBankRepository bankRepository = null!;
+
     [ObservableProperty]
     private string? itemName;
 
@@ -29,6 +32,13 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
 
     [ObservableProperty]
     private IEnumerable<Bank>? banks;
+
+    public AccountViewModel() { }
+
+    public AccountViewModel(IBankRepository bankRepository) : base()
+    {
+        this.bankRepository = bankRepository;
+    }
 
     protected override string GetStandardHeader() => "Расч. счёт";
 
@@ -51,7 +61,7 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
     protected override void InitializeEntityCollections(IDbConnection connection, Account? account)
     {
         base.InitializeEntityCollections(connection, account);
-        Banks = GetForeignDirectory<Bank>(connection);
+        Banks = bankRepository.GetSlim(connection);
     }
 
     protected override Query SelectQuery(Query query)

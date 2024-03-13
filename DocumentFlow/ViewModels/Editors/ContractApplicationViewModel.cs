@@ -8,18 +8,18 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using Dapper;
 
+using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
 using DocumentFlow.Data.Models;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
-using System.Data;
-using System.Windows.Input;
-using System.Windows;
 using Syncfusion.Windows.Shared;
-using DocumentFlow.Common;
-using System.Security.Principal;
+
+using System.Data;
+using System.Windows;
+using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 

@@ -5,14 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:enums="clr-namespace:DocumentFlow.Common.Enums"
              xmlns:c="clr-namespace:DocumentFlow.Controls"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
-             xmlns:common="clr-namespace:DocumentFlow.Common"
-             xmlns:enums="clr-namespace:DocumentFlow.Common.Enums"
-             xmlns:editors="clr-namespace:DocumentFlow.Views.Editors"
              xmlns:views="clr-namespace:DocumentFlow.Views.Browsers"
+             xmlns:editors="clr-namespace:DocumentFlow.Views.Editors"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="800" d:DesignWidth="800"
@@ -23,10 +23,10 @@
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorButtonResources.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:EnumConverter x:Key="EnumConverter"/>
-            <converters:SubjectsCivilRowVisibilityConverter x:Key="SubjectsCivilConverter"/>
-            <converters:ContractorCodeConverter x:Key="ContractorCodeConverter"/>
-            <converters:CodeValueConverter x:Key="CodeValueConverter"/>
+            <converters:EnumConverter x:Key="enumConverter"/>
+            <converters:ContractorCodeConverter x:Key="contractorCodeConverter"/>
+            <converters:CodeValueConverter x:Key="codeValueConverter"/>
+            <converters:EnumToRowVisibleConverter x:Key="enumToRowVisibleConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -49,12 +49,12 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource SubjectsCivilConverter}, ConverterParameter=LegalEntity}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource SubjectsCivilConverter}, ConverterParameter=LegalEntity}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource SubjectsCivilConverter}, ConverterParameter=LegalEntity}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource SubjectsCivilConverter}, ConverterParameter=LegalEntity}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource SubjectsCivilConverter}, ConverterParameter=LegalEntity}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource SubjectsCivilConverter}, ConverterParameter=Person}"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.Person}}"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -120,7 +120,7 @@
                          Grid.Row="3" Grid.Column="1"
                          Style="{StaticResource MultilineTextBoxStyle}"
                          MaxLength="150"/>
-                <ComboBox SelectedItem="{Binding SubjectsCivil, Mode=TwoWay, Converter={StaticResource EnumConverter}, ConverterParameter={x:Type enums:SubjectsCivilLow}}"
+                <ComboBox SelectedItem="{Binding SubjectsCivil, Mode=TwoWay, Converter={StaticResource enumConverter}, ConverterParameter={x:Type enums:SubjectsCivilLow}}"
                           ItemsSource="{Binding Source={common:EnumToItemsSource {x:Type enums:SubjectsCivilLow}}}"
                           Width="200"
                           Grid.Row="4" Grid.Column="1"
@@ -130,7 +130,7 @@
                                          Grid.Row="5" Grid.Column="1"
                                          Style="{StaticResource MaskedEditStyle}">
                     <syncfusion:SfMaskedEdit.Mask>
-                        <MultiBinding Converter="{StaticResource ContractorCodeConverter}"
+                        <MultiBinding Converter="{StaticResource contractorCodeConverter}"
                                       ConverterParameter="INN">
                             <Binding Path="SubjectsCivil"/>
                             <Binding Path="Okopf"/>
@@ -147,14 +147,14 @@
                                          Grid.Row="7" Grid.Column="1"
                                          Style="{StaticResource MaskedEditStyle}">
                     <syncfusion:SfMaskedEdit.Mask>
-                        <MultiBinding Converter="{StaticResource ContractorCodeConverter}"
+                        <MultiBinding Converter="{StaticResource contractorCodeConverter}"
                                       ConverterParameter="OGRN">
                             <Binding Path="SubjectsCivil"/>
                             <Binding Path="Okopf"/>
                         </MultiBinding>
                     </syncfusion:SfMaskedEdit.Mask>
                 </syncfusion:SfMaskedEdit>
-                <syncfusion:SfMaskedEdit Value="{Binding Okpo, Mode=TwoWay, Converter={StaticResource CodeValueConverter}, ConverterParameter=8}"
+                <syncfusion:SfMaskedEdit Value="{Binding Okpo, Mode=TwoWay, Converter={StaticResource codeValueConverter}, ConverterParameter=8}"
                                          Width="200"
                                          Grid.Row="8" Grid.Column="1"
                                          Style="{StaticResource MaskedEditStyle}"

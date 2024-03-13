@@ -23,15 +23,9 @@ namespace DocumentFlow.ViewModels.Browsers;
 public abstract class BalanceViewModel<T> : DocumentViewModel<T>
     where T : Balance
 {
-    public BalanceViewModel()
-    {
-        InitializeToolBar();
-    }
+    public BalanceViewModel() { }
 
-    public BalanceViewModel(IDatabase database) : base(database) 
-    {
-        InitializeToolBar();
-    }
+    public BalanceViewModel(IDatabase database) : base(database) { }
 
     #region Commands
 
@@ -69,7 +63,7 @@ public abstract class BalanceViewModel<T> : DocumentViewModel<T>
 
     #endregion
 
-    private void InitializeToolBar()
+    protected override void InitializeToolBar(IDatabase? database = null)
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Открыть документ", "open-document") { Command = OpenDocument },

@@ -14,6 +14,7 @@ using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
@@ -28,6 +29,8 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransientLifetime
 {
+    private readonly IMaterialRepository materialRepository = null!;
+
     [ObservableProperty]
     private decimal? minOrder;
 
@@ -55,6 +58,13 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
     [ObservableProperty]
     private CompatiblePart? compatibleSelected;
 
+    public MaterialViewModel() { }
+
+    public MaterialViewModel(IMeasurementRepository measurementRepository, IMaterialRepository materialRepository) : base(measurementRepository)
+    {
+        this.materialRepository = materialRepository;
+    }
+
     #region Commands
 
     #region AddCompatiblePart
@@ -80,7 +90,7 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
         var dialog = new DirectoryItemWindow();
-        if (dialog.Get(GetForeignDirectory<Material>(conn), null, out var material))
+        if (dialog.Get(materialRepository.GetMaterials(conn), null, out var material))
         {
             CompatibleParts.Add(new CompatiblePart() { Compatible = material });
         }
@@ -111,7 +121,7 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
         var dialog = new DirectoryItemWindow();
-        if (dialog.Get(GetForeignDirectory<Material>(conn), CompatibleSelected.Compatible, out var material))
+        if (dialog.Get(materialRepository.GetMaterials(conn), CompatibleSelected.Compatible, out var material))
         {
             CompatibleSelected.Compatible = material;
         }
@@ -170,7 +180,7 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
 
         var dialog = new DirectoryItemWindow();
-        if (dialog.Get(GetForeignDirectory<Material>(conn), CompatibleSelected.Compatible, out var material))
+        if (dialog.Get(materialRepository.GetMaterials(conn), CompatibleSelected.Compatible, out var material))
         {
             CompatibleParts.Add(new CompatiblePart() { Compatible = material });
         }
@@ -225,18 +235,11 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
     {
         base.InitializeEntityCollections(connection, entity);
 
-        CrossMaterials = GetForeignDirectory<Material>(connection, callback: q => q.WhereNull("owner_id"));
+        CrossMaterials = materialRepository.GetCrossMaterials(connection);
 
         if (entity != null)
         {
-            var sql = "select cp.*, m.id, m.code, m.item_name from compatible_part as cp left join material m on m.id = cp.compatible_id where cp.owner_id = :Id";
-            var res = connection.Query<CompatiblePart, Material, CompatiblePart>(sql, (cp, material) =>
-            {
-                cp.Compatible = material;
-                return cp;
-            }, entity);
-
-            CompatibleParts = new DependentCollection<CompatiblePart>(entity, res);
+            CompatibleParts = materialRepository.GetCompatibleParts(connection, entity);
         }
     }
 

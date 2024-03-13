@@ -12,7 +12,7 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class ContractorViewModel : DirectoryViewModel<Contractor>, ISelfTransientLifetime
+public sealed class ContractorViewModel : DirectoryViewModel<Contractor>, ISelfTransientLifetime
 {
     public ContractorViewModel() { }
 

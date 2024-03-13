@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
@@ -19,6 +20,10 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>, ISelfTransientLifetime
 {
+    private readonly IOkopfRepository okopfRepository = null!;
+    private readonly IAccountRepository accountRepository = null!;
+    private readonly IPersonRepository personRepository = null!;
+
     [ObservableProperty]
     private string code = string.Empty;
 
@@ -61,6 +66,15 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
     [ObservableProperty]
     private IEnumerable<Person>? persons;
 
+    public ContractorViewModel() { }
+
+    public ContractorViewModel(IOkopfRepository okopfRepository, IAccountRepository accountRepository, IPersonRepository personRepository) : base()
+    {
+        this.okopfRepository = okopfRepository;
+        this.accountRepository = accountRepository;
+        this.personRepository = personRepository;
+    }
+
     protected override string GetStandardHeader() => "Контрагент";
 
     protected override Query SelectQuery(Query query)
@@ -87,9 +101,13 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
     protected override void InitializeEntityCollections(IDbConnection connection, Contractor? contractor)
     {
         base.InitializeEntityCollections(connection, contractor);
-        Okopfs = GetForeignData<Okopf>(connection);
-        Accounts = GetForeignData<Account>(connection, Id);        
-        Persons = GetForeignDirectory<Person>(connection);
+        Okopfs = okopfRepository.GetSlim(connection);
+        if (Owner != null)
+        {
+            Accounts = accountRepository.GetSlim(connection, Owner);
+        }
+
+        Persons = personRepository.GetSlim(connection);
     }
 
     protected override void RaiseAfterLoadDocument(Contractor entity)

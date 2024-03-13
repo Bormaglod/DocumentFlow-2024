@@ -15,7 +15,7 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class OperationViewModel : DirectoryViewModel<Operation>, ISelfTransientLifetime
+public sealed class OperationViewModel : DirectoryViewModel<Operation>, ISelfTransientLifetime
 {
     public OperationViewModel() { }
 
@@ -41,7 +41,7 @@ public class OperationViewModel : DirectoryViewModel<Operation>, ISelfTransientL
 
     protected override IReadOnlyList<Operation> GetData(IDbConnection connection, Guid? id = null)
     {
-        return DefaultQuery(connection, id, new QueryParemeters() { FromOnly = true })
+        return DefaultQuery(connection, id, new QueryParameters() { FromOnly = true })
             .Get<Operation, OperationType>(
                 map: (operation, type) =>
                 {

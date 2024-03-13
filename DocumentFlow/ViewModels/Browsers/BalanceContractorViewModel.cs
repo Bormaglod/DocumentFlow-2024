@@ -12,7 +12,7 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class BalanceContractorViewModel : BalanceViewModel<BalanceContractor>, ISelfTransientLifetime
+public sealed class BalanceContractorViewModel : BalanceViewModel<BalanceContractor>, ISelfTransientLifetime
 {
     public BalanceContractorViewModel() { }
 

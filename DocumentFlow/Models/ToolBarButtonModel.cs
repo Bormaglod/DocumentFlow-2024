@@ -18,6 +18,7 @@ public class ToolBarButtonModel : ToolBarItemModel
     private string? smallIconName;
     private ImageSource? largeIcon;
     private ImageSource? smallIcon;
+    private string? hint;
 
     public ToolBarButtonModel(string label)
     {
@@ -60,4 +61,10 @@ public class ToolBarButtonModel : ToolBarItemModel
     public SizeMode SizeMode { get; init; }
 
     public ICommand? Command { get; set; }
+
+    public string Hint
+    {
+        get => hint ?? Label;
+        set => hint = value;
+    }
 }

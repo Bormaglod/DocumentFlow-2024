@@ -47,10 +47,10 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Папка"
+                <TextBlock Text="Наименование"
                            Style="{StaticResource TextBlockStyle}"
                            Grid.Row="0"/>
-                <TextBlock Text="Наименование"
+                <TextBlock Text="Папка"
                            Style="{StaticResource TextBlockStyle}"
                            Grid.Row="1"/>
                 <TextBlock Text="БИК"
@@ -62,16 +62,16 @@
                 <TextBlock Text="Город"
                            Style="{StaticResource TextBlockStyle}"
                            Grid.Row="4"/>
+                <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
+                         Width="400"
+                         Grid.Row="0" Grid.Column="1"
+                         Style="{StaticResource TextBoxStyle}"
+                         MaxLength="255"/>
                 <c:SelectBox x:Name="selectParent"
-                             Grid.Column="1"
+                             Grid.Row="1" Grid.Column="1"
                              SelectedValue="{Binding ParentId, Mode=TwoWay}"
                              ItemsSource="{Binding Folders}"
                              Style="{StaticResource SelectParentStyle}"/>
-                <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
-                         Width="400"
-                         Grid.Row="1" Grid.Column="1"
-                         Style="{StaticResource TextBoxStyle}"
-                         MaxLength="255"/>
                 <syncfusion:SfMaskedEdit Value="{Binding Bik, Mode=TwoWay, Converter={StaticResource CodeValueConverter}, ConverterParameter=9}"
                                          Width="100"
                                          Grid.Row="2" Grid.Column="1"

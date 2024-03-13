@@ -15,7 +15,7 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class MaterialViewModel : ProductViewModel<Material>, ISelfTransientLifetime
+public sealed class MaterialViewModel : ProductViewModel<Material>, ISelfTransientLifetime
 {
     public MaterialViewModel() { }
 
@@ -34,12 +34,12 @@ public class MaterialViewModel : ProductViewModel<Material>, ISelfTransientLifet
 
     protected override IReadOnlyList<Material> GetData(IDbConnection connection, Guid? id)
     {
-        var parameters = new QueryParemeters()
+        var parameters = new QueryParameters()
         {
             Table = "material_ext"
         };
 
-        return DefaultQuery(connection, id)
+        return DefaultQuery(connection, id, parameters)
             .Get<Material, Measurement, Wire, Material>(
                 map: (material, measurement, wire, cross) =>
                 {

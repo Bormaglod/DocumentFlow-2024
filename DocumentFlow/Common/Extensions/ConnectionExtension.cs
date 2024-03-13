@@ -13,8 +13,6 @@ using DocumentFlow.Models.Entities;
 
 using Humanizer;
 
-using Microsoft.VisualBasic;
-
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
@@ -28,11 +26,11 @@ namespace DocumentFlow.Common.Extensions;
 
 public static class ConnectionExtension
 {
-    public static Query GetQuery<T>(this IDbConnection connection, QueryParemeters? parameters = null)
+    public static Query GetQuery<T>(this IDbConnection connection, QueryParameters? parameters = null)
     {
         var factory = new QueryFactory(connection, new PostgresCompiler());
 
-        parameters ??= QueryParemeters.Default;
+        parameters ??= QueryParameters.Default;
 
         var table = parameters.Table ?? typeof(T).Name.Underscore();
 
