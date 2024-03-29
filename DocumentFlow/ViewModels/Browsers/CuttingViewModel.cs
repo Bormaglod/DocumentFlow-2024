@@ -7,6 +7,8 @@
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 namespace DocumentFlow.ViewModels.Browsers;
@@ -15,7 +17,7 @@ public sealed class CuttingViewModel : DirectoryViewModel<Cutting>, ISelfTransie
 {
     public CuttingViewModel() { }
 
-    public CuttingViewModel(IDatabase database) : base(database) { }
+    public CuttingViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.CuttingView);
 

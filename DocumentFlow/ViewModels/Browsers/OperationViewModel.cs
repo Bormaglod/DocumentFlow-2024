@@ -9,6 +9,8 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using System.Data;
@@ -19,7 +21,7 @@ public sealed class OperationViewModel : DirectoryViewModel<Operation>, ISelfTra
 {
     public OperationViewModel() { }
 
-    public OperationViewModel(IDatabase database) : base(database) { }
+    public OperationViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.OperationView);
 

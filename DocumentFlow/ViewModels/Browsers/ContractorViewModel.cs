@@ -8,6 +8,8 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
@@ -16,7 +18,7 @@ public sealed class ContractorViewModel : DirectoryViewModel<Contractor>, ISelfT
 {
     public ContractorViewModel() { }
 
-    public ContractorViewModel(IDatabase database) : base(database) { }
+    public ContractorViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.ContractorView);
 

@@ -7,13 +7,15 @@
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class OperationTypeViewModel : DirectoryViewModel<OperationType>, ISelfTransientLifetime
 {
     public OperationTypeViewModel() { }
 
-    public OperationTypeViewModel(IDatabase database) : base(database) { }
+    public OperationTypeViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.OperationTypeView);
 

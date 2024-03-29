@@ -13,6 +13,8 @@ using DocumentFlow.Models.Entities;
 
 using Humanizer;
 
+using Microsoft.Extensions.Configuration;
+
 using Syncfusion.Windows.Shared;
 
 using System.Reflection;
@@ -25,7 +27,7 @@ public abstract class BalanceViewModel<T> : DocumentViewModel<T>
 {
     public BalanceViewModel() { }
 
-    public BalanceViewModel(IDatabase database) : base(database) { }
+    public BalanceViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     #region Commands
 

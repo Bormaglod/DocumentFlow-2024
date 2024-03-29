@@ -16,6 +16,8 @@ using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
+using Microsoft.Extensions.Configuration;
+
 using Syncfusion.Windows.Shared;
 
 using System.Data;
@@ -27,7 +29,7 @@ public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage
 {
     public OperationUsageViewModel() { }
 
-    public OperationUsageViewModel(IDatabase database) : base(database) { }
+    public OperationUsageViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     #region Commands
 

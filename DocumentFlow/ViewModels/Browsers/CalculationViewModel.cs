@@ -7,13 +7,15 @@
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class CalculationViewModel : DirectoryViewModel<Calculation>, ISelfTransientLifetime
 {
     public CalculationViewModel() { }
 
-    public CalculationViewModel(IDatabase database) : base(database) { }
+    public CalculationViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.CalculationView);
 

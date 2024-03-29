@@ -12,6 +12,8 @@ using DocumentFlow.Messages;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using Syncfusion.Windows.Shared;
@@ -25,7 +27,7 @@ public sealed class CalculationDeductionViewModel : DirectoryViewModel<Calculati
 {
     public CalculationDeductionViewModel() { }
 
-    public CalculationDeductionViewModel(IDatabase database) : base(database) { }
+    public CalculationDeductionViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     #region Commands
 

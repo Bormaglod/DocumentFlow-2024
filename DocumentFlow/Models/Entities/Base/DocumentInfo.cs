@@ -58,6 +58,15 @@ public abstract class DocumentInfo : Entity
         }
     }
 
+    public void EndEdit()
+    {
+        if (storedValues != null)
+        {
+            storedValues.Clear();
+            storedValues = null;
+        }
+    }
+
     public bool IsEqualProperties(string propertyName)
     {
         if (storedValues == null)
@@ -82,20 +91,18 @@ public abstract class DocumentInfo : Entity
         return current.Equals(value.Value);
     }
 
-    public void EndEdit()
-    {
-        if (storedValues != null)
-        {
-            storedValues.Clear();
-            storedValues = null;
-        }
-    }
-
     protected virtual string GetRowStatusImageName()
     {
         if (Deleted)
         {
-            return "icons8-document-delete-16";
+            if (HasDocuments)
+            {
+                return "icons8-document-attached-delete-16";
+            }
+            else
+            {
+                return "icons8-document-delete-16";
+            }
         }
 
         if (HasThumbnails)

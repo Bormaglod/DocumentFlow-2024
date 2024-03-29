@@ -8,6 +8,8 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using System.Data;
 
 namespace DocumentFlow.ViewModels.Browsers;
@@ -16,7 +18,7 @@ public sealed class BalanceContractorViewModel : BalanceViewModel<BalanceContrac
 {
     public BalanceContractorViewModel() { }
 
-    public BalanceContractorViewModel(IDatabase database) : base(database) { }
+    public BalanceContractorViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     protected override IReadOnlyList<BalanceContractor> GetData(IDbConnection connection, Guid? id = null)
     {

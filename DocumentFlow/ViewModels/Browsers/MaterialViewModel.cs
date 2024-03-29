@@ -9,6 +9,8 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using System.Data;
@@ -19,7 +21,7 @@ public sealed class MaterialViewModel : ProductViewModel<Material>, ISelfTransie
 {
     public MaterialViewModel() { }
 
-    public MaterialViewModel(IDatabase database) : base(database) { }
+    public MaterialViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.MaterialView);
 

@@ -15,6 +15,8 @@ using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
+using Microsoft.Extensions.Configuration;
+
 using Syncfusion.Windows.Shared;
 
 using System.Data;
@@ -26,7 +28,7 @@ public sealed class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>,
 {
     public MaterialUsageViewModel() { }
 
-    public MaterialUsageViewModel(IDatabase database) : base(database) { }
+    public MaterialUsageViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     #region Commands
 

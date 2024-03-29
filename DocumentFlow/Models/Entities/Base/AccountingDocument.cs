@@ -19,4 +19,32 @@ public abstract partial class AccountingDocument : BaseDocument
     [ObservableProperty]
     [property: DenyWriting]
     private bool reCarriedOut;
+
+    protected override string GetRowStatusImageName()
+    {
+        if (CarriedOut)
+        {
+            if (HasDocuments) 
+            {
+                return "icons8-document-attached-check-16";
+            }
+            else
+            {
+                return "icons8-document-check-16";
+            }
+        }
+        else if (ReCarriedOut) 
+        { 
+            if (HasDocuments)
+            {
+                return "icons8-document-attached-warn-16";
+            }
+            else
+            {
+                return "icons8-document-warn-16";
+            }
+        }
+
+        return base.GetRowStatusImageName();
+    }
 }

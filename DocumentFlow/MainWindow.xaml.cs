@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Interfaces;
-using DocumentFlow.ViewModels;
 
 using System.Windows;
 
@@ -16,7 +15,5 @@ public partial class MainWindow : Window, ISelfSingletonLifetime
     public MainWindow()
     {
         InitializeComponent();
-        
-        Closing += ((MainWindowViewModel)DataContext).OnWindowClosing;
     }
 }

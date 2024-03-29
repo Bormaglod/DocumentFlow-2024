@@ -7,13 +7,15 @@
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class BankViewModel : DirectoryViewModel<Bank>, ISelfTransientLifetime
 {
     public BankViewModel() { }
 
-    public BankViewModel(IDatabase database) : base(database) { }
+    public BankViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.BankView);
 

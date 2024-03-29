@@ -1,0 +1,30 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.SelectDayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        mc:Ignorable="d"
+        Title="Выбор дня" Height="360" Width="280"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" 
+        PreviewKeyDown="Window_PreviewKeyDown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <syncfusion:CalendarEdit x:Name="calendar" 
+                                 Margin="5" 
+                                 NotCurrentMonthForeground="LightGray"
+                                 MouseDown="Calendar_MouseDown"/>
+        <TextBlock x:Name="textToday" 
+                   Text="Сегодня" 
+                   Grid.Row="1"
+                   Margin="5,5,5,10" 
+                   TextDecorations="Underline" 
+                   Foreground="Blue" 
+                   HorizontalAlignment="Left" 
+                   Cursor="Hand"
+                   MouseDown="TextToday_MouseDown" />
+    </Grid>
+</Window>

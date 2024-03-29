@@ -10,6 +10,8 @@ using DocumentFlow.Common;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.Windows.Shared;
 
@@ -22,7 +24,7 @@ public class ProductViewModel<T> : DirectoryViewModel<T>
 {
     public ProductViewModel() { }
 
-    public ProductViewModel(IDatabase database) : base(database) { }
+    public ProductViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     #region Commands
 

@@ -8,13 +8,18 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class CalculationOperationViewModel : BaseCalculationOperationViewModel<CalculationOperation>, ISelfTransientLifetime
 {
     public CalculationOperationViewModel() { }
 
-    public CalculationOperationViewModel(IDatabase database, ICalculationOperationRepository repoOperations) : base(database, repoOperations) { }
+    public CalculationOperationViewModel(IDatabase database, ICalculationOperationRepository repoOperations, IConfiguration configuration) 
+        : base(database, repoOperations, configuration) 
+    { 
+    }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.CalculationOperationView);
 }

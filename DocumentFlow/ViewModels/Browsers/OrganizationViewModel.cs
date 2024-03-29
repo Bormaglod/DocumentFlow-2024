@@ -8,6 +8,8 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using System.Data;
@@ -18,7 +20,7 @@ public sealed class OrganizationViewModel : DirectoryViewModel<Organization>, IS
 {
     public OrganizationViewModel() { }
 
-    public OrganizationViewModel(IDatabase database) : base(database) { }
+    public OrganizationViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.OrganizationView);
 

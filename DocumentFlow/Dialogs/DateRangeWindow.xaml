@@ -1,0 +1,171 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.DateRangeWindow"
+        x:Name="dateRangeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Выбор периода"
+        Height="215" Width="480" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height" 
+        PreviewKeyDown="DateRangeWindow_PreviewKeyDown">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/MSControl/Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="Button"
+                   BasedOn="{StaticResource WPFButtonStyle}">
+                <Style.Setters>
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Height" Value="25"/>
+                </Style.Setters>
+            </Style>
+            <Style TargetType="Border" x:Key="buttonSeparator">
+                <Style.Setters>
+                    <Setter Property="Background" Value="#16A5DC"/>
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Width" Value="2"/>
+                </Style.Setters>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Border Background="#C7E0F4"
+                Margin="5">
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center">
+                <Button x:Name="buttonPrevYear" 
+                        Width="25"
+                        Click="ButtonPrevYear_Click">
+                    <Button.Content>
+                        <Image Source="/Images/left_16.png" 
+                               Stretch="None"/>
+                    </Button.Content>
+                </Button>
+                <TextBlock Text="{Binding ElementName=dateRangeWindow, Path=Year, UpdateSourceTrigger=PropertyChanged}" 
+                           VerticalAlignment="Center" 
+                           FontSize="16"/>
+                <TextBlock Text=" год"
+                           VerticalAlignment="Center"
+                           FontSize="16"/>
+                <Button x:Name="buttonNextYear" 
+                        Width="25"
+                        Height="25" 
+                        Click="ButtonNextYear_Click">
+                    <Button.Content>
+                        <Image Source="/Images/right_16.png" 
+                               Stretch="None"/>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Январь"
+                    Grid.Column="0" Grid.Row="0" 
+                    Tag="1"
+                    Click="Button_Click"/>
+            <Button Content="Февраль"
+                    Grid.Column="1" Grid.Row="0"
+                    Tag="2"
+                    Click="Button_Click"/>
+            <Button Content="Март"
+                    Grid.Column="2" Grid.Row="0"
+                    Tag="3"
+                    Click="Button_Click"/>
+            <Button Content="Апрель"
+                    Grid.Column="0" Grid.Row="1"
+                    Tag="4"
+                    Click="Button_Click"/>
+            <Button Content="Май"
+                    Grid.Column="1" Grid.Row="1"
+                    Tag="5"
+                    Click="Button_Click"/>
+            <Button Content="Июнь"
+                    Grid.Column="2" Grid.Row="1"
+                    Tag="6"
+                    Click="Button_Click"/>
+            <Button Content="Июль"
+                    Grid.Column="0" Grid.Row="2"
+                    Tag="7"
+                    Click="Button_Click"/>
+            <Button Content="Август"
+                    Grid.Column="1" Grid.Row="2"
+                    Tag="8"
+                    Click="Button_Click"/>
+            <Button Content="Сентябрь"
+                    Grid.Column="2" Grid.Row="2"
+                    Tag="9"
+                    Click="Button_Click"/>
+            <Button Content="Октябрь"
+                    Grid.Column="0" Grid.Row="3"
+                    Tag="10"
+                    Click="Button_Click"/>
+            <Button Content="Ноябрь"
+                    Grid.Column="1" Grid.Row="3"
+                    Tag="11"
+                    Click="Button_Click"/>
+            <Button Content="Декабрь"
+                    Grid.Column="2" Grid.Row="3"
+                    Tag="12"
+                    Click="Button_Click"/>
+            <Border Style="{StaticResource buttonSeparator}"
+                    Grid.Column="3"
+                    Grid.RowSpan="4"/>
+            <Button Content="1 квартал"
+                    Grid.Column="4" Grid.Row="0"
+                    Tag="21"
+                    Click="Button_Click"/>
+            <Button Content="2 квартал"
+                    Grid.Column="4" Grid.Row="1"
+                    Tag="22"
+                    Click="Button_Click"/>
+            <Button Content="3 квартал"
+                    Grid.Column="4" Grid.Row="2"
+                    Tag="23"
+                    Click="Button_Click"/>
+            <Button Content="4 квартал"
+                    Grid.Column="4" Grid.Row="3"
+                    Tag="24"
+                    Click="Button_Click"/>
+            <Border Style="{StaticResource buttonSeparator}"
+                    Grid.Column="5"
+                    Grid.RowSpan="4"/>
+            <Button x:Name="buttonSelectDay" 
+                    Content="День..."
+                    Grid.Column="6" Grid.Row="0" 
+                    Click="ButtonSelectDay_Click"/>
+            <Button Content="Полугодие"
+                    Grid.Column="6" Grid.Row="1"
+                    Tag="32"
+                    Click="Button_Click"/>
+            <Button Content="9 месяцев"
+                    Grid.Column="6" Grid.Row="2"
+                    Tag="33"
+                    Click="Button_Click"/>
+            <Button Content="Год"
+                    Grid.Column="6" Grid.Row="3"
+                    Tag="34"
+                    Click="Button_Click"/>
+        </Grid>
+    </Grid>
+</Window>

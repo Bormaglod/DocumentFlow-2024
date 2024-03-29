@@ -27,6 +27,7 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
     {
         models.Add(
             AddFolder("Документы",
+                AddItem<PurchaseRequestView>("Заявка на приобретение материалов"),
                 AddFolder("Склад"),
                 AddFolder("Производство"),
                 AddFolder("Расчёты с контрагентами"),

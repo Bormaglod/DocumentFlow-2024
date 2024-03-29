@@ -15,6 +15,8 @@ using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using Syncfusion.Windows.Shared;
@@ -31,7 +33,8 @@ public abstract class BaseCalculationOperationViewModel<T> : DirectoryViewModel<
 
     public BaseCalculationOperationViewModel() { }
 
-    public BaseCalculationOperationViewModel(IDatabase database, ICalculationItemRepository<T> repoOperations) : base(database) 
+    public BaseCalculationOperationViewModel(IDatabase database, ICalculationItemRepository<T> repoOperations, IConfiguration configuration) 
+        : base(database, configuration) 
     { 
         this.repoOperations = repoOperations;
     }

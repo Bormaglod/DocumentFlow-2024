@@ -27,6 +27,11 @@
         </DataTemplate>
         <converters:GridLengthConverter x:Key="gridLengthConverter" />
     </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <common:EventCommandAction Command="{Binding AppClosing}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid x:Name="gridBase">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{Binding NavigatorWidth, Mode=TwoWay, Converter={StaticResource gridLengthConverter}}" />

@@ -7,11 +7,13 @@
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class BalanceGoodsViewModel : BalanceProductViewModel<BalanceGoods>, ISelfTransientLifetime
 {
     public BalanceGoodsViewModel() { }
 
-    public BalanceGoodsViewModel(IDatabase database) : base(database) { }
+    public BalanceGoodsViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 }

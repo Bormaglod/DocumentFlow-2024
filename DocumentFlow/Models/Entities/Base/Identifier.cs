@@ -14,4 +14,14 @@ public abstract class Identifier : ObservableObject
 {
     [Key]
     public Guid Id { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Identifier identifier && Id.Equals(identifier.Id);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id);
+    }
 }

@@ -7,13 +7,15 @@
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class ContractViewModel : DirectoryViewModel<Contract>, ISelfTransientLifetime
 {
     public ContractViewModel() { }
 
-    public ContractViewModel(IDatabase database) : base(database) { }
+    public ContractViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.ContractView);
 

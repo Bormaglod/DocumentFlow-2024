@@ -12,6 +12,8 @@ using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
@@ -27,7 +29,7 @@ public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTran
 {
     public CustomerViewModel() { }
 
-    public CustomerViewModel(IDatabase database) : base(database) { }
+    public CustomerViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     #region Commands
 

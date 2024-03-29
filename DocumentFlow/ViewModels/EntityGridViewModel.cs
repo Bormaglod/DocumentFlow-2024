@@ -21,8 +21,11 @@ using DocumentFlow.Messages;
 using DocumentFlow.Messages.Options;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
+using DocumentFlow.Settings;
 
 using Humanizer;
+
+using Microsoft.Extensions.Configuration;
 
 using SqlKata;
 using SqlKata.Execution;
@@ -40,7 +43,7 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
-public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IEntityGridViewModel
+public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IRecipient<PageClosedMessage>, IEntityGridViewModel
     where T : DocumentInfo
 {
     private class ColumnInfo : IColumnInfo
@@ -62,6 +65,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     }
 
     private readonly List<GridColumn> alwaysVisibleColumns = new();
+    private readonly BrowserSettings settings = new();
 
     [ObservableProperty]
     private ObservableCollection<T>? dataSource;
@@ -97,7 +101,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     }
 #pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
-    public EntityGridViewModel(IDatabase database)
+    public EntityGridViewModel(IDatabase database, IConfiguration configuration)
     {
         CurrentDatabase = database;
 
@@ -113,7 +117,12 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             creationBasedMenuItems.Add(item);
         }
 
-        WeakReferenceMessenger.Default.Register(this);
+        var section = configuration.GetSection(typeof(T).Name);
+        section.Bind(settings);
+        
+        LoadFilter(section);
+
+        WeakReferenceMessenger.Default.RegisterAll(this);
 
         InitializeToolBar(database);
     }
@@ -448,6 +457,14 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
+    public void Receive(PageClosedMessage message)
+    {
+        if (message.Value == this)
+        {
+            settings.Save(typeof(T).Name, GetFilter());
+        }
+    }
+
     #endregion
 
     public void RefreshDataSource()
@@ -468,6 +485,10 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     public virtual Type? GetEditorViewType() => null;
 
     protected virtual void InitializeToolBar(IDatabase? database = null) { }
+
+    protected virtual void LoadFilter(IConfigurationSection section) { }
+
+    protected virtual object? GetFilter() => null;
 
     protected virtual MessageOptions GetEditorOptions() => new DocumentEditorMessageOptions(Owner) { CanEdit = CanEditSelected() };
 
@@ -521,13 +542,26 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     protected Query DefaultQuery(IDbConnection conn, Guid? id = null, QueryParameters? parameters = null)
     {
         parameters ??= QueryParameters.Default;
-        return SelectQuery(RequiredQuery(conn, parameters))
+        return ApplyFilters(SelectQuery(RequiredQuery(conn, parameters)))
             .When(id != null, q => q.Where($"{parameters.Alias}.id", id));
     }
 
     protected virtual Query SelectQuery(Query query) => query;
 
     protected virtual Query WipeQuery(Query query) => query;
+
+    protected virtual Query? FilterQuery(Query query) => null;
+
+    private Query ApplyFilters(Query query)
+    {
+        var filterQuery = FilterQuery(query);
+        if (filterQuery != null)
+        {
+            query = query.Where(q => filterQuery);
+        }
+
+        return query;
+    }
 
     protected Query RequiredQuery(IDbConnection connection, QueryParameters parameters)
     {
@@ -542,7 +576,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             query = query
                 .SelectRaw($"exists(select 1 from document_refs dr where dr.owner_id = {parameters.Alias}.id) as has_documents")
                 .SelectRaw($"(exists (select 1 from document_refs dr where ((dr.owner_id = {parameters.Alias}.id) and (dr.thumbnail is not null)))) AS has_thumbnails");
-            var grp = query.Clauses.Where(c => c.Component == "group").OfType<Column>();
+            var grp = query.GetComponents<Column>("group");
             if (grp.Any() && grp.FirstOrDefault(x => x.Name == $"{parameters.Alias}.id") == null)
             {
                 query = query.GroupBy($"{parameters.Alias}.id");

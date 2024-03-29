@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Xaml.Behaviors;

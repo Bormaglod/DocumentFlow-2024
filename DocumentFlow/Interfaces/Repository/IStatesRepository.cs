@@ -4,13 +4,12 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using CommunityToolkit.Mvvm.Messaging.Messages;
+using DocumentFlow.Models.Entities;
 
-using DocumentFlow.Interfaces;
+namespace DocumentFlow.Interfaces.Repository;
 
-namespace DocumentFlow.Messages;
-
-public class ClosePageMessage : ValueChangedMessage<IPageView>
+public interface IStatesRepository
 {
-    public ClosePageMessage(IPageView value) : base(value) { }
+    IReadOnlyList<State> GetStateTargets(BaseDocument document);
+    IReadOnlyList<State> GetStateTargets(Type documentType, State fromState);
 }

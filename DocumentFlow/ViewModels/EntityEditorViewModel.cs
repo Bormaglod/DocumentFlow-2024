@@ -130,7 +130,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         OnSave();
         if (View != null)
         {
-            WeakReferenceMessenger.Default.Send(new ClosePageMessage(View));
+            WeakReferenceMessenger.Default.Send(new RequestClosePageMessage(View));
         }
     }
 

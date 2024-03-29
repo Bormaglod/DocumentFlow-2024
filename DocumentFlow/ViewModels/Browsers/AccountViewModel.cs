@@ -8,6 +8,8 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using System.Data;
@@ -18,7 +20,7 @@ public sealed class AccountViewModel : DirectoryViewModel<Account>, ISelfTransie
 {
     public AccountViewModel() { }
 
-    public AccountViewModel(IDatabase database) : base(database) { }
+    public AccountViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.AccountView);
 

@@ -12,13 +12,11 @@ using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
-using DocumentFlow.Common.Extensions;
 using DocumentFlow.Models.Settings;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-
-using Minio;
 
 using Npgsql;
 
@@ -27,6 +25,7 @@ using Syncfusion.Windows.Tools.Controls;
 
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json;
@@ -43,7 +42,7 @@ public partial class MainWindowViewModel :
     IRecipient<EntityListOpenMessage>,
     IRecipient<EntityEditorOpenMessage>,
     IRecipient<EditorPageHeaderChangedMessage>,
-    IRecipient<ClosePageMessage>,
+    IRecipient<RequestClosePageMessage>,
     ISelfSingletonLifetime
 {
     private readonly IServiceProvider services;
@@ -99,9 +98,12 @@ public partial class MainWindowViewModel :
         }
 
         Title = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
+
+        Windows = new ObservableCollection<object>();
+        Windows.CollectionChanged += Windows_CollectionChanged;
     }
 
-    public ObservableCollection<object> Windows { get; set; } = new ObservableCollection<object>();
+    public ObservableCollection<object> Windows { get; set; }
 
     #region Commands
 
@@ -125,7 +127,37 @@ public partial class MainWindowViewModel :
 
     #endregion
 
+    #region AppClosing
+
+    private ICommand? appClosing;
+
+    public ICommand AppClosing
+    {
+        get
+        {
+            appClosing ??= new DelegateCommand<CancelEventArgs>(OnAppClosing);
+            return appClosing;
+        }
+    }
+
+    private void OnAppClosing(CancelEventArgs e)
+    {
+        SaveSettings(localSettings.MainWindow.Settings);
+        localSettings.MainWindow.NavigatorWidth = NavigatorWidth;
+
+        localSettings.Save();
+
+        foreach (var item in Windows.OfType<Control>())
+        {
+            WeakReferenceMessenger.Default.Send(new PageClosedMessage(item.DataContext));
+        }
+    }
+
     #endregion
+
+    #endregion
+
+    #region Receives
 
     public void Receive(EntityListOpenMessage message)
     {
@@ -193,18 +225,12 @@ public partial class MainWindowViewModel :
         }
     }
 
-    public void Receive(ClosePageMessage message)
+    public void Receive(RequestClosePageMessage message)
     {
         Windows.Remove(message.Value);
     }
 
-    public void OnWindowClosing(object? sender, CancelEventArgs e)
-    {
-        SaveSettings(localSettings.MainWindow.Settings);
-        localSettings.MainWindow.NavigatorWidth = NavigatorWidth;
-
-        localSettings.Save();
-    }
+    #endregion
 
     private async Task CreateListener(CancellationToken token)
     {
@@ -297,6 +323,23 @@ public partial class MainWindowViewModel :
             {
                 WeakReferenceMessenger.Default.Send(message);
             }
+        }
+    }
+
+    private void Windows_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Remove:
+                if (e.OldItems != null)
+                {
+                    foreach (var item in e.OldItems.OfType<Control>())
+                    {
+                        WeakReferenceMessenger.Default.Send(new PageClosedMessage(item.DataContext));
+                    }
+                }
+
+                break;
         }
     }
 }

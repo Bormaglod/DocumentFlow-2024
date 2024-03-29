@@ -16,6 +16,8 @@ using DocumentFlow.Messages.Options;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using Syncfusion.Windows.Shared;
@@ -44,7 +46,7 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
         InitializeHierarchy();
     }
 
-    public DirectoryViewModel(IDatabase database) : base(database)
+    public DirectoryViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration)
     {
         InitializeHierarchy(database);
     }

@@ -9,6 +9,8 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using System.Data;
@@ -19,7 +21,7 @@ public sealed class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLife
 {
     public GoodsViewModel() { }
 
-    public GoodsViewModel(IDatabase database) : base(database) { }
+    public GoodsViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.GoodsView);
 

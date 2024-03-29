@@ -14,6 +14,8 @@ using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
+using Microsoft.Extensions.Configuration;
+
 using SqlKata;
 
 using Syncfusion.Windows.Shared;
@@ -29,7 +31,11 @@ public sealed class CalculationMaterialViewModel : DirectoryViewModel<Calculatio
 
     public CalculationMaterialViewModel() { }
 
-    public CalculationMaterialViewModel(IDatabase database, ICalculationMaterialRepository repoMaterials) : base(database) { }
+    public CalculationMaterialViewModel(IDatabase database, ICalculationMaterialRepository repoMaterials, IConfiguration configuration) 
+        : base(database, configuration) 
+    { 
+        this.repoMaterials = repoMaterials;
+    }
 
     #region Commands
 

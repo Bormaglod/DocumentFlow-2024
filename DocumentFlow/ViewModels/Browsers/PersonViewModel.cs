@@ -7,13 +7,15 @@
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class PersonViewModel : DirectoryViewModel<Person>, ISelfTransientLifetime
 {
     public PersonViewModel() { }
 
-    public PersonViewModel(IDatabase database) : base(database) { }
+    public PersonViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.PersonView);
 

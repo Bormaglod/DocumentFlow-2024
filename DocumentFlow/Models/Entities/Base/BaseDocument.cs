@@ -24,5 +24,8 @@ public abstract partial class BaseDocument : DocumentInfo
     [property: DenyWriting]
     private Organization? organization;
 
+    [ObservableProperty]
+    private State? state;
+
     public override string ToString() => $"№{DocumentNumber} от {DocumentDate:d}";
 }
