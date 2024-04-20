@@ -66,9 +66,9 @@ public sealed class CalculationDeductionViewModel : DirectoryViewModel<Calculati
         }
     }
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
-        base.InitializeToolBar(database);
+        base.InitializeToolBar();
 
         ToolBarItems.AddButtons(this,
             new ToolBarSeparatorModel(),

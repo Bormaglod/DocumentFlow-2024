@@ -109,7 +109,7 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>
         return base.GetFilter();
     }
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Создать", "file-add") { Command = CreateRow },
@@ -120,11 +120,12 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>
             new ToolBarSeparatorModel(),
             new ToolBarButtonModel("Копия", "copy-edit") { Command = CopyRow },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonComboModel("Печать", "print"),
+            new ToolBarButtonComboModel("Печать", "print", Reports),
             new ToolBarButtonModel("Настройки", "settings"));
     }
 
     protected virtual IEnumerable<int>? GetIncludingStates(int stateCategory) => null;
+
     protected virtual IEnumerable<int>? GetExcludingStates(int stateCategory)
     {
         return stateCategory switch

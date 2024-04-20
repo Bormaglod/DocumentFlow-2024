@@ -17,6 +17,7 @@ using DocumentFlow.Scanner.Enums;
 using Microsoft.Extensions.Options;
 
 using Syncfusion.UI.Xaml.Utility;
+using Syncfusion.Windows.Shared;
 
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -302,9 +303,20 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
 
     #endregion
 
-    #endregion
+    #region WindowClosing
 
-    public void OnWindowClosing(object? sender, CancelEventArgs e)
+    private ICommand? windowClosing;
+
+    public ICommand WindowClosing
+    {
+        get
+        {
+            windowClosing ??= new DelegateCommand<CancelEventArgs>(OnWindowClosing);
+            return windowClosing;
+        }
+    }
+
+    public void OnWindowClosing(CancelEventArgs e)
     {
         if (settings != null)
         {
@@ -320,6 +332,10 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
             settings.Save();
         }
     }
+
+    #endregion
+
+    #endregion
 
     private void Images_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {

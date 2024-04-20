@@ -7,6 +7,7 @@
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
@@ -19,9 +20,15 @@ namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 {
+    private readonly IGoodsRepository goodsRepository = null!;
+
     public GoodsViewModel() { }
 
-    public GoodsViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public GoodsViewModel(IDatabase database, IGoodsRepository goodsRepository, IConfiguration configuration) 
+        : base(database, configuration) 
+    { 
+        this.goodsRepository = goodsRepository;
+    }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.GoodsView);
 
@@ -60,5 +67,12 @@ public sealed class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLife
                     return goods;
                 })
             .ToList();
+    }
+
+    protected override void OnCopyNestedRows(IDbConnection connection, Goods from, Goods to, IDbTransaction? transaction = null)
+    {
+        base.OnCopyNestedRows(connection, from, to, transaction);
+
+        goodsRepository.CopyCalculation(connection, from, to, transaction);
     }
 }

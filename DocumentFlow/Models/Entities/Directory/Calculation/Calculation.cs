@@ -93,4 +93,14 @@ public partial class Calculation : Directory
         get { return Enum.Parse<StimulatingValue>(StimulType.Pascalize()); }
         set { StimulType = value.ToString().Underscore(); }
     }
+
+    public override string ToString()
+    {
+        if (DateApproval == null)
+        {
+            return Code;
+        }
+
+        return $"{Code} от {DateApproval:d}";
+    }
 }

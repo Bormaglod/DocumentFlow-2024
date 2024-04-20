@@ -8,6 +8,9 @@ using DocumentFlow.Common;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 
+using FastReport;
+using FastReport.Export.Image;
+
 using iText.IO.Image;
 using iText.Kernel.Pdf;
 using iText.Layout;
@@ -19,9 +22,9 @@ namespace DocumentFlow.Tools;
 
 public class PdfHelper
 {
-    /*public static string CreateDocument(Report report, int reportResolution, PdfNamingStrategy namingStrategy)
+    public static string CreateDocument(Report report, int reportResolution, PdfNamingStrategy namingStrategy)
     {
-        var pdfFile = GenerateFileName(namingStrategy);
+        var pdfFile = FileHelper.GetTempFileName("Reports", namingStrategy, FileExtension.Pdf);
         var path = Path.GetDirectoryName(pdfFile) ?? string.Empty;
 
         ImageExport exp = new()
@@ -52,7 +55,7 @@ public class PdfHelper
         document.Close();
 
         return pdfFile;
-    }*/
+    }
 
     public static string CreateDocument(IList<BitmapSource> images, PdfNamingStrategy namingStrategy)
     {

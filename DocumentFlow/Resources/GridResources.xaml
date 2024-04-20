@@ -6,8 +6,9 @@
                     xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
                     xmlns:behavior="clr-namespace:DocumentFlow.Common.Behaviors">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/SfDatagrid/SfDatagrid.xaml" />
-        <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/MSControl/Menu.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/SfDatagrid/SfDatagrid.xaml"/>
+        <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/MSControl/Menu.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridSummaryResources.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     <converters:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
     <converters:RowHeaderImageConverter x:Key="RowHeaderImageConverter"/>
@@ -426,10 +427,4 @@
                        VerticalAlignment="Center"/>
         </Border>
     </DataTemplate>
-    <Style x:Key="TableSummaryStyleDefault" TargetType="syncfusion:GridTableSummaryCell">
-        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-    </Style>
-    <Style x:Key="TableSummaryStyleNumeric" TargetType="syncfusion:GridTableSummaryCell">
-        <Setter Property="HorizontalContentAlignment" Value="Right"/>
-    </Style>
 </ResourceDictionary>

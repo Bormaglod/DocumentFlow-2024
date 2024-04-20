@@ -37,12 +37,10 @@ public abstract class ReadOnlyRepository<T> : IReadOnlyRepository<T>
 
     protected virtual Query GetSlimQuery(IDbConnection connection)
     {
-        return GetQuery(connection, GetDefaultSlimQueryParameters());
+        return connection.GetQuery<T>(GetDefaultSlimQueryParameters());
     }
 
     protected virtual QueryParameters GetDefaultSlimQueryParameters() => new() { IncludeDocumentsInfo = false };
-
-    protected Query GetQuery(IDbConnection connection, QueryParameters? parameters = null) => connection.GetQuery<T>(parameters);
 
     protected IDbConnection GetConnection() => CurrentDatabase.OpenConnection();
 }

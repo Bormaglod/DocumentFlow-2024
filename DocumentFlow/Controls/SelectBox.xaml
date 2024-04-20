@@ -9,7 +9,8 @@
              d:DesignHeight="25" d:DesignWidth="400">
     <UserControl.Resources>
         <ResourceDictionary>
-            <converters:EditorTypeConverter x:Key="EditorTypeConverter"/>
+            <converters:NullToVisibilityConverter x:Key="nullToVisibilityConverter"/>
+            <BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -28,6 +29,7 @@
                 Grid.Column="1"
                 Margin="0,0,5,0"
                 Width="25" 
+                Visibility="{Binding ElementName=selectBox, Path=ShowClearButton, Converter={StaticResource boolToVisibilityConverter}}"
                 Click="ButtonClear_Click">
             <ContentControl IsTabStop="False">
                 <Image Source="/Images/icons8-delete-16.png" 
@@ -46,7 +48,7 @@
         <Button x:Name="buttonOpenEditor" 
                 Grid.Column="3"
                 Width="25" 
-                Visibility="{Binding ElementName=selectBox, Path=EditorType, Converter={StaticResource EditorTypeConverter}}"
+                Visibility="{Binding ElementName=selectBox, Path=EditorType, Converter={StaticResource nullToVisibilityConverter}}"
                 Margin="5,0,0,0"
                 Click="ButtonOpenEditor_Click">
             <ContentControl IsTabStop="False">

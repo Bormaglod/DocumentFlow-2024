@@ -8,6 +8,13 @@ using System.ComponentModel;
 
 namespace DocumentFlow.Common.Enums;
 
+public enum ProductContent
+{
+    Materials,
+    Goods,
+    All
+}
+
 public enum QuantityInformation
 {
     Full,

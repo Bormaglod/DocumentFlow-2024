@@ -16,5 +16,5 @@ public interface IEntityGridViewModel
     bool AvailableNavigation { get; set; }
     bool AvailableGrouping { get; set; }
     SizeMode SizeMode { get; set; }
-    void SetView(IGridPageView view);
+    object? SelectedItem { get; }
 }

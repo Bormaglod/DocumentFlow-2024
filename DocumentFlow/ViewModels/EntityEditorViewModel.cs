@@ -58,6 +58,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
     public EntityEditorViewModel()
     {
         UpdateHeader();
+        InitializeToolBar();
 
         WeakReferenceMessenger.Default.Register(this);
     }
@@ -182,12 +183,17 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         }
     }
 
+    protected virtual void InitializeToolBar(IDatabase? database = null) { }
+
     protected virtual void InitializeEntityCollections(IDbConnection connection, T? entity = null) { }
+
+    protected virtual void UpdateUIControls(T entity) { }
 
     private void RaiseAfterLoad(IDbConnection connection, T entity)
     {
         InitializeEntityCollections(connection, entity);
         RaiseAfterLoadDocument(entity);
+        UpdateUIControls(entity);
     }
 
     protected void LoadEntity()

@@ -6,12 +6,8 @@
 
 using DocumentFlow.Models.Entities;
 
-using System.Data;
-
 namespace DocumentFlow.Interfaces.Repository;
 
 public interface IAccountRepository : IDirectoryRepository<Account>
 {
-    IReadOnlyList<Account> GetAccounts(Contractor contractor);
-    IReadOnlyList<Account> GetAccounts(IDbConnection connection, Contractor contractor);
 }

@@ -4,7 +4,6 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Common.Enums;
 using DocumentFlow.Models.Entities;
 
 using System.Data;
@@ -13,22 +12,6 @@ namespace DocumentFlow.Interfaces.Repository;
 
 public interface ICalculationRepository : IDirectoryRepository<Calculation>
 {
-    /// <summary>
-    /// Функция возвращает список утверждённых калькуляций для указанного изделия.
-    /// </summary>
-    /// <param name="connection"></param>
-    /// <param name="goods"></param>
-    /// <returns></returns>
-    IReadOnlyList<Calculation> GetCalculations(Goods goods);
-
-    /// <summary>
-    /// Функция возвращает список утверждённых калькуляций для указанного изделия.
-    /// </summary>
-    /// <param name="connection"></param>
-    /// <param name="goods"></param>
-    /// <returns></returns>
-    IReadOnlyList<Calculation> GetCalculations(IDbConnection connection, Goods goods);
-
     /// <summary>
     /// Метод сохраняет установленное состояние калькуляции.
     /// </summary>
@@ -42,4 +25,8 @@ public interface ICalculationRepository : IDirectoryRepository<Calculation>
     /// <param name="calculation"></param>
     /// <param name="transaction"></param>
     void SetState(IDbConnection connection, Calculation calculation, IDbTransaction? transaction = null);
+
+    void CopyItems(Calculation fromCalculation, Calculation toCalculation);
+
+    void CopyItems(IDbConnection connection, Calculation fromCalculation, Calculation toCalculation, IDbTransaction? transaction = null);
 }

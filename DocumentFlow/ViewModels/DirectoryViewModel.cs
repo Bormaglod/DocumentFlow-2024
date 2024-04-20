@@ -246,7 +246,7 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
         }
     }
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Создать", "file-add") { Command = CreateRow },

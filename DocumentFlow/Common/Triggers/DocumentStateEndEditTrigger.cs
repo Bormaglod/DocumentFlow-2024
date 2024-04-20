@@ -4,16 +4,18 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Common.Exceptions;
+using Dapper;
+
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
-using Dapper;
-using Microsoft.Xaml.Behaviors;
+
 using Humanizer;
+
+using Microsoft.Xaml.Behaviors;
+
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 
-using System.Transactions;
 using System.Windows;
 
 namespace DocumentFlow.Common.Triggers;

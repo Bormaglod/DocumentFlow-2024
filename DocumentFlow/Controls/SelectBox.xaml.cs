@@ -28,20 +28,20 @@ public partial class SelectBox : UserControl
 
     public Guid? SelectedValue
     {
-        get { return (Guid?)GetValue(SelectedValueProperty); }
-        set { SetValue(SelectedValueProperty, value); }
+        get => (Guid?)GetValue(SelectedValueProperty);
+        set => SetValue(SelectedValueProperty, value);
     }
 
     public DocumentInfo SelectedItem
     {
-        get { return (DocumentInfo)GetValue(SelectedItemProperty); }
-        set { SetValue(SelectedItemProperty, value); }
+        get => (DocumentInfo)GetValue(SelectedItemProperty);
+        set => SetValue(SelectedItemProperty, value);
     }
 
     public IEnumerable<DocumentInfo> ItemsSource
     {
-        get { return (IEnumerable<DocumentInfo>)GetValue(ItemsSourceProperty); }
-        set { SetValue(ItemsSourceProperty, value); }
+        get => (IEnumerable<DocumentInfo>)GetValue(ItemsSourceProperty);
+        set => SetValue(ItemsSourceProperty, value);
     }
 
     public string SelectedText
@@ -52,20 +52,26 @@ public partial class SelectBox : UserControl
 
     public TypeContent TypeContent
     {
-        get { return (TypeContent)GetValue(TypeContentProperty); }
-        set { SetValue(TypeContentProperty, value); }
+        get => (TypeContent)GetValue(TypeContentProperty);
+        set => SetValue(TypeContentProperty, value);
     }
 
     public bool CanSelectFolder 
     {
-        get { return (bool)GetValue(CanSelectFolderProperty); }
-        set { SetValue(CanSelectFolderProperty, value); }
+        get => (bool)GetValue(CanSelectFolderProperty);
+        set => SetValue(CanSelectFolderProperty, value);
     }
 
     public Type EditorType
     {
-        get { return (Type)GetValue(EditorTypeProperty); }
-        set { SetValue(EditorTypeProperty, value); }
+        get => (Type)GetValue(EditorTypeProperty);
+        set => SetValue(EditorTypeProperty, value);
+    }
+
+    public bool ShowClearButton
+    {
+        get => (bool)GetValue(ShowClearButtonProperty);
+        set => SetValue(ShowClearButtonProperty, value);
     }
 
     public static readonly DependencyProperty SelectedValueProperty = DependencyProperty.Register(
@@ -105,6 +111,12 @@ public partial class SelectBox : UserControl
         nameof(EditorType),
         typeof(Type),
         typeof(SelectBox));
+
+    public static readonly DependencyProperty ShowClearButtonProperty = DependencyProperty.Register(
+        nameof(ShowClearButton),
+        typeof(bool),
+        typeof(SelectBox),
+        new FrameworkPropertyMetadata(true));
 
     private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {

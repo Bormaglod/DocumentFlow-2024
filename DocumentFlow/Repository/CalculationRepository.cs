@@ -12,7 +12,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
-using SqlKata.Execution;
+using Humanizer;
 
 using System.Data;
 
@@ -22,19 +22,33 @@ public class CalculationRepository : DirectoryRepository<Calculation>, ICalculat
 {
     public CalculationRepository(IDatabase database) : base(database) { }
 
-    public IReadOnlyList<Calculation> GetCalculations(Goods goods)
+    public void CopyItems(Calculation fromCalculation, Calculation toCalculation)
     {
         using var conn = GetConnection();
-        return GetCalculations(conn, goods);
+        using var transaction = conn.BeginTransaction();
+
+        try
+        {
+            CopyItems(conn, fromCalculation, toCalculation, transaction);
+            transaction.Commit();
+        }
+        catch (Exception e)
+        {
+            transaction.Rollback();
+            throw new RepositoryException(ExceptionHelper.Message(e));
+        }
     }
 
-    public IReadOnlyList<Calculation> GetCalculations(IDbConnection connection, Goods goods)
+    public void CopyItems(IDbConnection connection, Calculation fromCalculation, Calculation toCalculation, IDbTransaction? transaction = null)
     {
-        return GetSlimQuery(connection, goods)
-            .WhereRaw("state = 'approved'::calculation_state")
-            .When(goods.Calculation != null, w => w.OrWhere("id", goods.Calculation!.Id))
-            .Get<Calculation>()
-            .ToList();
+        var sql = "insert into calculation_operation (owner_id, code, item_name, item_id, equipment_id, tools_id, material_id, material_amount, repeats, previous_operation, note) select :id_to, code, item_name, item_id, equipment_id, tools_id, material_id, material_amount, repeats, previous_operation, note from only calculation_operation where owner_id = :id_from";
+        connection.Execute(sql, new { id_to = toCalculation.Id, id_from = fromCalculation.Id }, transaction: transaction);
+
+        sql = "insert into calculation_cutting (owner_id, code, item_name, item_id, equipment_id, tools_id, material_id, material_amount, repeats, previous_operation, note) select :id_to, code, item_name, item_id, equipment_id, tools_id, material_id, material_amount, repeats, previous_operation, note from calculation_cutting where owner_id = :id_from";
+        connection.Execute(sql, new { id_to = toCalculation.Id, id_from = fromCalculation.Id }, transaction: transaction);
+
+        sql = "insert into calculation_deduction (owner_id, code, item_name, item_id, price, item_cost, value) select :id_to, code, item_name, item_id, price, item_cost, value from calculation_deduction where owner_id = :id_from";
+        connection.Execute(sql, new { id_to = toCalculation.Id, id_from = fromCalculation.Id }, transaction: transaction);
     }
 
     public void SetState(Calculation calculation)

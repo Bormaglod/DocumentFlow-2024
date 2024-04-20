@@ -17,6 +17,8 @@ public class LocalSettings
     public MainWindowSettings MainWindow { get; set; } = new();
     public PreviewRowSettings PreviewRows { get; set; } = new();
     public ScannerSettings Scanner { get; set; } = new();
+    public ReportSettings Report { get; set; } = new();
+    public PreviewPdfSettings PreviewPdf { get; set; } = new();
 
     public void Save()
     {

@@ -41,7 +41,13 @@
         <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
         <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
         <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="F5" Command="{Binding Refresh}"/>
     </UserControl.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <triggers:EventCommandAction Command="{Binding ControlLoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -63,6 +69,7 @@
         <syncfusion:SfDataGrid x:Name="gridContent" 
                                Grid.Row="2"
                                ShowBusyIndicator="True"
+                               EditTrigger="OnTap"
                                ItemsSource="{Binding DataSource}"
                                SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                                HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
@@ -93,17 +100,20 @@
                                            IsHidden="True"/>
                 <syncfusion:GridCurrencyColumn MappingName="CostOrder"
                                                HeaderText="Сумма"
-                                               Width="120"/>
+                                               Width="120"
+                                               CurrencyGroupSizes="3"/>
                 <syncfusion:GridPercentColumn MappingName="Tax"
                                               HeaderText="НДС%"
                                               Width="80"
                                               TextAlignment="Center"/>
                 <syncfusion:GridCurrencyColumn MappingName="TaxValue"
                                                HeaderText="НДС"
-                                               Width="120"/>
+                                               Width="120"
+                                               CurrencyGroupSizes="3"/>
                 <syncfusion:GridCurrencyColumn MappingName="FullCost"
                                                HeaderText="Всего c НДС"
-                                               Width="120"/>
+                                               Width="120"
+                                               CurrencyGroupSizes="3"/>
                 <syncfusion:GridCheckBoxColumn MappingName="Executed"
                                                HeaderText="Выполнена"
                                                Width="100"/>
@@ -172,7 +182,7 @@
                                                       CustomAggregate="{StaticResource infoAggregate}"
                                                       SummaryType="Custom"/>
                         <syncfusion:GridSummaryColumn Name="TaxValue" 
-                                                      Format="'{Sum:c'"
+                                                      Format="'{Sum:c}'"
                                                       MappingName="TaxValue"
                                                       CustomAggregate="{StaticResource infoAggregate}"
                                                       SummaryType="Custom" />

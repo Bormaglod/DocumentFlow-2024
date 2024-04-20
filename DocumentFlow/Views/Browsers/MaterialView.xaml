@@ -6,7 +6,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:local="clr-namespace:DocumentFlow"
-             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:triggers="clr-namespace:DocumentFlow.Common.Triggers"
              xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Browsers"
              xmlns:commands="clr-namespace:DocumentFlow.Commands"
@@ -30,7 +30,13 @@
         <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
         <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
         <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="F5" Command="{Binding Refresh}"/>
     </UserControl.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <triggers:EventCommandAction Command="{Binding ControlLoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -151,7 +157,7 @@
                                            CommandParameter="{Binding}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="DetailsViewExpanding">
-                    <common:EventCommandAction Command="{Binding PopulateThumbnails}"/>
+                    <triggers:EventCommandAction Command="{Binding PopulateThumbnails}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </syncfusion:SfDataGrid>

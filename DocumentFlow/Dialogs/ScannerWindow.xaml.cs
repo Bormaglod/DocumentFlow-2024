@@ -21,8 +21,6 @@ public partial class ScannerWindow : Window
     public ScannerWindow()
     {
         InitializeComponent();
-
-        Closing += ((ScannerViewModel)DataContext).OnWindowClosing;
     }
 
     public FileExtension ImageStore

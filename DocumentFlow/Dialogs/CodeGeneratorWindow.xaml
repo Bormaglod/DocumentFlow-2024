@@ -4,7 +4,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
-        xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
         xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
@@ -16,7 +15,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/DialogResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:GridRowVisibleConverter x:Key="GridRowVisibleConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>

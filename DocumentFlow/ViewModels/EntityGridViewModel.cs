@@ -66,6 +66,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     private readonly List<GridColumn> alwaysVisibleColumns = new();
     private readonly BrowserSettings settings = new();
+    private readonly List<MenuItemModel> reports = new();
+    private bool isLoaded = false;
 
     [ObservableProperty]
     private ObservableCollection<T>? dataSource;
@@ -97,7 +99,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 #pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
     public EntityGridViewModel() 
     {
-        InitializeToolBar();
+        InitializeViewer();
     }
 #pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
@@ -124,12 +126,14 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
         WeakReferenceMessenger.Default.RegisterAll(this);
 
-        InitializeToolBar(database);
+        InitializeViewer();
     }
 
     public ToolBarViewModel ToolBarItems { get; } = new();
 
     protected IDatabase CurrentDatabase { get; private set; }
+
+    protected IEnumerable<MenuItemModel> Reports => reports;
 
     #region Commands
 
@@ -322,6 +326,76 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     #endregion
 
+    #region ControlLoadedCommand
+
+    private ICommand? controlLoadedCommand;
+
+    public ICommand ControlLoadedCommand
+    {
+        get
+        {
+            controlLoadedCommand ??= new DelegateCommand<RoutedEventArgs>(OnControlLoadedCommand);
+            return controlLoadedCommand;
+        }
+    }
+
+    private void OnControlLoadedCommand(RoutedEventArgs e)
+    {
+        if (isLoaded)
+        {
+            return;
+        }
+
+        if (e.Source is not IGridPageView view)
+        {
+            return;
+        }
+
+        var grid = view.DataGrid;
+        if (grid == null)
+        {
+            return;
+        }
+
+        foreach (var column in grid.Columns.Where(c => !string.IsNullOrEmpty(c.HeaderText)))
+        {
+            grid.SortComparers.Add(
+                new SortComparer()
+                {
+                    Comparer = new CustomComparer(typeof(T), column.MappingName),
+                    PropertyName = column.MappingName
+                });
+
+            ColumnInfo info = new(column);
+            ConfigureColumn(info);
+
+            column.Width = info.Width;
+            column.IsHidden = info.IsHidden;
+
+            if (info.AlwaysVisible)
+            {
+                alwaysVisibleColumns.Add(column);
+            }
+
+            var item = new MenuItemModel()
+            {
+                Header = column.HeaderText,
+                IsChecked = !column.IsHidden,
+                IsEnabled = !alwaysVisibleColumns.Contains(column),
+                Tag = column,
+                PlacementTarget = this
+            };
+
+            VisibleColumnsMenuItems.Add(item);
+        }
+
+        RefreshDataSource();
+
+        isLoaded = true;
+    }
+
+    #endregion
+
     #region CopyRow
 
     private ICommand? copyRow;
@@ -360,7 +434,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
                         var type = GetEditorViewType();
                         if (copy != null && type != null)
                         {
-                            OnCopyRow(copy);
+                            OnCopyNestedRows(conn, row, copy, transaction);
                             if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
                                 WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(type, copy));
@@ -409,14 +483,6 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     #endregion
 
     #endregion
-
-    public void SetView(IGridPageView view)
-    {
-        if (view is FrameworkElement control)
-        {
-            control.Loaded += Control_Loaded;
-        }
-    }
 
     #region Receives
 
@@ -484,7 +550,24 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     public virtual Type? GetEditorViewType() => null;
 
-    protected virtual void InitializeToolBar(IDatabase? database = null) { }
+    protected virtual void InitializeToolBar() { }
+
+    protected virtual void RegisterReports() { }
+
+    protected void RegisterReport(Guid id)
+    {
+        using var conn = CurrentDatabase.OpenConnection();
+        var report = conn.QueryFirst<Report>("select * from report where id = :id", new { id });
+
+        MenuItemModel menuItem = new()
+        {
+            Header = report.Title,
+            Tag = report,
+            PlacementTarget = this
+        };
+
+        reports.Add(menuItem);
+    }
 
     protected virtual void LoadFilter(IConfigurationSection section) { }
 
@@ -506,6 +589,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     {
         return !selectedItem.Deleted;
     }
+
+    protected virtual void OnCopyNestedRows(IDbConnection connection, T from, T to, IDbTransaction? transaction = null) { }
 
     /// <summary>
     /// Возвращает список записей с учётом фильтров установленных в функции <see cref="DefaultQuery(IDbConnection)"/>.
@@ -552,17 +637,6 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual Query? FilterQuery(Query query) => null;
 
-    private Query ApplyFilters(Query query)
-    {
-        var filterQuery = FilterQuery(query);
-        if (filterQuery != null)
-        {
-            query = query.Where(q => filterQuery);
-        }
-
-        return query;
-    }
-
     protected Query RequiredQuery(IDbConnection connection, QueryParameters parameters)
     {
         var query = connection.GetQuery<T>(parameters);
@@ -598,6 +672,23 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     protected virtual bool CheckWipeRow(T row) => true;
 
     protected virtual bool CheckCopyRow(T row) => true;
+
+    private void InitializeViewer()
+    {
+        RegisterReports();
+        InitializeToolBar();
+    }
+
+    private Query ApplyFilters(Query query)
+    {
+        var filterQuery = FilterQuery(query);
+        if (filterQuery != null)
+        {
+            query = query.Where(q => filterQuery);
+        }
+
+        return query;
+    }
 
     private T? AddRow(Guid id)
     {
@@ -775,53 +866,5 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-    }
-
-    private void Control_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is not IGridPageView view)
-        {
-            return;
-        }
-
-        var grid = view.DataGrid;
-        if (grid == null)
-        {
-            return;
-        }
-
-        foreach (var column in grid.Columns.Where(c => !string.IsNullOrEmpty(c.HeaderText)))
-        {
-            grid.SortComparers.Add(
-                new SortComparer()
-                {
-                    Comparer = new CustomComparer(typeof(T), column.MappingName),
-                    PropertyName = column.MappingName
-                });
-
-            ColumnInfo info = new(column);
-            ConfigureColumn(info);
-
-            column.Width = info.Width;
-            column.IsHidden = info.IsHidden;
-
-            if (info.AlwaysVisible)
-            {
-                alwaysVisibleColumns.Add(column);
-            }
-
-            var item = new MenuItemModel()
-            {
-                Header = column.HeaderText,
-                IsChecked = !column.IsHidden,
-                IsEnabled = !alwaysVisibleColumns.Contains(column),
-                Tag = column,
-                PlacementTarget = this
-            };
-
-            VisibleColumnsMenuItems.Add(item);
-        }
-
-        RefreshDataSource();
     }
 }

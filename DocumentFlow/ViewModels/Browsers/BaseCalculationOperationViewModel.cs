@@ -158,9 +158,9 @@ public abstract class BaseCalculationOperationViewModel<T> : DirectoryViewModel<
             .ToList();
     }
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
-        base.InitializeToolBar(database);
+        base.InitializeToolBar();
 
         ToolBarItems.AddButtons(this,
             new ToolBarSeparatorModel(),

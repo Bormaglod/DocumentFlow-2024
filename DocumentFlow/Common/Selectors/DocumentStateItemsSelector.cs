@@ -4,7 +4,6 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
@@ -21,8 +20,6 @@ public class DocumentStateItemsSelector : IItemsSourceSelector
     {
         if (record is BaseDocument document && document.State != null) 
         {
-            using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
-
             var repo = ServiceLocator.Context.GetService<IStatesRepository>();
             return new ObservableCollection<State>(repo.GetStateTargets(document));
         }

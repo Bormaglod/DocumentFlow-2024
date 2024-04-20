@@ -6,6 +6,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Common.Data;
+
 namespace DocumentFlow.Models.Entities;
 
 public partial class Goods : Product
@@ -20,6 +22,7 @@ public partial class Goods : Product
     /// Возвращает или устанавливает идентификатор калькуляции.
     /// </summary>
     [ObservableProperty]
+    [property: DenyCopying]
     private Calculation? calculation;
 
     /// <summary>

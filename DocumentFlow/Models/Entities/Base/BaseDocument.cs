@@ -18,13 +18,14 @@ public abstract partial class BaseDocument : DocumentInfo
 
     [ObservableProperty]
     [property: DenyCopying]
-    private DateTime? documentDate;
+    private DateTime documentDate;
 
     [ObservableProperty]
     [property: DenyWriting]
     private Organization? organization;
 
     [ObservableProperty]
+    [property: DenyCopying]
     private State? state;
 
     public override string ToString() => $"№{DocumentNumber} от {DocumentDate:d}";

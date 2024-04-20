@@ -1,0 +1,219 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.PreviewReportWindow" 
+        x:Name="previewReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:pdf="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        xmlns:core="clr-namespace:DocumentFlow"
+        xmlns:triggers="clr-namespace:DocumentFlow.Common.Triggers"
+        xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+        xmlns:local="clr-namespace:DocumentFlow.ViewModels.Dialogs"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManager ThemeName=Windows11Light}"
+        d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=local:PreviewReportViewModel}"
+        core:ViewModelLocator.AutoWireViewModel="True"
+        mc:Ignorable="d"
+        Title="PreviewReportWindow"
+        WindowStartupLocation="CenterScreen" 
+        ShowInTaskbar="True"
+        Left="{Binding Left, Mode=TwoWay}"
+        Top="{Binding Top, Mode=TwoWay}"
+        WindowState="{Binding WindowState, Mode=TwoWay}"
+        Width="{Binding Width, Mode=TwoWay}"
+        Height="{Binding Height, Mode=TwoWay}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/ButtonAdv/ButtonAdv.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type syncfusion:ButtonAdv}"
+                   BasedOn="{StaticResource SyncfusionButtonAdvStyle}">
+                <Setter Property="SizeMode" Value="Small"/>
+                <Setter Property="Height" Value="28"/>
+            </Style>
+            <converters:IntToPercentConverter x:Key="intToPercentConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <triggers:EventCommandAction Command="{Binding WindowClosing}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <syncfusion:ButtonAdv x:Name="buttonSave" 
+                                  SmallIcon="/Images/icons8-save-16.png"
+                                  Margin="5,5,5,5" 
+                                  Command="{Binding SaveCommand}">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="Сохранить">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы сохранить документ на локальном диске."
+                                   TextWrapping="Wrap"/>
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <syncfusion:ButtonAdv x:Name="buttonPrint" 
+                                  SmallIcon="/Images/icons8-print-16.png"
+                                  Margin="0,5,5,5" 
+                                  Command="{Binding PrintCommand}">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="Печать">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы распечатать этот PDF-файл или страницы из него."
+                                   TextWrapping="Wrap"/>
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <Border Width="1"
+                    Margin="0,5,5,5"
+                    Background="LightGray"/>
+            <syncfusion:ButtonAdv x:Name="buttonSend" 
+                                  SmallIcon="/Images/icons8-send-16.png"
+                                  Margin="0,5,0,5" 
+                                  Command="{Binding SendCommand}"/>
+        </StackPanel>
+        <pdf:PdfViewerControl x:Name="pdfViewer"
+                              Grid.Row="1"
+                              ShowToolbar="False"
+                              CurrentPageChanged="PdfViewer_CurrentPageChanged"/>
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Center"
+                    UseLayoutRounding="True"
+                    Grid.Row="2">
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-start-16.png"
+                                  Command="{Binding ElementName=pdfViewer, Path=FirstPageCommand, Mode=OneWay}"
+                                  Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="В начало">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы перейти на первую страницу документа."/>
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-left-16.png"
+                                  Command="{Binding ElementName=pdfViewer, Path=PreviousPageCommand, Mode=OneWay}"
+                                  Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="Назад">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы перейти на предыдущую страницу документа."/>
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <TextBox x:Name="textCurrentPage"
+                     Width="40"
+                     Margin="5"
+                     VerticalAlignment="Stretch"
+                     HorizontalContentAlignment="Center"
+                     VerticalContentAlignment="Center"
+                     KeyDown="TextCurrentPage_KeyDown">
+                <TextBox.ToolTip>
+                    <syncfusion:ScreenTip Description="К странице...">
+                        <TextBlock Width="130"
+                                   HorizontalAlignment="Left"
+                                   Text="Перейдите на указанную страницу документа."
+                                   TextWrapping="Wrap"/>
+                    </syncfusion:ScreenTip>
+                </TextBox.ToolTip>
+            </TextBox>
+            <TextBlock Text="/" 
+                       VerticalAlignment="Center"
+                       Margin="0,5,5,5"/>
+            <TextBlock Text="{Binding PageCount, ElementName=pdfViewer}" 
+                       VerticalAlignment="Center"
+                       Margin="0,5,10,5"/>
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-right-16.png"
+                                  Command="{Binding ElementName=pdfViewer, Path=NextPageCommand, Mode=OneWay}"
+                                  Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="Вперед">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы перейти к следующей странице документа."
+                                   TextWrapping="Wrap"/>
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-end-16.png"
+                                  Command="{Binding ElementName=pdfViewer, Path=LastPageCommand, Mode=OneWay}"
+                                  Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="В конец">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы перейти на последнюю страницу документа."
+                                   TextWrapping="Wrap"/>
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <Border Width="1"
+                    Margin="0,5,5,5"
+                    Background="LightGray"/>
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-zoom-in-16.png"
+                      Command="{Binding ElementName=pdfViewer, Path=IncreaseZoomCommand, Mode=OneWay}"
+                      Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="Zoom Out">
+                        <TextBlock HorizontalAlignment="Left"
+                       Text="Нажмите, чтобы уменьшить увеличение всей страницы." />
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-zoom-out-16.png"
+                      Command="{Binding ElementName=pdfViewer, Path=DecreaseZoomCommand, Mode=OneWay}"
+                      Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="Zoom In">
+                        <TextBlock HorizontalAlignment="Left"
+                       Text="Нажмите, чтобы увеличить изображение всей страницы."/>
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <ComboBox x:Name="zoomText" 
+                      Width="80" 
+                      IsEditable="False"
+                      SelectedItem="{Binding ZoomItem, Converter={StaticResource intToPercentConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="0,5,5,5" 
+                      SelectedIndex="2"
+                      VerticalContentAlignment="Center">
+                <ComboBoxItem Content="50 %"/>
+                <ComboBoxItem Content="75 %"/>
+                <ComboBoxItem Content="100 %"/>
+                <ComboBoxItem Content="150 %"/>
+                <ComboBoxItem Content="200 %"/>
+                <ComboBoxItem Content="400 %"/>
+            </ComboBox>
+            <Border Width="1"
+                    Margin="0,5,5,5"
+                    Background="LightGray"/>
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-fill-window-16.png"
+                                  Command="{Binding FitWidthCommand, Mode=OneWay}"
+                                  Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="FitWidth">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы заполнить окно каждой страницей, и непрерывно прокручивайте страницы."
+                                   TextWrapping="Wrap" />
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+            <syncfusion:ButtonAdv SmallIcon="/Images/icons8-fit-page-16.png"
+                                  Command="{Binding FitPageCommand, Mode=OneWay}"
+                                  Margin="0,5,5,5">
+                <syncfusion:ButtonAdv.ToolTip>
+                    <syncfusion:ScreenTip Description="FitPage">
+                        <TextBlock HorizontalAlignment="Left"
+                                   Text="Нажмите, чтобы показывать по одной странице за раз." />
+                    </syncfusion:ScreenTip>
+                </syncfusion:ButtonAdv.ToolTip>
+            </syncfusion:ButtonAdv>
+        </StackPanel>
+    </Grid>
+</Window>

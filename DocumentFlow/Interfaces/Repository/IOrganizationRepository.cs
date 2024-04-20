@@ -6,8 +6,12 @@
 
 using DocumentFlow.Models.Entities;
 
+using System.Data;
+
 namespace DocumentFlow.Interfaces.Repository;
 
 public interface IOrganizationRepository : ICompanyRepository<Organization>
 {
+    IReadOnlyList<EmailAddress> GetEmails();
+    IReadOnlyList<EmailAddress> GetEmails(IDbConnection connection);
 }

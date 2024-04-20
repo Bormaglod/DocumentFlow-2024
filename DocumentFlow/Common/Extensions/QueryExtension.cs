@@ -17,10 +17,11 @@ using SqlKata.Execution;
 using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace DocumentFlow.Common.Extensions;
 
-public static class QueryExtension
+public static partial class QueryExtension
 {
     public static IEnumerable<TSource> Get<TSource, T>(this Query query, Func<TSource, T, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
     {
@@ -95,7 +96,7 @@ public static class QueryExtension
             var table = prop.PropertyType.Name.Underscore();
 
             var refName = $"{table}_id";
-            var refTable = query.GetOneComponent<AbstractFrom>("from").Alias ?? "t0";
+            var refTable = query.GetAliasTable(typeof(T).Name.Underscore());
 
             var attr = prop.GetCustomAttribute<ForeignKeyAttribute>();
             if (attr != null)
@@ -154,8 +155,8 @@ public static class QueryExtension
         foreach (var join in joins)
         {
             var from = join.Join.GetOneComponent<FromClause>("from");
-            var t = from.Table.Split("as", StringSplitOptions.TrimEntries);
-            if (t.Length > 0 && t[0] == refTable)
+            var joinTable = TableNameRegex().Match(from.Table).Value;
+            if (string.Compare(joinTable, refTable, true) == 0)
             {
                 return from.Alias;
             }
@@ -163,4 +164,29 @@ public static class QueryExtension
 
         throw new Exception($"Join для таблицы {refTable} не найден.");
     }
+
+    private static string GetAliasTable(this Query query, string table)
+    {
+        var fromComponent = query.GetOneComponent<AbstractFrom>("from");
+        if (fromComponent is FromClause fromClause)
+        {
+            var fromTable = TableNameRegex().Match(fromClause.Table).Value;
+            if (string.Compare(fromTable, table, true) == 0)
+            {
+                return fromClause.Alias;
+            }
+        }
+
+        try
+        {
+            return query.GetJoinRefAlias(table);
+        }
+        catch
+        {
+            return fromComponent.Alias ?? "t0";
+        }
+    }
+
+    [GeneratedRegex("^\\w+")]
+    private static partial Regex TableNameRegex();
 }

@@ -16,6 +16,10 @@ namespace DocumentFlow.Models.Entities;
 public partial class Employee : Directory
 {
     [ObservableProperty]
+    [property: ForeignKey(FieldKey = "owner_id")]
+    private Company? company;
+    
+    [ObservableProperty]
     private Guid? personId;
 
     [ObservableProperty]

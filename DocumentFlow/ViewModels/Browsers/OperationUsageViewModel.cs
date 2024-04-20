@@ -125,7 +125,7 @@ public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage
             .ToList();
     }
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Изделие", "goods") { Command = OpenGoods },

@@ -6,6 +6,7 @@
 
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
@@ -34,11 +35,17 @@ public abstract class DirectoryRepository<T> : ReadOnlyRepository<T>, IDirectory
 
     protected virtual Query GetSlimQuery(IDbConnection connection, DocumentInfo? owner = null)
     {
-        return GetQuery(connection, GetDefaultSlimQueryParameters())
-            .WhereFalse("deleted")
-            .When(owner != null, q => q.Where("owner_id", owner!.Id))
-            .OrderBy("item_name")
-            .Select("parent_id", "is_folder");
+        return GetCustomSlimQuery<T>(connection, owner);
+    }
+
+    protected Query GetCustomSlimQuery<P>(IDbConnection connection, DocumentInfo? owner = null)
+        where P : Directory
+    {
+        return connection.GetQuery<P>(GetDefaultSlimQueryParameters())
+            .WhereFalse("t0.deleted")
+            .When(owner != null, q => q.Where("t0.owner_id", owner!.Id))
+            .OrderBy("t0.item_name")
+            .Select("t0.{parent_id,is_folder}");
     }
 
     protected override QueryParameters GetDefaultSlimQueryParameters()

@@ -9,7 +9,7 @@
         xmlns:views="clr-namespace:DocumentFlow.Views"
         xmlns:vm="clr-namespace:DocumentFlow.ViewModels"
         xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
-        xmlns:common="clr-namespace:DocumentFlow.Common"
+        xmlns:triggers="clr-namespace:DocumentFlow.Common.Triggers"
         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
@@ -29,7 +29,7 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <common:EventCommandAction Command="{Binding AppClosing}"/>
+            <triggers:EventCommandAction Command="{Binding AppClosing}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid x:Name="gridBase">
@@ -55,7 +55,7 @@
                                       TDICloseButtonType="Individual">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="DocumentClosing">
-                    <common:EventCommandAction Command="{Binding DocumentClosing}"/>
+                    <triggers:EventCommandAction Command="{Binding DocumentClosing}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </syncfusion:DocumentContainer>

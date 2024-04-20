@@ -120,9 +120,9 @@ public sealed class CalculationMaterialViewModel : DirectoryViewModel<Calculatio
         }
     }
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
-        base.InitializeToolBar(database);
+        base.InitializeToolBar();
 
         ToolBarItems.AddButtons(this,
             new ToolBarSeparatorModel(),

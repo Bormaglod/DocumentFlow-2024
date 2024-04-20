@@ -88,10 +88,5 @@ public static class ViewModelLocator
 
         // View's DataContext is set to ViewModel
         ((FrameworkElement)d).DataContext = viewModel;
-
-        if (viewModel is IEntityGridViewModel model && d is IGridPageView view)
-        {
-            model.SetView(view);
-        }
     }
 }

@@ -65,7 +65,7 @@ public abstract class BalanceViewModel<T> : DocumentViewModel<T>
 
     #endregion
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Открыть документ", "open-document") { Command = OpenDocument },

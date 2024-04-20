@@ -14,4 +14,6 @@ public interface IEmployeeRepository : IDirectoryRepository<Employee>
 {
     IReadOnlyList<Employee> GetEmployees(Contractor contractor);
     IReadOnlyList<Employee> GetEmployees(IDbConnection connection, Contractor contractor);
+    IReadOnlyList<EmailAddress> GetEmails();
+    IReadOnlyList<EmailAddress> GetEmails(IDbConnection connection);
 }

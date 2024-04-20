@@ -1,0 +1,127 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.ProductWindow"
+        x:Name="productWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        xmlns:c="clr-namespace:DocumentFlow.Controls"
+        xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+        mc:Ignorable="d"
+        Title="Материал / изделие" Height="350" Width="400"
+        ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height" WindowStartupLocation="CenterScreen"
+        ContentRendered="ProductWindow_ContentRendered">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/DialogResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BoolToRowVisibilityConverter x:Key="boolToRowVisibilityConverter"/>
+            <BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="{Binding ElementName=productWindow, Path=WithCalculation, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+                <RowDefinition Height="{Binding ElementName=productWindow, Path=WithLot, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="{Binding ElementName=productWindow, Path=IncludePrice, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+                <RowDefinition Height="{Binding ElementName=productWindow, Path=IncludePrice, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+                <RowDefinition Height="{Binding ElementName=productWindow, Path=IncludePrice, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+                <RowDefinition Height="{Binding ElementName=productWindow, Path=IncludePrice, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+                <RowDefinition Height="{Binding ElementName=productWindow, Path=IncludePrice, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Материал / изделие"
+                       Grid.Row="0" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <c:SelectBox x:Name="selectProduct" 
+                         SelectedItem="{Binding ElementName=productWindow, Path=Product}" 
+                         ItemsSource="{Binding ElementName=productWindow, Path=Products}"
+                         Grid.Row="0" Grid.Column="1"
+                         Style="{StaticResource SelectBoxStyle}" 
+                         ShowClearButton="False"/>
+            <TextBlock Text="Калькуляция"
+                       Grid.Row="1" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <c:SelectBox x:Name="selectCalculation" 
+                         SelectedItem="{Binding ElementName=productWindow, Path=Calculation}" 
+                         ItemsSource="{Binding ElementName=productWindow, Path=Calculations}"
+                         Grid.Row="1" Grid.Column="1"
+                         Style="{StaticResource SelectBoxStyle}" 
+                         ShowClearButton="False"/>
+            <TextBlock Text="Партия"
+                       Grid.Row="2" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <c:SelectBox x:Name="selectLot" 
+                         Grid.Row="2" Grid.Column="1"
+                         Style="{StaticResource SelectBoxStyle}"/>
+            <TextBlock Text="Количество"
+                       Grid.Row="3" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <syncfusion:DoubleTextBox x:Name="textAmount" 
+                                      Value="{Binding ElementName=productWindow, Path=Amount}" 
+                                      Grid.Row="3" Grid.Column="1"
+                                      Style="{StaticResource DoubleTextBoxStyle}"
+                                      NumberDecimalDigits="3"/>
+            <TextBlock Text="Цена"
+                       Grid.Row="4" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=Price}" 
+                                        Grid.Row="4" Grid.Column="1"
+                                        Style="{StaticResource CurrencyTextBoxStyle}"/>
+            <TextBlock Text="Сумма"
+                       Grid.Row="5" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=ProductCost}" 
+                                        Grid.Row="5" Grid.Column="1"
+                                        Style="{StaticResource CurrencyTextBoxStyle}"/>
+            <TextBlock Text="НДС%"
+                       Grid.Row="6" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <ComboBox ItemsSource="{Binding ElementName=productWindow, Path=Taxes}" 
+                      SelectedItem="{Binding ElementName=productWindow, Path=Tax}"
+                      ItemTemplate="{StaticResource VatDataItem}"
+                      Grid.Row="6" Grid.Column="1"
+                      Style="{StaticResource ComboBoxStyle}" 
+                      IsEnabled="{Binding ElementName=productWindow, Path=IsTaxPayer, Converter={StaticResource boolToVisibilityConverter}}"/>
+            <TextBlock Text="НДС"
+                       Grid.Row="7" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"
+                       IsEnabled="{Binding ElementName=productWindow, Path=IsTaxPayer, Converter={StaticResource boolToVisibilityConverter}}"/>
+            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=TaxValue}" 
+                                        Grid.Row="7" Grid.Column="1"
+                                        Style="{StaticResource CurrencyTextBoxStyle}"/>
+            <TextBlock Text="Всего с НДС"
+                       Grid.Row="8" Grid.Column="0"
+                       Style="{StaticResource TextBlockStyle}"/>
+            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=FullCost}" 
+                                        Grid.Row="8" Grid.Column="1"
+                                        Style="{StaticResource CurrencyTextBoxStyle}"/>
+        </Grid>
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Grid.Row="1">
+            <Button Content="Сохранить"
+                    Margin="0,5,5,10" 
+                    IsDefault="True" 
+                    Padding="2"
+                    Click="AcceptClick"/>
+            <Button Content="Отменить"
+                    Margin="5,5,10,10" 
+                    Padding="2"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -15,7 +15,8 @@
         <StackPanel Orientation="Horizontal"
                     Height="25">
             <TextBlock Text="Организация" VerticalAlignment="Center"/>
-            <ComboBox ItemsSource="{Binding ElementName=docFilter, Path=Organizations}" 
+            <ComboBox x:Name="comboOrg" 
+                      ItemsSource="{Binding ElementName=docFilter, Path=Organizations}" 
                       SelectedItem="{Binding ElementName=docFilter, Path=SelectedOrganization}"
                       Width="150"
                       Margin="5,0,0,0"/>

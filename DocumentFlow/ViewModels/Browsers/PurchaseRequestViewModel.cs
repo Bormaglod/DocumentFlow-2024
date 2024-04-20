@@ -4,9 +4,12 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using Dapper;
+
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
@@ -19,10 +22,16 @@ namespace DocumentFlow.ViewModels.Browsers;
 
 public sealed class PurchaseRequestViewModel : DocumentViewModel<PurchaseRequest>, ISelfTransientLifetime
 {
+    private readonly IPurchaseRequestRepository requestRepository = null!;
     public PurchaseRequestViewModel() { }
 
-    public PurchaseRequestViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.WireView);
+    public PurchaseRequestViewModel(IDatabase database, IPurchaseRequestRepository requestRepository, IConfiguration configuration) 
+        : base(database, configuration) 
+    { 
+        this.requestRepository = requestRepository;
+    }
+    
+    public override Type? GetEditorViewType() => typeof(Views.Editors.PurchaseRequestView);
 
     protected override Query SelectQuery(Query query)
     {
@@ -45,5 +54,17 @@ public sealed class PurchaseRequestViewModel : DocumentViewModel<PurchaseRequest
                     return pr;
                 })
             .ToList();
+    }
+
+    protected override void OnCopyNestedRows(IDbConnection connection, PurchaseRequest from, PurchaseRequest to, IDbTransaction? transaction = null)
+    {
+        base.OnCopyNestedRows(connection, from, to, transaction);
+
+        requestRepository.CopyContent(connection, from, to, transaction);
+    }
+
+    protected override void RegisterReports()
+    {
+        RegisterReport(new Guid("d0edcb83-c298-4d19-a216-309d33687e40"));
     }
 }

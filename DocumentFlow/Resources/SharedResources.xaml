@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <DataTemplate x:Key="VatDataItem"
+                  DataType="{x:Type sys:Int32}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock x:Name="valueVat"
+                       Text="{Binding}"/>
+            <TextBlock x:Name="textVat"
+                       Text="%"/>
+        </StackPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding}" Value="0">
+                <Setter TargetName="textVat" Property="Text" Value="Без НДС"/>
+                <Setter TargetName="valueVat" Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+</ResourceDictionary>

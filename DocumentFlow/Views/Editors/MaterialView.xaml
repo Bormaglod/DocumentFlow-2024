@@ -187,7 +187,8 @@
                            Margin="0,10,0,5"
                            Grid.Row="1"/>
                 <ToolBar ToolBarTray.IsLocked="True"
-                         Grid.Row="2">
+                         Grid.Row="2"
+                         IsEnabled="{Binding Enabled}">
                     <syncfusion:ButtonAdv Label="Добавить" 
                                           SmallIcon="/Images/icons8-file-add-16.png" 
                                           IconStretch="None"

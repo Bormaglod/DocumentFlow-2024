@@ -23,7 +23,7 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLifetime
 {
-    private readonly ICalculationRepository calculationRepository = null!;
+    private readonly IGoodsRepository goodsRepository = null!;
 
     [ObservableProperty]
     private bool isService;
@@ -48,9 +48,9 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
 
     public GoodsViewModel() { }
 
-    public GoodsViewModel(IMeasurementRepository measurementRepository, ICalculationRepository calculationRepository) : base(measurementRepository)
+    public GoodsViewModel(IMeasurementRepository measurementRepository, IGoodsRepository goodsRepository) : base(measurementRepository)
     {
-        this.calculationRepository = calculationRepository;
+        this.goodsRepository = goodsRepository;
     }
 
     #region Commands
@@ -128,7 +128,7 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
 
         if (goods != null) 
         {
-            Calculations = calculationRepository.GetCalculations(connection, goods);
+            Calculations = goodsRepository.GetCalculations(connection, goods);
         }
     }
 }

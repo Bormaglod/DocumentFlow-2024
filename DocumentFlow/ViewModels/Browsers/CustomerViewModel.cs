@@ -134,7 +134,7 @@ public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTran
             .ToList();
     }
 
-    protected override void InitializeToolBar(IDatabase? database = null)
+    protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
             new ToolBarButtonModel("Контрагент", "contractor") { Command = OpenContractor },

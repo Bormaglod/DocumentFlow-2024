@@ -10,6 +10,8 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
+using SqlKata.Execution;
+
 using System.Data;
 
 namespace DocumentFlow.Repository;
@@ -17,6 +19,23 @@ namespace DocumentFlow.Repository;
 public class OurEmployeeRepository : DirectoryRepository<OurEmployee>, IOurEmployeeRepository, ITransientLifetime
 {
     public OurEmployeeRepository(IDatabase database) : base(database) { }
+
+    public IReadOnlyList<EmailAddress> GetEmails()
+    {
+        using var conn = GetConnection();
+        return GetEmails(conn);
+    }
+
+    public IReadOnlyList<EmailAddress> GetEmails(IDbConnection connection)
+    {
+        return GetSlimQuery(connection)
+            .Select("email")
+            .WhereNotNull("item_name")
+            .WhereNotNull("email")
+            .Get<OurEmployee>()
+            .Select(x => new EmailAddress(x))
+            .ToList();
+    }
 
     public IReadOnlyList<OurEmployee> GetEmployees()
     {

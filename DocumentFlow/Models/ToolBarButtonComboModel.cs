@@ -17,10 +17,19 @@ public class ToolBarButtonComboModel : ToolBarButtonModel
         Items = new(items);
     }
 
-    public ToolBarButtonComboModel(string label, string iconName) : base(label, iconName)
+    public ToolBarButtonComboModel(string label, string iconName, IEnumerable<MenuItemModel>? menuItems = null) : base(label, iconName)
     {
         Items = new(items);
+        if (menuItems != null)
+        {
+            foreach (var item in menuItems)
+            {
+                items.Add(item);
+            }
+        }
+
+        
     }
 
-    public ReadOnlyObservableCollection<MenuItemModel>? Items { get; }
+    public ReadOnlyObservableCollection<MenuItemModel> Items { get; }
 }

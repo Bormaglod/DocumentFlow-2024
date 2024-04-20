@@ -1,0 +1,147 @@
+﻿<Window x:Class="DocumentFlow.Dialogs.EmailSendWindow"
+        x:Name="emailSendWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        mc:Ignorable="d"
+        Title="Выбор адреса электронной почты"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
+        Width="600" Height="350">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/MSControl/TextBlock.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:FileNameConverter x:Key="fileNameConverter"/>
+            <Style TargetType="{x:Type TextBlock}"
+                   BasedOn="{StaticResource WPFTextBlockStyle}">
+                <Style.Setters>
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                    <Setter Property="Margin" Value="0,5,10,5"/>
+                </Style.Setters>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="10,10,10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="От:"/>
+        <syncfusion:ComboBoxAdv ItemsSource="{Binding ElementName=emailSendWindow, Path=EmailFrom}" 
+                                SelectedItem="{Binding ElementName=emailSendWindow, Path=EmailFromSelected}"
+                                Height="30"
+                                Margin="0,5,0,5" 
+                                Grid.Column="1"/>
+        <TextBlock Text="Кому:"
+                   Grid.Row="1"/>
+        <syncfusion:ComboBoxAdv ItemsSource="{Binding ElementName=emailSendWindow, Path=EmailTo}" 
+                                SelectedItems="{Binding ElementName=emailSendWindow, Path=EmailToSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                AllowMultiSelect="True"
+                                SelectedValueDelimiter=";"
+                                Height="30"
+                                Margin="0,5,0,5" 
+                                Grid.Row="1" 
+                                Grid.Column="1">
+            <syncfusion:ComboBoxAdv.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text=" &lt;"/>
+                        <TextBlock Text="{Binding Email}"/>
+                        <TextBlock Text="&gt;"/>
+                    </StackPanel>
+                </DataTemplate>
+            </syncfusion:ComboBoxAdv.ItemTemplate>
+            <syncfusion:ComboBoxAdv.SelectionBoxTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+            </syncfusion:ComboBoxAdv.SelectionBoxTemplate>
+        </syncfusion:ComboBoxAdv>
+        <TextBlock Text="Тема:"
+                   Grid.Row="2"/>
+        <syncfusion:SfTextBoxExt Text="{Binding ElementName=emailSendWindow, Path=Subject}" 
+                                 VerticalContentAlignment="Center"
+                                 Margin="0,5,0,5" 
+                                 Grid.Row="2" 
+                                 Grid.Column="1" 
+                                 Height="30"/>
+        <TextBlock Text="Вложения:"
+                   Grid.Row="3"/>
+        <Grid Grid.Row="3" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <ListBox Background="White" 
+                     BorderBrush="#E6E6E6"
+                     BorderThickness="1"
+                     ItemsSource="{Binding ElementName=emailSendWindow, Path=Attachments}" 
+                     SelectedIndex="{Binding ElementName=emailSendWindow, Path=SelectedIndex}"
+                     Height="70"
+                     Margin="0,5,0,5" 
+                     d:ItemsSource="{d:SampleData ItemCount=5}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource fileNameConverter}}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Grid.Column="1">
+                <Button x:Name="buttonAdd" 
+                        Content="Добавить"
+                        Margin="5"
+                        Padding="10,0,10,0" 
+                        Height="22"
+                        Click="ButtonAdd_Click"/>
+                <Button x:Name="buttonDelete" 
+                        Content="Удалить"
+                        Margin="5,0,5,0"
+                        Padding="10,0,10,0" 
+                        Height="22"
+                        Click="ButtonDelete_Click"/>
+            </StackPanel>
+        </Grid>
+        <TextBlock Text="Текст:"
+                   Grid.Row="4"/>
+        <TextBox Text="{Binding ElementName=emailSendWindow, Path=Body, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}" 
+                 VerticalContentAlignment="Top"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 Margin="0,5,0,5"
+                 Grid.Row="4" 
+                 Grid.Column="1"/>
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Grid.Row="5" 
+                    Grid.ColumnSpan="2">
+            <Button Content="Отправить"
+                    Margin="0,5,5,10" 
+                    IsDefault="True" 
+                    Padding="2"
+                    Click="AcceptClick"/>
+            <Button Content="Отменить"
+                    Margin="5,5,10,10" 
+                    Padding="2"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

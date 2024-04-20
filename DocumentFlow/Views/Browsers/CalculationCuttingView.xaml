@@ -8,6 +8,7 @@
              xmlns:local="clr-namespace:DocumentFlow"
              xmlns:commands="clr-namespace:DocumentFlow.Commands"
              xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:triggers="clr-namespace:DocumentFlow.Common.Triggers"
              xmlns:selectors="clr-namespace:DocumentFlow.Common.Selectors"
              xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Browsers"
@@ -31,7 +32,13 @@
         <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
         <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
         <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="F5" Command="{Binding Refresh}"/>
     </UserControl.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <triggers:EventCommandAction Command="{Binding ControlLoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
