@@ -31,20 +31,20 @@ public abstract class DirectoryRepository<T> : ReadOnlyRepository<T>, IDirectory
 
     public IReadOnlyList<T> GetSlim(IDbConnection connection, DocumentInfo owner) => GetSlimQuery(connection, owner).Get<T>().ToList();
 
-    protected override Query GetSlimQuery(IDbConnection connection) => GetSlimQuery(connection, null);
+    protected override Query GetSlimQuery(IDbConnection connection, bool isDefaultSorting = true) => GetSlimQuery(connection, null, isDefaultSorting);
 
-    protected virtual Query GetSlimQuery(IDbConnection connection, DocumentInfo? owner = null)
+    protected virtual Query GetSlimQuery(IDbConnection connection, DocumentInfo? owner = null, bool isDefaultSorting = true)
     {
-        return GetCustomSlimQuery<T>(connection, owner);
+        return GetCustomSlimQuery<T>(connection, owner, isDefaultSorting);
     }
 
-    protected Query GetCustomSlimQuery<P>(IDbConnection connection, DocumentInfo? owner = null)
+    protected Query GetCustomSlimQuery<P>(IDbConnection connection, DocumentInfo? owner = null, bool isDefaultSorting = true)
         where P : Directory
     {
         return connection.GetQuery<P>(GetDefaultSlimQueryParameters())
             .WhereFalse("t0.deleted")
             .When(owner != null, q => q.Where("t0.owner_id", owner!.Id))
-            .OrderBy("t0.item_name")
+            .When(isDefaultSorting, q => q.OrderBy("t0.item_name"))
             .Select("t0.{parent_id,is_folder}");
     }
 

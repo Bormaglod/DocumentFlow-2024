@@ -17,13 +17,15 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=local:ScannerViewModel}"
         core:ViewModelLocator.AutoWireViewModel="True"
-        Title="ScannerWindow"
+        Title="Сканирование"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
+        d:Height="600"
         Left="{Binding Left, Mode=TwoWay}"
         Top="{Binding Top, Mode=TwoWay}"
         WindowState="{Binding WindowState, Mode=TwoWay}"
         Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}">
+        Height="{Binding Height, Mode=TwoWay}"
+        UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -111,7 +113,7 @@
             <Border Style="{StaticResource BorderContent}"
                     Grid.Row="1">
                 <ScrollViewer>
-                    <StackPanel UseLayoutRounding="True">
+                    <StackPanel>
                         <TextBlock Text="Сохранить как"
                                    FontWeight="Bold"
                                    Margin="10"/>
@@ -167,9 +169,11 @@
                             <Button x:Name="buttonBrightnessReset"
                                     Grid.Column="1"
                                     Command="{Binding ResetScanParameter}"
-                                    CommandParameter="BRIGHTNESS">
+                                    CommandParameter="BRIGHTNESS"
+                                    Padding="2"
+                                    VerticalAlignment="Center">
                                 <Button.Content>
-                                    <Image Source="/Images/icons8-undo-16.png" Stretch="None"/>
+                                    <Image Source="/Images/icons8-undo-16.png" Width="16" Height="16"/>
                                 </Button.Content>
                             </Button>
                         </Grid>
@@ -196,9 +200,11 @@
                             <Button x:Name="buttonContrastReset" 
                                     Grid.Column="1"
                                     Command="{Binding ResetScanParameter}"
-                                    CommandParameter="CONTRAST">
+                                    CommandParameter="CONTRAST"
+                                    Padding="2"
+                                    VerticalAlignment="Center">
                                 <Button.Content>
-                                    <Image Source="/Images/icons8-undo-16.png" Stretch="None"/>
+                                    <Image Source="/Images/icons8-undo-16.png" Width="16" Height="16"/>
                                 </Button.Content>
                             </Button>
                         </Grid>

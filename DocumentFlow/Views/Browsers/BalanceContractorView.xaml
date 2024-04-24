@@ -12,7 +12,8 @@
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:BalanceContractorViewModel}">
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:BalanceContractorViewModel}"
+             UseLayoutRounding="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

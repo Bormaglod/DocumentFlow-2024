@@ -4,8 +4,6 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using Dapper;
-
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
@@ -23,6 +21,7 @@ namespace DocumentFlow.ViewModels.Browsers;
 public sealed class PurchaseRequestViewModel : DocumentViewModel<PurchaseRequest>, ISelfTransientLifetime
 {
     private readonly IPurchaseRequestRepository requestRepository = null!;
+
     public PurchaseRequestViewModel() { }
 
     public PurchaseRequestViewModel(IDatabase database, IPurchaseRequestRepository requestRepository, IConfiguration configuration) 

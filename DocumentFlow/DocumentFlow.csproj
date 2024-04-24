@@ -9,16 +9,18 @@
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Version>5.0.0.40420</Version>
+		<Version>5.0.0.40424</Version>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Images\icons8-accept-16.png" />
 	  <None Remove="Images\icons8-add-16.png" />
 	  <None Remove="Images\icons8-calculate-16.png" />
 	  <None Remove="Images\icons8-calculate-30.png" />
 	  <None Remove="Images\icons8-calculation-16.png" />
 	  <None Remove="Images\icons8-calculation-30.png" />
+	  <None Remove="Images\icons8-cancel-16.png" />
 	  <None Remove="Images\icons8-collapse-16.png" />
 	  <None Remove="Images\icons8-contract-16.png" />
 	  <None Remove="Images\icons8-contract-30.png" />
@@ -189,6 +191,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Resource Include="Images\icons8-accept-16.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="Images\icons8-add-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
@@ -202,6 +207,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-calculation-30.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\icons8-cancel-16.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\icons8-collapse-16.png">

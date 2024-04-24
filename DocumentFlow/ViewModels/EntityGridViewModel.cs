@@ -131,6 +131,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     public ToolBarViewModel ToolBarItems { get; } = new();
 
+    public bool SupportAccepting => GetSupportAccepting();
+
     protected IDatabase CurrentDatabase { get; private set; }
 
     protected IEnumerable<MenuItemModel> Reports => reports;
@@ -427,14 +429,17 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
                 {
                     if (conn.Copy(row, out var copyRow, transaction))
                     {
-                        transaction.Commit();
-                        
                         var copy = AddRow(conn, ((T)copyRow).Id);
+                        if (copy != null)
+                        {
+                            OnCopyNestedRows(conn, row, copy, transaction);
+                        }
+
+                        transaction.Commit();
 
                         var type = GetEditorViewType();
                         if (copy != null && type != null)
                         {
-                            OnCopyNestedRows(conn, row, copy, transaction);
                             if (MessageBox.Show("Открыть окно для редактрования?", "Вопрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             {
                                 WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(type, copy));
@@ -442,10 +447,10 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
                         }
                     }
                 }
-                catch
+                catch (Exception e)
                 {
                     transaction.Rollback();
-                    throw;
+                    MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -554,6 +559,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual void RegisterReports() { }
 
+    protected abstract bool GetSupportAccepting();
+
     protected void RegisterReport(Guid id)
     {
         using var conn = CurrentDatabase.OpenConnection();
@@ -627,11 +634,13 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     protected Query DefaultQuery(IDbConnection conn, Guid? id = null, QueryParameters? parameters = null)
     {
         parameters ??= QueryParameters.Default;
-        return ApplyFilters(SelectQuery(RequiredQuery(conn, parameters)))
+        return ApplyFilters(MappingsQuery(SelectQuery(RequiredQuery(conn, parameters))))
             .When(id != null, q => q.Where($"{parameters.Alias}.id", id));
     }
 
     protected virtual Query SelectQuery(Query query) => query;
+
+    protected virtual Query MappingsQuery(Query query) => query;
 
     protected virtual Query WipeQuery(Query query) => query;
 
@@ -666,7 +675,12 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual bool CheckDeleteRow(T row)
     {
-        return MessageBox.Show("Вы действительно хотите удалить запись?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
+        if (!row.Deleted)
+        {
+            return MessageBox.Show("Вы действительно хотите пометить запись как удалённую?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
+        }
+
+        return true;
     }
 
     protected virtual bool CheckWipeRow(T row) => true;
@@ -762,37 +776,42 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
+    protected void ExecuteSqlById(string sql, T row)
+    {
+        try
+        {
+            using var conn = CurrentDatabase.OpenConnection();
+            using var transaction = conn.BeginTransaction();
+
+            try
+            {
+                conn.Execute(sql, new { row.Id }, transaction);
+
+                transaction.Commit();
+
+                if (DataSource != null)
+                {
+                    DataSource[DataSource.IndexOf(row)] = GetDataById(row.Id);
+                }
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     private void SetMarkedValue(bool mark)
     {
         if (SelectedItem is T row && CheckDeleteRow(row))
         {
-            try
-            {
-                using var conn = CurrentDatabase.OpenConnection();
-                using var transaction = conn.BeginTransaction();
-
-                try
-                {
-                    var sql = $"update {typeof(T).Name.Underscore()} set deleted = {mark} where id = :Id";
-                    conn.Execute(sql, row, transaction);
-
-                    transaction.Commit();
-
-                    if (DataSource != null)
-                    {
-                        DataSource[DataSource.IndexOf(row)] = GetDataById(row.Id);
-                    }
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            var sql = $"update {typeof(T).Name.Underscore()} set deleted = {mark} where id = :Id";
+            ExecuteSqlById(sql, row);
         }
     }
 

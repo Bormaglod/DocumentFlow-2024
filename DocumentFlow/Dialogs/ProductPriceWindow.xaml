@@ -10,7 +10,8 @@
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="Цена материала / изделия" Height="160" Width="560"
-        ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height" WindowStartupLocation="CenterScreen">
+        ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height" WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

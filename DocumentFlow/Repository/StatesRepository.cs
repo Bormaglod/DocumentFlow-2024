@@ -24,6 +24,7 @@ using Syncfusion.Data.Extensions;
 
 using System.Collections.Concurrent;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Repository;
 
@@ -82,32 +83,36 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
 
     public IReadOnlyList<State> GetStateTargets(Type documentType, State fromState)
     {
-        using var conn = database.OpenConnection();
-        return GetStateTargets(conn, documentType, fromState);
-    }
-
-    public IReadOnlyList<State> GetStateTargets(IDbConnection connection, Type documentType, State fromState)
-    {
-        var states = DocumentStatesCache(documentType, fromState);
-        if (states != null)
+        if (TryGetDocumentStatesCache(documentType, fromState, out var states))
         {
             return states.ToList();
         }
 
-        states = GetStateTargetsQuery(connection, documentType, fromState).Get<State>();
-
-        documentStates[documentType.TypeHandle].Add(fromState.Id, states);
-
-        return states.ToList();
-    }
-
-    public async Task<IEnumerable<State>> GetStateTargetsAsync(BaseDocument document)
-    {
         using var conn = database.OpenConnection();
-        return await GetStateTargetsAsync(conn, document);
+        return GetStateTargetsList(conn, documentType, fromState);
     }
 
-    public async Task<IEnumerable<State>> GetStateTargetsAsync(IDbConnection connection, BaseDocument document)
+    public IReadOnlyList<State> GetStateTargets(IDbConnection connection, Type documentType, State fromState)
+    {
+        if (TryGetDocumentStatesCache(documentType, fromState, out var states))
+        {
+            return states.ToList();
+        }
+
+        return GetStateTargetsList(connection, documentType, fromState);
+    }
+
+    public async Task<IReadOnlyList<State>> GetStateTargetsAsync(BaseDocument document)
+    {
+        if (document.State != null)
+        {
+            return await GetStateTargetsAsync(document.GetType(), document.State);
+        }
+
+        return Array.Empty<State>();
+    }
+
+    public async Task<IReadOnlyList<State>> GetStateTargetsAsync(IDbConnection connection, BaseDocument document)
     {
         if (document.State != null)
         {
@@ -117,26 +122,25 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
         return Array.Empty<State>();
     }
 
-    public async Task<IEnumerable<State>> GetStateTargetsAsync(Type documentType, State fromState)
+    public async Task<IReadOnlyList<State>> GetStateTargetsAsync(Type documentType, State fromState)
     {
-        using var conn = database.OpenConnection();
-        return await GetStateTargetsAsync(conn, documentType, fromState);
-    }
-
-    public async Task<IEnumerable<State>> GetStateTargetsAsync(IDbConnection connection, Type documentType, State fromState)
-    {
-        var states = DocumentStatesCache(documentType, fromState);
-        if (states != null)
+        if (TryGetDocumentStatesCache(documentType, fromState, out var states))
         {
             return states.ToList();
         }
 
-        states = await GetStateTargetsQuery(connection, documentType, fromState)
-            .GetAsync<State>();
+        using var conn = database.OpenConnection();
+        return await GetStateTargetsListAsync(conn, documentType, fromState);
+    }
 
-        documentStates[documentType.TypeHandle].Add(fromState.Id, states);
+    public async Task<IReadOnlyList<State>> GetStateTargetsAsync(IDbConnection connection, Type documentType, State fromState)
+    {
+        if (TryGetDocumentStatesCache(documentType, fromState, out var states))
+        {
+            return states.ToList();
+        }
 
-        return states;
+        return await GetStateTargetsListAsync(connection, documentType, fromState);
     }
 
     public void SetDocumentState(BaseDocument document, short newState)
@@ -192,27 +196,56 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
             Quantity = QuantityInformation.None
         };
 
-        return connection.GetQuery<ChangingState>(parameters)
+        var baseQuery = connection.GetQuery<ChangingState>(parameters)
             .Select("s.*")
             .Join("schema_states as ss", "ss.id", "cs.schema_id")
             .Join("document_type as dt", "dt.id", "ss.document_type_id")
             .Join("state as s", "s.id", "cs.to_state_id")
             .Where("dt.code", documentType.Name.Underscore())
-            .Where("cs.from_state_id", fromState.Id)
             .Union(q => q
                 .From("state")
                 .Select("*")
                 .Where("id", fromState.Id)
             );
+
+        if (fromState.Id == 0)
+        {
+            return baseQuery
+                .Distinct();
+        }
+        else
+        {
+            return baseQuery
+                .Where("cs.from_state_id", fromState.Id);
+        }
     }
 
-    private static IEnumerable<State>? DocumentStatesCache(Type documentType, State fromState)
+    private static IReadOnlyList<State> GetStateTargetsList(IDbConnection connection, Type documentType, State fromState)
+    {
+        var states = GetStateTargetsQuery(connection, documentType, fromState).Get<State>();
+
+        documentStates[documentType.TypeHandle].Add(fromState.Id, states);
+
+        return states.ToList();
+    }
+
+    private static async Task<IReadOnlyList<State>> GetStateTargetsListAsync(IDbConnection connection, Type documentType, State fromState)
+    {
+        var states = await GetStateTargetsQuery(connection, documentType, fromState).GetAsync<State>();
+
+        documentStates[documentType.TypeHandle].Add(fromState.Id, states);
+
+        return states.ToList();
+    }
+
+    private static bool TryGetDocumentStatesCache(Type documentType, State fromState, [MaybeNullWhen(false)] out IEnumerable<State> states)
     {
         if (documentStates.TryGetValue(documentType.TypeHandle, out var typeStates))
         {
-            if (typeStates.TryGetValue(fromState.Id, out var states))
+            if (typeStates.TryGetValue(fromState.Id, out var cache))
             {
-                return states.ToList();
+                states = cache;
+                return true;
             }
         }
         else
@@ -220,6 +253,7 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
             documentStates[documentType.TypeHandle] = new Dictionary<short, IEnumerable<State>>();
         }
 
-        return null;
+        states = null;
+        return false;
     }
 }

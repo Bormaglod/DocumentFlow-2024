@@ -147,6 +147,8 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
 
     protected override MessageOptions GetEditorOptions() => new DirectoryEditorMessageOptions(Owner, Parent) { CanEdit = CanEditSelected() };
 
+    protected override bool GetSupportAccepting() => false;
+
     private HierarchyItemModel CurrentFolder
     {
         get

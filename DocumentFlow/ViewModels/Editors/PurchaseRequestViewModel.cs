@@ -27,7 +27,6 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
 {
     private readonly IPurchaseRequestRepository requestRepository = null!;
     private readonly IContractorRepository contractorRepository = null!;
-    private readonly IMaterialRepository materialRepository = null!;
 
     [ObservableProperty]
     private Contractor? contractor;
@@ -55,12 +54,10 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
     public PurchaseRequestViewModel(
         IPurchaseRequestRepository requestRepository, 
         IContractorRepository contractorRepository, 
-        IMaterialRepository materialRepository,
         IOrganizationRepository organizationRepository) : base(organizationRepository)
     {
         this.requestRepository = requestRepository;
         this.contractorRepository = contractorRepository;
-        this.materialRepository = materialRepository;
     }
 
     #region Commands
@@ -219,7 +216,7 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
         entity.Note = Note;
     }
 
-    protected override IEnumerable<int> DisabledStates() => new[] { 1001, 1002 };
+    protected override IEnumerable<short> DisabledStates() => new[] { State.Canceled, State.Completed };
 
     protected override Query SelectQuery(Query query)
     {

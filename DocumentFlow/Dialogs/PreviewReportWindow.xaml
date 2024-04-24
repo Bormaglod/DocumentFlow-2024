@@ -23,7 +23,8 @@
         Top="{Binding Top, Mode=TwoWay}"
         WindowState="{Binding WindowState, Mode=TwoWay}"
         Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}">
+        Height="{Binding Height, Mode=TwoWay}"
+        UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -87,7 +88,6 @@
                               CurrentPageChanged="PdfViewer_CurrentPageChanged"/>
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Center"
-                    UseLayoutRounding="True"
                     Grid.Row="2">
             <syncfusion:ButtonAdv SmallIcon="/Images/icons8-start-16.png"
                                   Command="{Binding ElementName=pdfViewer, Path=FirstPageCommand, Mode=OneWay}"

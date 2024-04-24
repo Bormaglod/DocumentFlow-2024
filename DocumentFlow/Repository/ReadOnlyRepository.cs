@@ -35,7 +35,7 @@ public abstract class ReadOnlyRepository<T> : IReadOnlyRepository<T>
 
     public IReadOnlyList<T> GetSlim(IDbConnection connection) => GetSlimQuery(connection).Get<T>().ToList();
 
-    protected virtual Query GetSlimQuery(IDbConnection connection)
+    protected virtual Query GetSlimQuery(IDbConnection connection, bool isDefaultSorting = true)
     {
         return connection.GetQuery<T>(GetDefaultSlimQueryParameters());
     }

@@ -24,6 +24,8 @@ public partial class CalculationDeductionViewModel : DirectoryEditorViewModel<Ca
     private readonly ICalculationOperationRepository repoOperations = null!;
     private readonly ICalculationMaterialRepository repoMaterials = null!;
 
+    private bool isDeductionChanging;
+
     [ObservableProperty]
     private Deduction? deduction;
 
@@ -93,21 +95,45 @@ public partial class CalculationDeductionViewModel : DirectoryEditorViewModel<Ca
 
     partial void OnDeductionChanged(Deduction? value)
     {
-        UpdateHeader(value?.Code ?? "[NULL]");
+        UpdateHeader(value?.Code ?? string.Empty);
         if (Owner is Calculation calculation && value != null)
         {
-            if (value.BaseDeduction == BaseDeduction.Salary)
+            isDeductionChanging = true;
+            try
             {
-                Price = repoOperations.GetSumItemCost(calculation);
+                if (value.BaseDeduction == BaseDeduction.Salary)
+                {
+                    Price = repoOperations.GetSumItemCost(calculation);
+                }
+                else
+                {
+                    Price = repoMaterials.GetSumItemCost(calculation);
+                }
+
+                Value = value.Value;
+
+                ItemCost = Price * Value / 100;
             }
-            else
+            finally
             {
-                Price = repoMaterials.GetSumItemCost(calculation);
+                isDeductionChanging = false;
             }
+        }
+    }
 
-            Value = value.Value;
+    partial void OnPriceChanged(decimal value)
+    {
+        if (!isDeductionChanging)
+        {
+            ItemCost = value * Value / 100;
+        }
+    }
 
-            ItemCost = Price * Value / 100;
+    partial void OnValueChanged(decimal value)
+    {
+        if (!isDeductionChanging)
+        {
+            ItemCost = Price * value / 100;
         }
     }
 }

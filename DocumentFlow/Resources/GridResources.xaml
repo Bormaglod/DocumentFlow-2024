@@ -120,6 +120,21 @@
             </MenuItem.Icon>
         </MenuItem>
         <Separator/>
+        <MenuItem Header="Провести"
+                  Visibility="{Binding Path=DataGrid.Parent.Parent.DataContext.SupportAccepting, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.AcceptCommand}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-accept-16.png"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Отменить проведение"
+                  Visibility="{Binding Path=DataGrid.Parent.Parent.DataContext.SupportAccepting, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CancelAccepanceCommand}">
+            <MenuItem.Icon>
+                <Image Source="/Images/icons8-cancel-16.png"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator Visibility="{Binding Path=DataGrid.Parent.Parent.DataContext.SupportAccepting, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <MenuItem Header="Создать копию"
                   Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CopyRow}"
                   InputGestureText="Ctrl+Alt+INSERT">
@@ -301,7 +316,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid UseLayoutRounding="True">
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="2"/>
@@ -355,8 +370,6 @@
                 Value="AutoWithLastColumnFill"/>
         <Setter Property="AutoGenerateColumns"
                 Value="False"/>
-        <Setter Property="UseLayoutRounding"
-                Value="True"/>
         <Setter Property="RowHeight"
                 Value="28"/>
     </Style>

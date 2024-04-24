@@ -16,7 +16,8 @@
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="700" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance Type=vm:MaterialViewModel, IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance Type=vm:MaterialViewModel, IsDesignTimeCreatable=True}"
+             UseLayoutRounding="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

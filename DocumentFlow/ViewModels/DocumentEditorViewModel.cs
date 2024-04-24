@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
-using DocumentFlow.Messages.Options;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
@@ -60,13 +59,7 @@ public abstract partial class DocumentEditorViewModel<T> : EntityEditorViewModel
         Organizations = organizationRepository.GetSlim(connection);
     }
 
-    /*protected override void SetOptions(MessageOptions options)
-    {
-        base.SetOptions(options);
-        
-    }*/
-
-    protected virtual IEnumerable<int> DisabledStates() => Array.Empty<int>();
+    protected virtual IEnumerable<short> DisabledStates() => Array.Empty<short>();
 
     protected override void UpdateUIControls(T entity)
     {
@@ -80,7 +73,7 @@ public abstract partial class DocumentEditorViewModel<T> : EntityEditorViewModel
         }
     }
 
-    private string GetHeaderStringValue() => $"{GetStandardHeader()} № {(DocumentNumber.ToString() ?? "б/н")} от {DocumentDate:d}";
+    private string GetHeaderStringValue() => $"№ {(DocumentNumber.ToString() ?? "б/н")} от {DocumentDate:d}";
 
     partial void OnDocumentNumberChanged(int? value)
     {

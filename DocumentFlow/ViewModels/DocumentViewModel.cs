@@ -13,6 +13,8 @@ using DocumentFlow.Models.Settings;
 
 using FluentDateTime;
 
+using Humanizer;
+
 using Microsoft.Extensions.Configuration;
 
 using SqlKata;
@@ -63,6 +65,58 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>
 
     #endregion
 
+    #region AcceptCommand
+
+    private ICommand? acceptCommand;
+
+    public ICommand AcceptCommand
+    {
+        get
+        {
+            acceptCommand ??= new BaseCommand(OnAcceptCommand);
+            return acceptCommand;
+        }
+    }
+
+    private void OnAcceptCommand(object parameter)
+    {
+        if (SelectedItem is not T row)
+        {
+            return;
+        }
+
+        var sql = $"call execute_system_operation(:Id, 'accept'::system_operation, true, '{typeof(T).Name.Underscore()}')";
+        ExecuteSqlById(sql, row);
+    }
+
+    #endregion
+
+    #region CancelAccepanceCommand
+
+    private ICommand? cancelAccepanceCommand;
+
+    public ICommand CancelAccepanceCommand
+    {
+        get
+        {
+            cancelAccepanceCommand ??= new BaseCommand(OnCancelAccepanceCommand);
+            return cancelAccepanceCommand;
+        }
+    }
+
+    private void OnCancelAccepanceCommand(object parameter)
+    {
+        if (SelectedItem is not T row)
+        {
+            return;
+        }
+
+        var sql = $"call execute_system_operation(:Id, 'accept'::system_operation, false, '{typeof(T).Name.Underscore()}')";
+        ExecuteSqlById(sql, row);
+    }
+
+    #endregion
+
     #endregion
 
     public DateTime? DateFrom { get; set; }
@@ -74,6 +128,8 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>
         new() { Id = 0, StateName = "Все документы"},
         new() { Id = -1, StateName = "Активные"}
     };
+
+    protected override bool GetSupportAccepting() => typeof(T).IsAssignableTo(typeof(AccountingDocument));
 
     protected override void LoadFilter(IConfigurationSection section)
     {
@@ -166,13 +222,13 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>
             var states = GetIncludingStates(SelectedState.Id);
             if (states != null)
             {
-                filterQuery.WhereIn("state_id", states);
+                filterQuery.WhereIn($"{alias}.state_id", states);
             }
 
             states = GetExcludingStates(SelectedState.Id);
             if (states != null)
             {
-                filterQuery.WhereNotIn("state_id", states);
+                filterQuery.WhereNotIn($"{alias}.state_id", states);
             }
         }
 

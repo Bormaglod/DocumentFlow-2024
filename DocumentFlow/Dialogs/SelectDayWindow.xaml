@@ -9,7 +9,8 @@
         mc:Ignorable="d"
         Title="Выбор дня" Height="340" Width="250"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" 
-        PreviewKeyDown="Window_PreviewKeyDown">
+        PreviewKeyDown="Window_PreviewKeyDown"
+        UseLayoutRounding="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

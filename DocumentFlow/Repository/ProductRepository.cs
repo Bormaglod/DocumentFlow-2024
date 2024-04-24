@@ -55,9 +55,9 @@ public abstract class ProductRepository<T> : DirectoryRepository<T>, IProductRep
             });
     }
 
-    protected override Query GetSlimQuery(IDbConnection connection, DocumentInfo? owner = null)
+    protected override Query GetSlimQuery(IDbConnection connection, DocumentInfo? owner = null, bool isDefaultSorting = true)
     {
-        return base.GetSlimQuery(connection, owner)
+        return base.GetSlimQuery(connection, owner, isDefaultSorting)
             .Select("t0.price");
     }
 }

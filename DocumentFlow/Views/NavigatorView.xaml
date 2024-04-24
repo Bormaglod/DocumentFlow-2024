@@ -2,9 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:core="clr-namespace:DocumentFlow"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels"
+             xmlns:triggers="clr-namespace:DocumentFlow.Common.Triggers"
              xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
              xmlns:navigation="clr-namespace:Syncfusion.Windows.Controls.Navigation;assembly=Syncfusion.SfTreeNavigator.WPF"
              mc:Ignorable="d" 
@@ -18,6 +20,11 @@
                                     Header="Каталог"
                                     BorderThickness="1"
                                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                    <triggers:EventCommandAction Command="{Binding SelectActiveItem}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <navigation:SfTreeNavigator.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Models}">
                     <StackPanel Orientation="Horizontal">

@@ -80,6 +80,8 @@ public sealed class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>,
 
     #endregion
 
+    protected override bool GetSupportAccepting() => false;
+
     protected override IReadOnlyList<MaterialUsage> GetData(IDbConnection connection, Guid? id = null)
     {
         return connection.GetQuery<CalculationMaterial>(new QueryParameters() { Quantity = QuantityInformation.None })

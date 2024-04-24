@@ -55,7 +55,7 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository, ITran
                 StimulType = fromProduct.Calculation.StimulType
             };
 
-            connection.Update(newCalc, transaction);
+            connection.Insert(newCalc, transaction);
 
             var repo = ServiceLocator.Context.GetService<ICalculationRepository>();
             repo.CopyItems(connection, fromProduct.Calculation, newCalc, transaction);

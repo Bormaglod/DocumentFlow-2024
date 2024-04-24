@@ -11,7 +11,8 @@
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="Выбор" Height="450" Width="600" 
-        ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
+        ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -15,7 +15,8 @@
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="450" d:DesignWidth="900"
-             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:PurchaseRequestViewModel}">
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:PurchaseRequestViewModel}"
+             UseLayoutRounding="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -24,6 +25,7 @@
             </ResourceDictionary.MergedDictionaries>
             <common:DocumentInfoAggregate x:Key="infoAggregate"/>
             <selectors:TableSummaryStyleSelector x:Key="tableSummaryStyleSelector"/>
+            <selectors:GroupSummaryStyleSelector x:Key="groupSummaryStyleSelector"/>
             <selectors:DocumentStateItemsSelector x:Key="documentStateItemsSelector"/>
             <Style x:Key="customCellStyle" 
                    TargetType="syncfusion:GridCell"
@@ -77,6 +79,7 @@
                                GroupDropAreaContextMenu="{StaticResource GroupDropAreaContextMenu}"
                                GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}"
                                TableSummaryCellStyleSelector="{StaticResource tableSummaryStyleSelector}"
+                               GroupSummaryCellStyleSelector="{StaticResource groupSummaryStyleSelector}"
                                CellStyle="{StaticResource customCellStyle}">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"

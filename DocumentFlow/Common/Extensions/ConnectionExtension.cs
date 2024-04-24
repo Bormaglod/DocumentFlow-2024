@@ -191,7 +191,7 @@ public static class ConnectionExtension
         var fields = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
         {
             string name;
-            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            if (x.PropertyType.IsSubclassOf(typeof(Identifier)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
                 name = attr == null || string.IsNullOrEmpty(attr.FieldKey) ? x.Name.Underscore() + "_id" : attr.FieldKey;
@@ -207,7 +207,7 @@ public static class ConnectionExtension
         var values = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
         {
             string name;
-            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            if (x.PropertyType.IsSubclassOf(typeof(Identifier)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
                 name = attr == null || string.IsNullOrEmpty(attr.PropertyKey) ? x.Name + "Id" : attr.PropertyKey;
@@ -493,7 +493,14 @@ public static class ConnectionExtension
             {
                 if (item.PropertyType.IsSubclassOf(typeof(Identifier)))
                 {
-                    parameters.Add($"{item.Name}Id", val);
+                    if (val == null)
+                    {
+                        parameters.Add($"{item.Name}Id", null);
+                    }
+                    else
+                    {
+                        parameters.Add($"{item.Name}Id", ((Identifier)val).Id);
+                    }
                 }
                 else
                 {

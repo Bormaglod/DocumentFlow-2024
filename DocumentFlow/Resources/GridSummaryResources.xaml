@@ -14,4 +14,14 @@
            BasedOn="{StaticResource SyncfusionGridTableSummaryCellStyle}">
         <Setter Property="HorizontalContentAlignment" Value="Right"/>
     </Style>
+    <Style x:Key="GroupSummaryStyleDefault" 
+           TargetType="syncfusion:GridGroupSummaryCell"
+           BasedOn="{StaticResource SyncfusionGridGroupSummaryCellStyle}">
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
+    <Style x:Key="GroupSummaryStyleNumeric" 
+           TargetType="syncfusion:GridGroupSummaryCell"
+           BasedOn="{StaticResource SyncfusionGridGroupSummaryCellStyle}">
+        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+    </Style>
 </ResourceDictionary>

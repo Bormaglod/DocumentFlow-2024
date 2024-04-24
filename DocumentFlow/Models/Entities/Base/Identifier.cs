@@ -6,22 +6,19 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Interfaces;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace DocumentFlow.Models.Entities;
 
-public abstract class Identifier : ObservableObject
+public abstract class Identifier : ObservableObject, IIdentifier
 {
     [Key]
     public Guid Id { get; set; }
 
-    public override bool Equals(object? obj)
+    public bool Identical(IIdentifier other)
     {
-        return obj is Identifier identifier && Id.Equals(identifier.Id);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Id);
+        return other is Identifier identifier && Id.Equals(identifier.Id);
     }
 }

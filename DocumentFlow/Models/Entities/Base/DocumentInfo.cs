@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace DocumentFlow.Models.Entities;
 
-public abstract class DocumentInfo : Entity
+public abstract partial class DocumentInfo : Entity
 {
     private Dictionary<PropertyInfo, object?>? storedValues;
 
@@ -130,7 +130,6 @@ public abstract class DocumentInfo : Entity
     protected Dictionary<PropertyInfo, object?> BackUp()
     {
         var dict = new Dictionary<PropertyInfo, object?>();
-        //var itemProperties = GetType().GetTypeInfo().DeclaredProperties;
         var itemProperties = GetType().GetProperties();
 
         foreach (var pDescriptor in itemProperties)

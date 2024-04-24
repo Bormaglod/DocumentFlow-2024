@@ -8,7 +8,8 @@
         mc:Ignorable="d"
         Title="Удаление" Height="224" Width="336" 
         WindowStartupLocation="CenterScreen" SizeToContent="Height" ShowInTaskbar="False" ResizeMode="NoResize" 
-        ContentRendered="Window_ContentRendered">
+        ContentRendered="Window_ContentRendered"
+        UseLayoutRounding="True">
     <StackPanel Margin="10">
         <TextBlock Text="Безвозвратное удаление записи (записей)."
                    Margin="0,0,0,30"/>

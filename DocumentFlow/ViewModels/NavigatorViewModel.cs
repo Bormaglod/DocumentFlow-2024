@@ -12,7 +12,10 @@ using DocumentFlow.Messages;
 using DocumentFlow.Models;
 using DocumentFlow.Views.Browsers;
 
+using Syncfusion.Windows.Shared;
+
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
@@ -31,6 +34,7 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
                 AddFolder("Склад"),
                 AddFolder("Производство"),
                 AddFolder("Расчёты с контрагентами"),
+                AddItem<WaybillReceiptView>("Поступление"),
                 AddFolder("Зар. плата")));
 
         models.Add(AddFolder("Справочники",
@@ -67,6 +71,32 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
 
     public ReadOnlyObservableCollection<NavigatorModel> Models { get; }
 
+    #region SelectActiveItem
+
+    private ICommand? selectActiveItem;
+
+    public ICommand SelectActiveItem
+    {
+        get
+        {
+            selectActiveItem ??= new DelegateCommand<MouseButtonEventArgs>(OnSelectActiveItem);
+            return selectActiveItem;
+        }
+    }
+
+    // Если элемент SfTreeNavigator уже выбран, то при нажатии на него, не вызывается OnSelectedItemChanged и
+    // соответственно не активируется нужное окно. Поэтому пришлось активировать выбранное окно всякий раз,
+    // когда пользователь нажимает кнопку мыши.
+    private void OnSelectActiveItem(MouseButtonEventArgs e)
+    {
+        if (((Syncfusion.Windows.Controls.Navigation.SfTreeNavigator)e.Source).SelectedItem is NavigatorModel model)
+        {
+            OpenPage(model);
+        }
+    }
+
+    #endregion
+
     private static NavigatorModel AddFolder(string header, params NavigatorModel[] items)
     {
         NavigatorModel folder = new() { Header = header, ImageName = "icons8-folder-16" };
@@ -78,6 +108,14 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
         return folder;
     }
 
+    private static void OpenPage(NavigatorModel model)
+    {
+        if (model.ViewType != null)
+        {
+            WeakReferenceMessenger.Default.Send(new EntityListOpenMessage(model.ViewType, model.Header));
+        }
+    }
+
     private static NavigatorModel AddItem<V>(string header)
     {
         return new NavigatorModel() { Header = header, ImageName = "icons8-documents-16", ViewType = typeof(V) };
@@ -85,9 +123,9 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
 
     partial void OnSelectedItemChanged(object? value)
     {
-        if (value is NavigatorModel item && item.ViewType != null)
+        if (value is NavigatorModel item)
         {
-            WeakReferenceMessenger.Default.Send(new EntityListOpenMessage(item.ViewType, item.Header));
+            OpenPage(item);
         }
     }
 }

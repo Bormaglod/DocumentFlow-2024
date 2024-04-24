@@ -19,11 +19,6 @@ public partial class PurchaseRequest : ShipmentDocument
     public decimal CostOrder { get; protected set; }
 
     /// <summary>
-    /// Возвращает true, если контрагента является плательщиком НДС.
-    /// </summary>
-    public bool TaxPayer { get; protected set; }
-
-    /// <summary>
     /// Возвращает значение ставки НДС.
     /// </summary>
     public int Tax => (Contract?.TaxPayer ?? false) ? 20 : 0;

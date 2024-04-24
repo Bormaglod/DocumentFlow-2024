@@ -10,7 +10,8 @@
         Title="Выбор периода"
         Height="215" Width="480" 
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height" 
-        PreviewKeyDown="DateRangeWindow_PreviewKeyDown">
+        PreviewKeyDown="DateRangeWindow_PreviewKeyDown"
+        UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

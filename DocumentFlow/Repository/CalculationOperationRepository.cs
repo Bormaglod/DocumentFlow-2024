@@ -47,8 +47,9 @@ public class CalculationOperationRepository : CalculationItemRepository<Calculat
 
     public IReadOnlyList<CalculationOperation> GetPreviousOperations(IDbConnection connection, Calculation calculation, CalculationOperation? operation)
     {
-        return GetSlimQuery(connection, calculation)
+        return GetSlimQuery(connection, calculation, false)
             .When(operation != null, q => q.Where("id", "!=", operation!.Id))
+            .OrderBy("code")
             .Get<CalculationOperation>()
             .ToList();
     }

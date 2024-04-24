@@ -35,7 +35,10 @@ public partial class DeductionViewModel : DirectoryEditorViewModel<Deduction>, I
     private Person? person;
 
     [ObservableProperty]
-    private decimal value;
+    private decimal valueCurrency;
+
+    [ObservableProperty]
+    private decimal valuePercent;
 
     [ObservableProperty]
     private IEnumerable<Person>? persons;
@@ -56,7 +59,14 @@ public partial class DeductionViewModel : DirectoryEditorViewModel<Deduction>, I
         ItemName = entity.ItemName;
         BaseDeduction = entity.BaseDeduction;
         Person = entity.Person;
-        Value = entity.Value;
+        if (BaseDeduction == BaseDeduction.Person)
+        {
+            ValueCurrency = entity.Value;
+        }
+        else
+        {
+            ValuePercent = entity.Value;
+        }
     }
 
     protected override void UpdateEntity(Deduction entity)
@@ -66,7 +76,7 @@ public partial class DeductionViewModel : DirectoryEditorViewModel<Deduction>, I
         entity.ItemName = ItemName;
         entity.BaseDeduction = BaseDeduction;
         entity.Person = Person;
-        entity.Value = Value;
+        entity.Value = BaseDeduction == BaseDeduction.Person ? ValueCurrency : ValuePercent;
     }
 
     protected override void InitializeEntityCollections(IDbConnection connection, Deduction? entity = null)

@@ -87,6 +87,8 @@ public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage
 
     #endregion
 
+    protected override bool GetSupportAccepting() => false;
+
     protected override void ConfigureColumn(IColumnInfo columnInfo)
     {
         if (columnInfo.MappingName == nameof(Goods))

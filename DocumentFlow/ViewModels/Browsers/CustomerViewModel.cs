@@ -104,6 +104,8 @@ public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTran
 
     #endregion
 
+    protected override bool GetSupportAccepting() => false;
+
     protected override void ConfigureColumn(IColumnInfo columnInfo)
     {
         if (columnInfo.MappingName == nameof(Directory.Code))

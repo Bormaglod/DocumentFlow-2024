@@ -9,7 +9,8 @@
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Генератор кода изделия" Height="350" Width="350"
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height">
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height"
+        UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
