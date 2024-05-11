@@ -9,7 +9,7 @@
 ; Имя приложения
 #define   Name       "DocumentFlow 2024"
 ; Версия приложения
-#define   Version    "5.0.0.40424"
+#define   Version    "5.0.0.40511"
 ; Имя исполняемого модуля
 #define   ExeName    "DocumentFlow.exe"
 
@@ -33,7 +33,7 @@ Compression=lzma2
 SolidCompression=yes
 
 ; Каталог, куда будет записан собранный setup и имя исполняемого файла
-OutputDir=C:\Projects\DocumentFlow-2024\DocumentFlow.Installer
+OutputDir=C:\Projects\DocumentFlow-2024\DocumentFlow.Installer\Bin
 OutputBaseFileName={#Name}-{#SetupSetting("AppVersion")}-x64-installer
 
 ; Файл иконки
