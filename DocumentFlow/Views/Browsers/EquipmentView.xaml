@@ -69,17 +69,21 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Code"
                                            HeaderText="Код"
-                                           Width="110"/>
+                                           Width="110"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="ItemName"
                                            HeaderText="Наименование"
-                                           ColumnSizer="AutoLastColumnFill"/>
+                                           ColumnSizer="AutoLastColumnFill"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="SerialNumber"
                                            HeaderText="Серийный номер"
                                            Width="100"
-                                           HeaderTemplate="{StaticResource headerWrappingTemplate}"/>
+                                           HeaderTemplate="{StaticResource headerWrappingTemplate}"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridCheckBoxColumn MappingName="IsTools"
                                                HeaderText="Инструмент"
                                                Width="100"/>

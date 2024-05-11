@@ -5,23 +5,25 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Common;
+using DocumentFlow.Models.Settings;
 
 using Humanizer;
 
 using System.IO;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace DocumentFlow.Settings;
 
 public class BrowserSettings
 {
     /*[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public IReadOnlyList<ColumnSettings>? Columns { get; set; }
+    public IReadOnlyList<ColumnSettings>? Columns { get; set; }*/
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public IReadOnlyList<GroupSettings>? Groups { get; set; }
+    public IList<GroupSettings>? Groups { get; set; }
 
-    public ReportPageSettings Page { get; set; } = new();*/
+    //public ReportPageSettings Page { get; set; } = new();*/
 
     public void Save(string browserName, object? filter = null)
     {

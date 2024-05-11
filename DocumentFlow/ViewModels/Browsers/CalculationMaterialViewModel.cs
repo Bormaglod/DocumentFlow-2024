@@ -116,7 +116,7 @@ public sealed class CalculationMaterialViewModel : DirectoryViewModel<Calculatio
     {
         if (columnInfo.MappingName == nameof(CalculationMaterial.Material))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

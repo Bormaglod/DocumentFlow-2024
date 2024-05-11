@@ -9,6 +9,7 @@
         <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/SfDatagrid/SfDatagrid.xaml"/>
         <ResourceDictionary Source="/Syncfusion.Themes.Windows11Light.WPF;component/MSControl/Menu.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridSummaryResources.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/SharedResources.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     <converters:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
     <converters:RowHeaderImageConverter x:Key="RowHeaderImageConverter"/>
@@ -193,6 +194,10 @@
         <MenuItem Header="Очистить" 
                   Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.ClearGroups}}"
                   CommandParameter="{Binding}"/>
+        <Separator/>
+        <MenuItem Header="Настройка..."
+                  Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.CustomGrouping}}"
+                  CommandParameter="{Binding}"/>
     </ContextMenu>
     <ContextMenu x:Key="GroupDropItemContextMenu">
         <MenuItem Header="Развернуть всё"
@@ -372,6 +377,10 @@
                 Value="False"/>
         <Setter Property="RowHeight"
                 Value="28"/>
+        <Setter Property="AutoExpandGroups"
+                Value="True"/>
+        <Setter Property="IsGroupDropAreaExpanded"
+                Value="True"/>
     </Style>
     <DataTemplate x:Key="ThumbnailsViewTemplate">
         <ListView ItemsSource="{Binding Data.Thumbnails}">
@@ -433,11 +442,22 @@
            BasedOn="{StaticResource SyncfusionGridCellStyle}">
         <Setter Property="Background" Value="#FFC873"/>
     </Style>
-    <DataTemplate x:Key="headerWrappingTemplate">
-        <Border BorderBrush="{x:Null}">
-            <TextBlock TextWrapping="Wrap" 
-                       Text="{Binding}" 
-                       VerticalAlignment="Center"/>
-        </Border>
-    </DataTemplate>
+    <Style TargetType="syncfusion:GridCell"
+           x:Key="stateRowStyle" 
+           BasedOn="{StaticResource SyncfusionGridCellStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=State.Id}" Value="1001">
+                <Setter Property="Foreground" Value="Red"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="syncfusion:GridCell"
+           x:Key="stateCellStyle" 
+           BasedOn="{StaticResource stateRowStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=State.Id}" Value="1002">
+                <Setter Property="Foreground" Value="Green"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

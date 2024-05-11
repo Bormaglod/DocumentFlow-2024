@@ -109,7 +109,7 @@
                     <StackPanel Grid.Row="4" Grid.Column="1"
                                 Orientation="Horizontal">
                         <syncfusion:IntegerTextBox Value="{Binding Produced, UpdateSourceTrigger=PropertyChanged}"
-                                                   Width="100"
+                                                   Width="100" Height="25"
                                                    Style="{StaticResource IntegerTextBoxStyle}"/>
                         <TextBlock Text="шт."
                                    Margin="5,0,0,0"/>
@@ -117,7 +117,7 @@
                     <StackPanel Grid.Row="5" Grid.Column="1"
                                 Orientation="Horizontal">
                         <syncfusion:IntegerTextBox Value="{Binding ProdTime, UpdateSourceTrigger=PropertyChanged}"
-                                                   Width="100"
+                                                   Width="100" Height="25"
                                                    Style="{StaticResource IntegerTextBoxStyle}"/>
                         <TextBlock Text="сек."
                                    Margin="5,0,0,0"/>
@@ -125,7 +125,7 @@
                     <StackPanel Grid.Row="6" Grid.Column="1"
                                 Orientation="Horizontal">
                         <syncfusion:IntegerTextBox Value="{Binding ProductionRate, UpdateSourceTrigger=PropertyChanged}"
-                                                   Width="100"
+                                                   Width="100" Height="25"
                                                    Style="{StaticResource IntegerTextBoxStyle}"/>
                         <TextBlock Text="ед./час"
                                    Margin="5,0,0,0"/>
@@ -139,7 +139,7 @@
                                              NoneDateText="Введите дату"
                                              ShowMaskOnNullValue="False"/>
                     <syncfusion:CurrencyTextBox Value="{Binding Salary, UpdateSourceTrigger=PropertyChanged}"
-                                                Width="100"
+                                                Width="100" Height="25"
                                                 Grid.Row="8" Grid.Column="1"
                                                 Style="{StaticResource CurrencyTextBoxStyle}"
                                                 CurrencyDecimalDigits="4"/>

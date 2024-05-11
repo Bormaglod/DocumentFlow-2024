@@ -61,6 +61,8 @@
         <syncfusion:SfDataGrid x:Name="gridContent" 
                                Grid.Row="2"
                                ShowBusyIndicator="True"
+                               AllowGrouping="False"
+                               ShowGroupDropArea="False"
                                ItemsSource="{Binding DataSource}"
                                SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                                HeaderContextMenu="{StaticResource GridHeaderContextMenu}"

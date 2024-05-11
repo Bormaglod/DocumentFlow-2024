@@ -46,9 +46,10 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="{Binding BaseDeduction, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}"/>
-                    <RowDefinition Height="{Binding BaseDeduction, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}"/>
-                    <RowDefinition Height="{Binding BaseDeduction, Converter={StaticResource inverseEnumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}"/>
+                    <RowDefinition Height="{Binding BaseDeduction, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}" d:Height="auto"/>
+                    <RowDefinition Height="{Binding BaseDeduction, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}" d:Height="auto"/>
+                    <RowDefinition Height="{Binding BaseDeduction, Converter={StaticResource inverseEnumToRowVisibleConverter}, ConverterParameter={x:Static enums:BaseDeduction.Person}}" d:Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -104,11 +105,11 @@
                             EditorType="{x:Type editors:PersonView}"
                             Style="{StaticResource ExtComboBoxStyle}"/>
                 <syncfusion:CurrencyTextBox Value="{Binding ValueCurrency, UpdateSourceTrigger=PropertyChanged}"
-                                            Width="100"
+                                            Width="100" Height="25"
                                             Grid.Row="5" Grid.Column="1"
                                             Style="{StaticResource CurrencyTextBoxStyle}"/>
                 <syncfusion:PercentTextBox PercentValue="{Binding ValuePercent, UpdateSourceTrigger=PropertyChanged}"
-                                           Width="100"
+                                           Width="100" Height="25"
                                            Grid.Row="6" Grid.Column="1"
                                            Style="{StaticResource PercentTextBoxStyle}"/>
             </Grid>

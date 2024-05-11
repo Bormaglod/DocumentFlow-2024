@@ -63,7 +63,7 @@ public class ProductViewModel<T> : DirectoryViewModel<T>
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 }

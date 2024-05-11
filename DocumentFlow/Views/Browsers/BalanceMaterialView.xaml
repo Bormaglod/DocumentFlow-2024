@@ -56,7 +56,8 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="DocumentName"
                                            HeaderText="Документ"
                                            ColumnSizer="AutoLastColumnFill"/>

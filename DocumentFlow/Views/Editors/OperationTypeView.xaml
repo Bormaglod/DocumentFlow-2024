@@ -38,6 +38,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -64,7 +65,7 @@
                          Style="{StaticResource TextBoxStyle}"
                          MaxLength="255"/>
                 <syncfusion:CurrencyTextBox Value="{Binding Salary, UpdateSourceTrigger=PropertyChanged}"
-                                            Width="400"
+                                            Width="400" Height="25"
                                             Grid.Row="2" Grid.Column="1"
                                             Style="{StaticResource CurrencyTextBoxStyle}"/>
             </Grid>

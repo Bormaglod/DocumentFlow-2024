@@ -124,11 +124,11 @@
                 <syncfusion:DoubleTextBox Value="{Binding Weight, TargetNullValue=0}"
                                           Grid.Row="5" Grid.Column="1"
                                           NumberDecimalDigits="3"
-                                          Width="100"
+                                          Width="100" Height="25"
                                           Style="{StaticResource DoubleTextBoxStyle}"/>
                 <syncfusion:CurrencyTextBox Value="{Binding Price}"
                                             Grid.Row="6" Grid.Column="1"
-                                            Width="150"
+                                            Width="150" Height="25"
                                             Style="{StaticResource CurrencyTextBoxStyle}"/>
                 <ComboBox ItemsSource="{Binding Vats}"
                           SelectedItem="{Binding Vat}"

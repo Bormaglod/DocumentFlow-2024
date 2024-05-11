@@ -260,6 +260,11 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
         }
     }
 
+    protected override void RegisterReports()
+    {
+        RegisterReport(Report.PurchaseRequest);
+    }
+
     partial void OnContractorChanged(Contractor? value)
     {
         if (value == null)

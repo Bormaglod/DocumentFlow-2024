@@ -16,4 +16,12 @@
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
+    <DataTemplate x:Key="headerWrappingTemplate">
+        <Border BorderBrush="{x:Null}">
+            <TextBlock TextWrapping="Wrap"
+                       Margin="0,-6,0,-6"
+                       Text="{Binding}" 
+                       VerticalAlignment="Center"/>
+        </Border>
+    </DataTemplate>
 </ResourceDictionary>

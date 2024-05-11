@@ -1,10 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
-                    xmlns:commands="clr-namespace:DocumentFlow.Commands"
+                    xmlns:m="clr-namespace:DocumentFlow.Models"
+                    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:triggers="clr-namespace:DocumentFlow.Common.Triggers"
-                    xmlns:m="clr-namespace:DocumentFlow.Models">
+                    xmlns:commands="clr-namespace:DocumentFlow.Commands">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/ToolbarButtonResources.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     <DataTemplate DataType="{x:Type m:ToolBarButtonModel}">
         <syncfusion:ButtonAdv Label="{Binding Label}"
@@ -18,34 +21,7 @@
             </syncfusion:ButtonAdv.ToolTip>
         </syncfusion:ButtonAdv>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type m:ToolBarSeparatorModel}">
-        <Separator/>
-    </DataTemplate>
-    <DataTemplate x:Key="ReportMenuTemplate">
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Margin="5,5" Text="{Binding Path=Header}" />
-        </StackPanel>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type m:ToolBarButtonComboModel}">
-        <syncfusion:DropDownButtonAdv Label="{Binding Label}"
-                                      LargeIcon="{Binding LargeIcon}"
-                                      SmallIcon="{Binding SmallIcon}"
-                                      SizeMode="{Binding PlacementTarget.SizeMode}">
-            <ListBox BorderThickness="0"
-                     ItemTemplate="{StaticResource ReportMenuTemplate}"
-                     ItemsSource="{Binding Items}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <triggers:EventCommandAction Command="{Binding Source={x:Static commands:CommonCommands.OpenReport}}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ListBox>
-            <syncfusion:DropDownButtonAdv.ToolTip>
-                <TextBlock Text="{Binding Hint}"/>
-            </syncfusion:DropDownButtonAdv.ToolTip>
-        </syncfusion:DropDownButtonAdv>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type m:ToolBarGroupingButtonModel}">
+    <DataTemplate DataType="{x:Type m:ToolBarNavigationButtonModel}">
         <syncfusion:ButtonAdv Label="{Binding Label}"
                               LargeIcon="{Binding LargeIcon}"
                               SmallIcon="{Binding SmallIcon}"
@@ -57,5 +33,24 @@
                 <TextBlock Text="{Binding Hint}"/>
             </syncfusion:ButtonAdv.ToolTip>
         </syncfusion:ButtonAdv>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type m:ToolBarButtonComboModel}">
+        <syncfusion:DropDownButtonAdv Label="{Binding Label}"
+                              LargeIcon="{Binding LargeIcon}"
+                              SmallIcon="{Binding SmallIcon}"
+                              SizeMode="{Binding PlacementTarget.SizeMode}">
+            <ListBox BorderThickness="0"
+                     ItemTemplate="{StaticResource DropDownItemTemplate}"
+                     ItemsSource="{Binding Items}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <triggers:EventCommandAction Command="{Binding Source={x:Static commands:CommonCommands.OpenReport}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
+            <syncfusion:DropDownButtonAdv.ToolTip>
+                <TextBlock Text="{Binding Hint}"/>
+            </syncfusion:DropDownButtonAdv.ToolTip>
+        </syncfusion:DropDownButtonAdv>
     </DataTemplate>
 </ResourceDictionary>

@@ -23,7 +23,7 @@ public sealed class MeasurementViewModel : DirectoryViewModel<Measurement>, ISel
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 }

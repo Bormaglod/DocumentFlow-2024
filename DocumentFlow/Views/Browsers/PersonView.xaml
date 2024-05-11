@@ -68,10 +68,12 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="ItemName"
                                            HeaderText="Фамилия И.О."
-                                           ColumnSizer="AutoLastColumnFill"/>
+                                           ColumnSizer="AutoLastColumnFill"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Surname"
                                            HeaderText="Фамилия"
                                            Width="150"/>

@@ -164,11 +164,11 @@
                             <syncfusion:DoubleTextBox Grid.Row="3" Grid.Column="1"
                                                       Value="{Binding Weight, TargetNullValue=0}"
                                                       NumberDecimalDigits="3"
-                                                      Width="100"
+                                                      Width="100" Height="25"
                                                       Style="{StaticResource DoubleTextBoxStyle}"/>
                             <syncfusion:CurrencyTextBox Grid.Row="4" Grid.Column="1"
                                                         Value="{Binding Price}"
-                                                        Width="150"
+                                                        Width="150" Height="25"
                                                         Style="{StaticResource CurrencyTextBoxStyle}"/>
                             <ComboBox Grid.Row="5" Grid.Column="1"
                                       Style="{StaticResource ComboBoxStyle}"

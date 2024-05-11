@@ -11,6 +11,7 @@ using Dapper;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Comparers;
+using DocumentFlow.Common.Converters;
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Exceptions;
@@ -21,6 +22,7 @@ using DocumentFlow.Messages;
 using DocumentFlow.Messages.Options;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
+using DocumentFlow.Models.Settings;
 using DocumentFlow.Settings;
 
 using Humanizer;
@@ -43,7 +45,7 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
-public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IRecipient<PageClosedMessage>, IEntityGridViewModel
+public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IRecipient<PageClosedMessage>, IEntityGridViewModel, IReport
     where T : DocumentInfo
 {
     private class ColumnInfo : IColumnInfo
@@ -53,7 +55,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             Width = gridColumn.Width;
             IsHidden = gridColumn.IsHidden;
             ColumnSizer = gridColumn.ColumnSizer;
-            AlwaysVisible = false;
+            State = ColumnVisibleState.Default;
             MappingName = gridColumn.MappingName;
         }
 
@@ -61,9 +63,11 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         public GridLengthUnitType ColumnSizer { get; set; }
         public double Width { get; set; }
         public bool IsHidden { get; set; }
-        public bool AlwaysVisible { get; set; }
+        public ColumnVisibleState State { get; set; }
     }
 
+    private readonly IConfiguration configuration;
+    private SfDataGrid? grid;
     private readonly List<GridColumn> alwaysVisibleColumns = new();
     private readonly BrowserSettings settings = new();
     private readonly List<MenuItemModel> reports = new();
@@ -94,6 +98,9 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     private bool availableGrouping = true;
 
     [ObservableProperty]
+    private bool isGroupDropAreaExpanded = true;
+
+    [ObservableProperty]
     private SizeMode sizeMode = SizeMode.Normal;
 
 #pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
@@ -119,10 +126,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             creationBasedMenuItems.Add(item);
         }
 
-        var section = configuration.GetSection(typeof(T).Name);
-        section.Bind(settings);
-        
-        LoadFilter(section);
+        this.configuration = configuration;
 
         WeakReferenceMessenger.Default.RegisterAll(this);
 
@@ -353,10 +357,47 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             return;
         }
 
-        var grid = view.DataGrid;
+        grid = view.DataGrid;
         if (grid == null)
         {
             return;
+        }
+
+        var section = configuration.GetSection(GetConfigFileName());
+        section.Bind(settings);
+
+        LoadFilter(section);
+
+        if (settings.Groups != null)
+        {
+            grid.GroupColumnDescriptions.Clear();
+            foreach (var item in settings.Groups.OrderBy(x => x.Order))
+            {
+                GroupColumnDescription? groupColumn = null;
+                if (item.Extended)
+                {
+                    if (this is ICustomGroupingView customGroupingView) 
+                    {
+                        foreach (var column in customGroupingView.GroupingColumns)
+                        {
+                            if (column.Converter is CustomGroupConverter converter && converter.Name == item.Name)
+                            {
+                                groupColumn = new() { ColumnName = column.MappingName, Converter = column.Converter };
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    groupColumn = new() { ColumnName = item.Name };
+                }
+
+                if (groupColumn != null)
+                {
+                    grid.GroupColumnDescriptions.Add(groupColumn);
+                }
+            }
         }
 
         foreach (var column in grid.Columns.Where(c => !string.IsNullOrEmpty(c.HeaderText)))
@@ -374,21 +415,24 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             column.Width = info.Width;
             column.IsHidden = info.IsHidden;
 
-            if (info.AlwaysVisible)
+            if (info.State != ColumnVisibleState.AlwaysHidden)
             {
-                alwaysVisibleColumns.Add(column);
+                if (info.State == ColumnVisibleState.AlwaysVisible)
+                {
+                    alwaysVisibleColumns.Add(column);
+                }
+
+                var item = new MenuItemModel()
+                {
+                    Header = column.HeaderText,
+                    IsChecked = !column.IsHidden,
+                    IsEnabled = !alwaysVisibleColumns.Contains(column),
+                    Tag = column,
+                    PlacementTarget = this
+                };
+
+                VisibleColumnsMenuItems.Add(item);
             }
-
-            var item = new MenuItemModel()
-            {
-                Header = column.HeaderText,
-                IsChecked = !column.IsHidden,
-                IsEnabled = !alwaysVisibleColumns.Contains(column),
-                Tag = column,
-                PlacementTarget = this
-            };
-
-            VisibleColumnsMenuItems.Add(item);
         }
 
         RefreshDataSource();
@@ -530,13 +574,42 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     public void Receive(PageClosedMessage message)
     {
-        if (message.Value == this)
+        if (message.Value == this || (Owner != null && message.Value is IEntityEditorViewModel model && model.DocumentInfo != null && model.DocumentInfo == Owner))
         {
-            settings.Save(typeof(T).Name, GetFilter());
+            if (grid != null)
+            {
+                int i = 1;
+                var list = new List<GroupSettings>();
+                foreach (var item in grid.GroupColumnDescriptions)
+                {
+                    var grp = new GroupSettings()
+                    {
+                        Order = i++,
+                        Name = (item.Converter is CustomGroupConverter converter) ? converter.Name : item.ColumnName,
+                        Extended = item.Converter != null
+                    };
+
+                    list.Add(grp);
+                }
+
+                settings.Groups = list.Count == 0 ? null : list;
+            }
+
+            settings.Save(GetConfigFileName(), GetFilter());
         }
     }
 
     #endregion
+
+    public virtual DocumentInfo? GetReportingDocument(Report report)
+    {
+        if (SelectedItem is DocumentInfo document)
+        {
+            return document;
+        }
+
+        return null;
+    }
 
     public void RefreshDataSource()
     {
@@ -560,6 +633,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     protected virtual void RegisterReports() { }
 
     protected abstract bool GetSupportAccepting();
+
+    protected string GetConfigFileName() => typeof(T).Name + (Owner == null ? string.Empty : "Nested");
 
     protected void RegisterReport(Guid id)
     {

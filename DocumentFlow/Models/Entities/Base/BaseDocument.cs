@@ -26,6 +26,7 @@ public abstract partial class BaseDocument : DocumentInfo
 
     [ObservableProperty]
     [property: DenyCopying]
+    [property: DenyWriting]
     private State? state;
 
     public override string ToString() => $"№{DocumentNumber} от {DocumentDate:d}";

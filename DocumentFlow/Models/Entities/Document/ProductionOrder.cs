@@ -8,17 +8,23 @@ namespace DocumentFlow.Models.Entities;
 
 public class ProductionOrder : ShipmentDocument
 {
-    /*private bool closed;
+    /// <summary>
+    /// Возвращает сумму заявки без НДС.
+    /// </summary>
+    public decimal ProductCost { get; protected set; }
 
-    public bool Closed 
-    { 
-        get => closed;
-        set => SetProperty(ref closed, value);
-    }
+    /// <summary>
+    /// Возвращает значение ставки НДС.
+    /// </summary>
+    public int Tax => (Contract?.TaxPayer ?? false) ? 20 : 0;
 
-    public decimal CostOrder { get; protected set; }
-    public bool TaxPayer { get; protected set; }
-    public int Tax { get; protected set; }
+    /// <summary>
+    /// Возвращает сумму НДС.
+    /// </summary>
     public decimal TaxValue { get; protected set; }
-    public decimal FullCost { get; protected set; }*/
+
+    /// <summary>
+    /// Возвращает Полную стоимость заявки с НДС.
+    /// </summary>
+    public decimal FullCost { get; protected set; }
 }

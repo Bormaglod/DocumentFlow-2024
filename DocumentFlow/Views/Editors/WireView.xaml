@@ -39,6 +39,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -75,7 +76,7 @@
                          Style="{StaticResource TextBoxStyle}"
                          MaxLength="255"/>
                 <syncfusion:DoubleTextBox Value="{Binding Wsize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                          Width="100"
+                                          Width="100" Height="25"
                                           Grid.Row="3" Grid.Column="1"
                                           Style="{StaticResource DoubleTextBoxStyle}" 
                                           MaxLength="10"/>

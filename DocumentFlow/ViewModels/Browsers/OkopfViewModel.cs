@@ -23,7 +23,7 @@ public sealed class OkopfViewModel : DirectoryViewModel<Okopf>, ISelfTransientLi
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 }

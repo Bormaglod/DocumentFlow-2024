@@ -96,6 +96,13 @@ public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation
         entity.StimulPayment = StimulPayment;
     }
 
+    protected override void RegisterReports()
+    {
+        base.RegisterReports();
+        RegisterReport(Report.Specification);
+        RegisterReport(Report.ProcessMap);
+    }
+
     partial void OnCodeChanged(string value)
     {
         UpdateHeader(value);

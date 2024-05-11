@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="DocumentFlow.Controls.LotEditor"
+             x:Name="lotEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:selectors="clr-namespace:DocumentFlow.Common.Selectors"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Loaded="LotEditor_Loaded">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/SharedResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridSummaryResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <selectors:TableSummaryStyleSelector x:Key="tableSummaryStyleSelector"/>
+            <common:ComplexSummaryAggregate x:Key="complexSummaryAggregate"/>
+            <Style x:Key="redCellStyle" 
+                   TargetType="syncfusion:GridCell"
+                   BasedOn="{StaticResource SyncfusionGridCellStyle}">
+                <Setter Property="Foreground" Value="Red" />
+            </Style>
+            <Style x:Key="greenCellStyle" 
+                   TargetType="syncfusion:GridCell"
+                   BasedOn="{StaticResource SyncfusionGridCellStyle}">
+                <Setter Property="Foreground" Value="Green" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <syncfusion:SfDataGrid x:Name="gridContent" 
+                               AllowGrouping="False" 
+                               AllowSorting="False" 
+                               AutoGenerateColumns="False"
+                               AllowResizingColumns="True"
+                               ItemsSource="{Binding ElementName=lotEditor, Path=OperationInfos}"
+                               QueryRowHeight="GridContent_QueryRowHeight"
+                               CellDoubleTapped="GridContent_CellDoubleTapped"
+                               TableSummaryCellStyle="{StaticResource TableSummaryStyleNumeric}">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="Operation.Code"
+                                           ColumnSizer="Auto"
+                                           HeaderText="Код"/>
+                <syncfusion:GridTextColumn MappingName="Operation"
+                                           ColumnSizer="Auto"
+                                           HeaderText="Операция"/>
+                <syncfusion:GridNumericColumn MappingName="OperationsByLot"
+                                              HeaderText="Всего на партию"
+                                              HeaderTemplate="{StaticResource headerWrappingTemplate}"
+                                              NumberDecimalDigits="0"
+                                              Width="80"/>
+                <syncfusion:GridNumericColumn MappingName="Quantity"
+                                              HeaderText="Кол-во"
+                                              NumberDecimalDigits="0"
+                                              Width="80">
+                    <syncfusion:GridNumericColumn.CellStyle>
+                        <Style TargetType="syncfusion:GridCell"
+                               BasedOn="{StaticResource SyncfusionGridCellStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsComplete}" Value="True">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsComplete}" Value="False">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </syncfusion:GridNumericColumn.CellStyle>
+                </syncfusion:GridNumericColumn>
+                <syncfusion:GridCurrencyColumn MappingName="Salary"
+                                               HeaderText="Зарплата"
+                                               Width="90"/>
+            </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.StackedHeaderRows>
+                <syncfusion:StackedHeaderRow x:Name="stackedHeaderRow">
+                    <syncfusion:StackedHeaderRow.StackedColumns>
+                        <syncfusion:StackedColumn ChildColumns="Quantity,Salary" 
+                                                  HeaderText="Итого" 
+                                                  MappingName="OperationSummary"/>
+                    </syncfusion:StackedHeaderRow.StackedColumns>
+                </syncfusion:StackedHeaderRow>
+            </syncfusion:SfDataGrid.StackedHeaderRows>
+            <syncfusion:SfDataGrid.TableSummaryRows>
+                <syncfusion:GridTableSummaryRow ShowSummaryInRow="False" x:Name="summaryRow">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="Salary"
+                                                      Format="'{Sum:c}'"
+                                                      MappingName="Salary"
+                                                      SummaryType="DoubleAggregate" />
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridTableSummaryRow>
+            </syncfusion:SfDataGrid.TableSummaryRows>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</UserControl>

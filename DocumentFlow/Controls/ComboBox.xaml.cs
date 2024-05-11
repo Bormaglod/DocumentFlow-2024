@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Messages;
@@ -18,11 +19,11 @@ namespace DocumentFlow.Controls;
 /// <summary>
 /// Логика взаимодействия для ComboBox.xaml
 /// </summary>
-public partial class ComboBox : UserControl, INotifyPropertyChanged
+[INotifyPropertyChanged]
+public partial class ComboBox : UserControl
 {
-    private DocumentInfo? document;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
+    [ObservableProperty]
+    private DocumentInfo? documentItem;
 
     public ComboBox()
     {
@@ -47,21 +48,6 @@ public partial class ComboBox : UserControl, INotifyPropertyChanged
         set { SetValue(EditorTypeProperty, value); }
     }
 
-    public DocumentInfo? DocumentItem
-    {
-        get => document;
-        set
-        {
-            if (document != value)
-            {
-                document = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DocumentItem)));
-
-                SelectedItem = document!;
-            }
-        }
-    }
-
     public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
         nameof(SelectedItem),
         typeof(object),
@@ -81,7 +67,8 @@ public partial class ComboBox : UserControl, INotifyPropertyChanged
 
     private void ButtonClear_Click(object sender, RoutedEventArgs e)
     {
-        combo.SelectedItem = null;
+        SelectedItem = null!;
+        DocumentItem = null;
     }
 
     private void ButtonOpenEditor_Click(object sender, RoutedEventArgs e)
@@ -98,11 +85,11 @@ public partial class ComboBox : UserControl, INotifyPropertyChanged
         {
             if (e.NewValue is DocumentInfo info)
             {
-                combo.DocumentItem ??= combo.ItemsSource?.FirstOrDefault(x => x.Id == combo.SelectedItem.Id);
+                combo.DocumentItem ??= combo.ItemsSource?.FirstOrDefault(x => x.Id == info.Id)!;
             }
             else
             {
-                combo.DocumentItem = null;
+                combo.DocumentItem = null!;
             }
         }
     }
@@ -113,5 +100,10 @@ public partial class ComboBox : UserControl, INotifyPropertyChanged
         {
             combo.DocumentItem = combo.ItemsSource?.FirstOrDefault(x => x.Id == combo.SelectedItem.Id);
         }
+    }
+
+    partial void OnDocumentItemChanged(DocumentInfo? value)
+    {
+        SelectedItem = value!;
     }
 }

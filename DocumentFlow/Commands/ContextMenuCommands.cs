@@ -4,7 +4,12 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+//using DocumentFlow.Common;
 using DocumentFlow.Common;
+using CommunityToolkit.Mvvm.ComponentModel;
+
+using DocumentFlow.Dialogs;
+using DocumentFlow.Interfaces;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
@@ -16,6 +21,8 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Data;
+using DocumentFlow.Common.Converters;
 
 namespace DocumentFlow.Commands;
 
@@ -179,6 +186,82 @@ public static class ContextMenuCommands
         }
 
         return false;
+    }
+
+    #endregion
+
+    #region CustomGrouping
+
+    static ICommand? customGrouping;
+
+    public static ICommand CustomGrouping
+    {
+        get
+        {
+            customGrouping ??= new BaseCommand(OnCustomGrouping);
+            return customGrouping;
+        }
+    }
+
+    private static void OnCustomGrouping(object parameter)
+    {
+        if (parameter is GridContextMenuInfo info)
+        {
+            IReadOnlyList<(string MappingName, IValueConverter Converter)> customs = new List<(string, IValueConverter)>();
+            if (info.DataGrid.DataContext is ICustomGroupingView view)
+            {
+                customs = view.GroupingColumns;
+            }
+
+            int i = 0;
+            var availables = new List<CustomGroupColumn>();
+            foreach (var item in info.DataGrid.Columns.Where(x => x.AllowGrouping))
+            {
+                availables.Add(new CustomGroupColumn(item, customs.FirstOrDefault(x => x.MappingName == item.MappingName) != default, i++));
+            }
+
+            foreach (var (MappingName, Converter) in customs)
+            {
+                var column = availables.First(x => x.MappingName == MappingName);
+                availables.Add(new CustomGroupColumn(column, Converter, i++));
+            }
+
+            i = 0;
+            var selected = new List<CustomGroupColumn>();
+            foreach (var item in info.DataGrid.GroupColumnDescriptions)
+            {
+                CustomGroupColumn? sel = null;
+                if (item.Converter == null)
+                {
+                    sel = availables.FirstOrDefault(x => x.MappingName == item.ColumnName && x.Converter == null);
+                }
+                else
+                {
+                    sel = availables.FirstOrDefault(x => x.MappingName == item.ColumnName && x.Converter != null && x.Converter.Equals(item.Converter));
+                }
+
+                if (sel != null)
+                {
+                    selected.Add(sel);
+                }
+            }
+
+            CustomGroupWindow window = new(availables, selected);
+            if (window.ShowDialog() == true)
+            {
+                info.DataGrid.GroupColumnDescriptions.Clear();
+                foreach (var item in window.Selected.OrderBy(x => x.Order))
+                {
+                    var grp = new GroupColumnDescription()
+                    {
+                        ColumnName = item.MappingName,
+                        Converter = item.Converter
+                    };
+
+                    info.DataGrid.GroupColumnDescriptions.Add(grp);
+                }
+            }
+        }
     }
 
     #endregion
@@ -514,7 +597,7 @@ public static class ContextMenuCommands
             if (grid.CurrentItem is Identifier identifier)
             {
                 Clipboard.SetText(identifier.Id.ToString() ?? string.Empty);
-                ToastOperations.IdentifierValueCopied(identifier.Id);
+                Common.ToastOperations.IdentifierValueCopied(identifier.Id);
             }
         }
     }

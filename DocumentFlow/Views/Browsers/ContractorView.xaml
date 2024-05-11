@@ -70,23 +70,28 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Code"
                                            HeaderText="Наименование"
-                                           ColumnSizer="AutoLastColumnFill"/>
+                                           ColumnSizer="AutoLastColumnFill"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="ItemName"
                                            HeaderText="Краткое наименование"
                                            Width="150"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="FullName"
                                            HeaderText="Полное наименование"
-                                           Width="400"/>
+                                           Width="400"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridNumericColumn MappingName="Inn"
                                               HeaderText="ИНН"
                                               Width="100" 
                                               ParsingMode="Decimal" 
                                               UseBindingValue="True"
-                                              DisplayBinding="{Binding Inn, ConverterParameter=INN, Converter={StaticResource DecimalConverter}}"/>
+                                              DisplayBinding="{Binding Inn, ConverterParameter=INN, Converter={StaticResource DecimalConverter}}"
+                                              AllowGrouping="False"/>
                 <syncfusion:GridNumericColumn MappingName="Kpp"
                                               HeaderText="КПП"
                                               Width="100" 
@@ -104,7 +109,8 @@
                                               Width="120" 
                                               ParsingMode="Decimal" 
                                               UseBindingValue="True"
-                                              DisplayBinding="{Binding Ogrn, ConverterParameter=OGRN, Converter={StaticResource DecimalConverter}}"/>
+                                              DisplayBinding="{Binding Ogrn, ConverterParameter=OGRN, Converter={StaticResource DecimalConverter}}"
+                                              AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Okopf.ItemName"
                                            HeaderText="ОКОПФ"
                                            Width="300"/>

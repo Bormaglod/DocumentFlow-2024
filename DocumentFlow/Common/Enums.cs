@@ -8,6 +8,20 @@ using System.ComponentModel;
 
 namespace DocumentFlow.Common.Enums;
 
+public enum JoinType
+{
+    Left,
+    Right,
+    Inner
+}
+
+public enum DateTimeGrouping
+{
+    Default,
+    ByDate,
+    ByMonth
+}
+
 public enum ProductContent
 {
     Materials,

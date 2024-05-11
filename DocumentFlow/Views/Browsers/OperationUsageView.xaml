@@ -56,7 +56,8 @@
                 <syncfusion:GridTextColumn MappingName="Id"
                                            HeaderText="Идентификатор"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Goods.Code"
                                            HeaderText="Артикул"
                                            Width="140"

@@ -64,6 +64,6 @@ public sealed class PurchaseRequestViewModel : DocumentViewModel<PurchaseRequest
 
     protected override void RegisterReports()
     {
-        RegisterReport(new Guid("d0edcb83-c298-4d19-a216-309d33687e40"));
+        RegisterReport(Report.PurchaseRequest);
     }
 }

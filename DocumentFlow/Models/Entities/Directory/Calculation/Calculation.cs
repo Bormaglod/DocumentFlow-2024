@@ -16,6 +16,11 @@ namespace DocumentFlow.Models.Entities;
 
 public partial class Calculation : Directory
 {
+    [ObservableProperty]
+    [property: DenyWriting]
+    [property: ForeignKey(FieldKey = "owner_id")]
+    private Goods? goods;
+
     /// <summary>
     /// Возвращает или устанавливает себестоимость изделия или услуги.
     /// </summary>

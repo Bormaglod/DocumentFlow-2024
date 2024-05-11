@@ -55,12 +55,13 @@ public static class CommonCommands
                 throw new Exception("Свойство Tag в объекте класса MenuItemModel должно иметь тип Models.Entities.Report");
             }
 
-            if (model.PlacementTarget is not IEntityGridViewModel grid)
+            if (model.PlacementTarget is not IReport r)
             {
-                throw new Exception("Свойство PlacementTarget в объекте класса MenuItemModel должно иметь тип IEntityGridViewModel");
+                throw new Exception("Свойство PlacementTarget в объекте класса MenuItemModel должно реализовывать интерфейс IReport");
             }
 
-            if (grid.SelectedItem is not DocumentInfo document || string.IsNullOrEmpty(report.SchemaReport))
+            var document = r.GetReportingDocument(report);
+            if (document == null || string.IsNullOrEmpty(report.SchemaReport))
             {
                 return;
             }

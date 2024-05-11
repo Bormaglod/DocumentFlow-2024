@@ -23,7 +23,7 @@ public static class GhostScript
         IntPtr libHandle = IntPtr.Zero;
         if (libraryName.StartsWith("gsdll"))
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ThirdParty");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ThirdParty", "Ghostscript");
             if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
             {
                 libHandle = NativeLibrary.Load(Path.Combine(path, "gsdll32.dll"));

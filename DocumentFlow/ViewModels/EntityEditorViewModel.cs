@@ -16,6 +16,7 @@ using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
 using DocumentFlow.Messages.Options;
+using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
 using Humanizer;
@@ -31,11 +32,12 @@ using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
-public abstract partial class EntityEditorViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IEntityEditorViewModel
+public abstract partial class EntityEditorViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IEntityEditorViewModel, IReport
     where T : DocumentInfo, new()
 {
     private string? headerDetails;
     private EntityEditStatus entityEditStatus = EntityEditStatus.Created;
+    private readonly List<MenuItemModel> reports = new();
 
     [ObservableProperty]
     private Guid id;
@@ -58,7 +60,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
     public EntityEditorViewModel()
     {
         UpdateHeader();
-        InitializeToolBar();
+        InitializeEditor();
 
         WeakReferenceMessenger.Default.Register(this);
     }
@@ -70,6 +72,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
     public DocumentInfo? DocumentInfo => Entity;
 
     protected EntityEditStatus Status => entityEditStatus;
+
+    protected IEnumerable<MenuItemModel> Reports => reports;
 
     #region Commands
 
@@ -174,6 +178,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         InitializeEntityCollections(conn);
     }
 
+    public virtual DocumentInfo? GetReportingDocument(Report report) => Entity;
+
     protected virtual void SetOptions(MessageOptions options)
     {
         if (options is DocumentEditorMessageOptions documentOptions)
@@ -188,6 +194,29 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
     protected virtual void InitializeEntityCollections(IDbConnection connection, T? entity = null) { }
 
     protected virtual void UpdateUIControls(T entity) { }
+
+    protected virtual void RegisterReports() { }
+
+    protected void RegisterReport(Guid id)
+    {
+        using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+        var report = conn.QueryFirst<Report>("select * from report where id = :id", new { id });
+
+        MenuItemModel menuItem = new()
+        {
+            Header = report.Title,
+            Tag = report,
+            PlacementTarget = this
+        };
+
+        reports.Add(menuItem);
+    }
+
+    private void InitializeEditor()
+    {
+        RegisterReports();
+        InitializeToolBar();
+    }
 
     private void RaiseAfterLoad(IDbConnection connection, T entity)
     {
@@ -261,6 +290,30 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
             sqlParameters).First();
     }
 
+    protected void Load<P1, P2, P3, P4, P5>(IDbConnection connection, Func<T, P1, P2, P3, P4, P5, T> map, QueryParameters? parameters = null)
+    {
+        PrepareQuery(connection, out var compiled, out var sqlParameters, parameters);
+        Entity = connection.Query(
+            compiled.Sql,
+            map,
+            sqlParameters).First();
+    }
+
+    protected void Load<P1, P2, P3, P4, P5, P6>(IDbConnection connection, Func<T, P1, P2, P3, P4, P5, P6, T> map, QueryParameters? parameters = null)
+    {
+        PrepareQuery(connection, out var compiled, out var sqlParameters, parameters);
+        Entity = connection.Query(
+            compiled.Sql,
+            map,
+            sqlParameters).First();
+    }
+
+    protected void Load<P1, P2, P3, P4, P5, P6, P7>(IDbConnection connection, Func<T, P1, P2, P3, P4, P5, P6, P7, T> map, QueryParameters? parameters = null)
+    {
+        var query = DefaultQuery(connection, parameters);
+        Entity = query.Get(map).First();
+    }
+
     protected abstract string GetStandardHeader();
 
     protected abstract void RaiseAfterLoadDocument(T entity);
@@ -297,17 +350,15 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         }
     }
 
-    private void UpdateHeader() => UpdateHeader(headerDetails ?? string.Empty);
-
-    private void PrepareQuery(IDbConnection connection, out SqlResult compiled, out DynamicParameters sqlParameters, QueryParameters? parameters = null)
+    protected bool OnSave(bool sendNotify = true)
     {
-        var query = DefaultQuery(connection, parameters);
-        compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
-        sqlParameters = new DynamicParameters(compiled.NamedBindings);
-    }
+        MessageAction action;
 
-    private void OnSave()
-    {
+        Entity ??= new();
+        Entity.OwnerId = Owner?.Id;
+
+        UpdateEntity(Entity);
+
         try
         {
             using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
@@ -315,13 +366,6 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
             try
             {
-                MessageAction action;
-
-                Entity ??= new();
-                Entity.OwnerId = Owner?.Id;
-
-                UpdateEntity(Entity);
-
                 if (Entity.Id == Guid.Empty)
                 {
                     conn.Insert(Entity, transaction);
@@ -342,7 +386,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
                 LoadEntity();
                 UpdateHeader();
 
-                if (Id != Guid.Empty)
+                if (Id != Guid.Empty && sendNotify)
                 {
                     WeakReferenceMessenger.Default.Send(new EntityActionMessage(EntityProperties.GetTableName(typeof(T)), Id, action));
                 }
@@ -351,13 +395,24 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
             {
                 transaction.Rollback();
                 throw;
-
             }
         }
         catch (Exception e)
         {
             MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
+
+        return true;
+    }
+
+    private void UpdateHeader() => UpdateHeader(headerDetails ?? string.Empty);
+
+    private void PrepareQuery(IDbConnection connection, out SqlResult compiled, out DynamicParameters sqlParameters, QueryParameters? parameters = null)
+    {
+        var query = DefaultQuery(connection, parameters);
+        compiled = ((XQuery)query).QueryFactory.Compiler.Compile(query);
+        sqlParameters = new DynamicParameters(compiled.NamedBindings);
     }
 
     private Query DefaultQuery(IDbConnection connection, QueryParameters? parameters = null)

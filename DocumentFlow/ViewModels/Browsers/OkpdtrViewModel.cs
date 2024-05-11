@@ -23,7 +23,7 @@ public sealed class OkpdtrViewModel : DirectoryViewModel<Okpdtr>, ISelfTransient
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 }

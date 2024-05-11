@@ -4,7 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using DocumentFlow.Models.Entities;
 
 using System.ComponentModel;
@@ -16,29 +17,17 @@ namespace DocumentFlow.Dialogs;
 /// <summary>
 /// Логика взаимодействия для DirectoryItemWindow.xaml
 /// </summary>
-public partial class DirectoryItemWindow : Window, INotifyPropertyChanged
+[INotifyPropertyChanged]
+public partial class DirectoryItemWindow : Window
 {
+    [ObservableProperty]
     private Directory? selectedItem;
+    
     private IEnumerable<Directory>? itemsSource;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     public DirectoryItemWindow()
     {
         InitializeComponent();
-    }
-
-    public Directory? SelectedItem
-    {
-        get => selectedItem;
-        set 
-        { 
-            if (selectedItem != value)
-            { 
-                selectedItem = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedItem)));
-            }
-        }
     }
 
     public bool Get<T>(IEnumerable<T> items, T? selected, [MaybeNullWhen(false)] out T directory)

@@ -81,6 +81,16 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
 
     #endregion
 
+
+    public override DocumentInfo? GetReportingDocument(Report report) => Entity?.Calculation;
+
+    protected override void RegisterReports()
+    {
+        base.RegisterReports();
+        RegisterReport(Report.Specification);
+        RegisterReport(Report.ProcessMap);
+    }
+
     protected override string GetStandardHeader() => "Изделие";
 
     protected override void RaiseAfterLoadDocument(Goods entity)

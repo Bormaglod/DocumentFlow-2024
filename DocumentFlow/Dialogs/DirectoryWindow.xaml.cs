@@ -4,11 +4,16 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
+using DocumentFlow.Common;
 using DocumentFlow.Models.Entities;
 
+using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.ScrollAxis;
 using Syncfusion.UI.Xaml.TreeGrid;
 
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -17,23 +22,16 @@ namespace DocumentFlow.Dialogs;
 /// <summary>
 /// Логика взаимодействия для DirectoryWindow.xaml
 /// </summary>
+[INotifyPropertyChanged]
 public partial class DirectoryWindow : Window
 {
-    private class ColumnInfo
-    {
-        public ColumnInfo(string mappingName, string header, double width)
-        {
-            MappingName = mappingName;
-            Header = header;
-            Width = width;
-        }
+    private IEnumerable<Common.GridComboColumn>? columns;
 
-        public string MappingName { get; set; }
-        public string Header { get; set; }
-        public double Width { get; set; }
-    }
+    [ObservableProperty]
+    private Directory? selectedItem;
 
-    private readonly IEnumerable<ColumnInfo> columns = new List<ColumnInfo>();
+    [ObservableProperty]
+    private object? itemsSource;
 
     public DirectoryWindow()
     {
@@ -42,27 +40,58 @@ public partial class DirectoryWindow : Window
 
     public bool CanSelectFolder { get; set; }
 
-    public Directory SelectedItem
+    public IEnumerable<Common.GridComboColumn>? Columns
     {
-        get { return (Directory)GetValue(SelectedItemProperty); }
-        set { SetValue(SelectedItemProperty, value); }
+        get => columns;
+        set
+        {
+            if (columns != value)
+            {
+                columns = value;
+                if (columns == null)
+                {
+                    gridContent.Columns.Clear();
+                }
+                else
+                {
+                    foreach (var info in columns.OrderBy(x => x.Order))
+                    {
+                        TreeGridColumn? column = null;
+                        switch (info)
+                        {
+                            case TextGridComboColumn:
+                                column = new TreeGridTextColumn();
+                                break;
+                            case DateTimeGridComboColumn dateTimeColumnInfo:
+                                column = new TreeGridDateTimeColumn() { Pattern = dateTimeColumnInfo.Pattern };
+                                break;
+                            case CurrencyGridComboColumn:
+                                column = new TreeGridCurrencyColumn();
+                                break;
+                        }
+
+                        if (column == null)
+                        {
+                            continue;
+                        }
+
+                        column.MappingName = info.MappingName;
+                        column.HeaderText = info.Header;
+                        if (!double.IsNaN(info.Width))
+                        {
+                            column.Width = info.Width;
+                        }
+                        else
+                        {
+                            column.ColumnSizer = TreeColumnSizer.AutoFillColumn;
+                        }
+
+                        gridContent.Columns.Add(column);
+                    }
+                }
+            }
+        }
     }
-
-    public IEnumerable<Directory> ItemsSource
-    {
-        get { return (IEnumerable<Directory>)GetValue(ItemsSourceProperty); }
-        set { SetValue(ItemsSourceProperty, value); }
-    }
-
-    public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
-        nameof(SelectedItem),
-        typeof(Directory),
-        typeof(DirectoryWindow));
-
-    public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register(
-        nameof(ItemsSource),
-        typeof(IEnumerable<Directory>),
-        typeof(DirectoryWindow));
 
     private void ButtonSelect_Click(object sender, RoutedEventArgs e)
     {
@@ -72,30 +101,9 @@ public partial class DirectoryWindow : Window
         }
     }
 
-    private void SfTreeGrid_AutoGeneratingColumn(object sender, TreeGridAutoGeneratingColumnEventArgs e)
-    {
-        var column = columns.FirstOrDefault(x => x.MappingName == e.Column.MappingName);
-        if (column != null) 
-        {
-            e.Column.HeaderText = column.Header;
-            if (!double.IsNaN(column.Width)) 
-            { 
-                e.Column.Width = column.Width;
-            }
-            else
-            {
-                e.Column.ColumnSizer = TreeColumnSizer.AutoFillColumn;
-            }
-        }
-        else
-        {
-            e.Cancel = true;
-        }
-    }
-
     private void SfTreeGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (!SelectedItem.IsFolder || CanSelectFolder)
+        if (SelectedItem != null && (!SelectedItem.IsFolder || CanSelectFolder))
         {
             DialogResult = true;
         }

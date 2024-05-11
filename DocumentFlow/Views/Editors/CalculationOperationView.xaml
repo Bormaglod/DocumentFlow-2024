@@ -112,7 +112,7 @@
                                      Style="{StaticResource SelectBoxStyle}"
                                      EditorType="{x:Type editors:OperationView}"/>
                         <syncfusion:CurrencyTextBox Value="{Binding Price, UpdateSourceTrigger=PropertyChanged}"
-                                                    Width="100"
+                                                    Width="100" Height="25"
                                                     Grid.Row="4" Grid.Column="1"
                                                     Style="{StaticResource CurrencyTextBoxDisabledStyle}"
                                                     CurrencyDecimalDigits="4"/>
@@ -135,12 +135,12 @@
                                      Style="{StaticResource SelectBoxStyle}"
                                      EditorType="{x:Type editors:MaterialView}"/>
                         <syncfusion:DoubleTextBox Value="{Binding MaterialAmount}"
-                                                  Width="100"
+                                                  Width="100" Height="25"
                                                   Grid.Row="8" Grid.Column="1"
                                                   Style="{StaticResource DoubleTextBoxStyle}"
                                                   NumberDecimalDigits="3"/>
                         <syncfusion:IntegerTextBox Value="{Binding Repeats}"
-                                                   Width="100"
+                                                   Width="100" Height="25"
                                                    Grid.Row="9" Grid.Column="1"
                                                    Style="{StaticResource IntegerTextBoxStyle}"/>
                         <syncfusion:ComboBoxAdv ItemsSource="{Binding PreviousOperationList}"

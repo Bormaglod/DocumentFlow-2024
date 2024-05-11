@@ -72,13 +72,16 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Code"
                                            HeaderText="Код"
-                                           Width="150"/>
+                                           Width="150"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="ItemName"
                                            HeaderText="Наименование"
-                                           ColumnSizer="AutoLastColumnFill"/>
+                                           ColumnSizer="AutoLastColumnFill"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Measurement.Abbreviation"
                                            HeaderText="Ед. изм."
                                            Width="100"
@@ -106,7 +109,8 @@
                                               TextAlignment="Right"/>
                 <syncfusion:GridTextColumn MappingName="ExtArticle"
                                            HeaderText="Доп. артикул"
-                                           Width="120" />
+                                           Width="120" 
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Cross.Code"
                                            HeaderText="Кросс-артикул"
                                            Width="120" />

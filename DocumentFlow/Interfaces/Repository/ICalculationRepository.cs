@@ -29,4 +29,25 @@ public interface ICalculationRepository : IDirectoryRepository<Calculation>
     void CopyItems(Calculation fromCalculation, Calculation toCalculation);
 
     void CopyItems(IDbConnection connection, Calculation fromCalculation, Calculation toCalculation, IDbTransaction? transaction = null);
+
+    /// <summary>
+    /// Возвращает список операций относящихся к калькуляции <paramref name="calculation"/>.
+    /// Если параметр <paramref name="includeMaterialInfo"/> равен true, то для каждого значения <see cref="CalculationOperation"/>
+    /// будет установлено свойство <see cref="CalculationOperation.Material"/>.
+    /// </summary>
+    /// <param name="calculation"></param>
+    /// <param name="includeMaterialInfo"></param>
+    /// <returns></returns>
+    IReadOnlyList<CalculationOperation> GetOperations(Calculation calculation, bool includeMaterialInfo = false);
+
+    /// <summary>
+    /// Возвращает список операций относящихся к калькуляции <paramref name="calculation"/>.
+    /// Если параметр <paramref name="includeMaterialInfo"/> равен true, то для каждого значения <see cref="CalculationOperation"/>
+    /// будет установлено свойство <see cref="CalculationOperation.Material"/>.
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="calculation"></param>
+    /// <param name="includeMaterialInfo"></param>
+    /// <returns></returns>
+    IReadOnlyList<CalculationOperation> GetOperations(IDbConnection connection, Calculation calculation, bool includeMaterialInfo = false);
 }

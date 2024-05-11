@@ -8,7 +8,6 @@ using Dapper;
 
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
-using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Humanizer;
@@ -16,6 +15,7 @@ using Humanizer;
 using SqlKata;
 using SqlKata.Execution;
 
+using System.Collections;
 using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -26,154 +26,188 @@ namespace DocumentFlow.Common.Extensions;
 public static partial class QueryExtension
 {
     public static IEnumerable<TSource> Get<TSource, T>(this Query query, Func<TSource, T, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
-        where T : IIdentifier
     {
         var factory = ((XQuery)query).QueryFactory;
 
         var compiled = factory.Compiler.Compile(query);
         var parameters = new DynamicParameters(compiled.NamedBindings);
 
-        List<TSource> listSource = new();
-        List<T> listT = new();
-        using (var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout))
+        var types = new Type[] { typeof(TSource), typeof(T) };
+
+        var list = GetListCollection(types);
+        using var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout);
+
+        var parsers = GetListParsers(reader, types, GetFields(reader));
+
+        while (reader.Read())
         {
-            var fields = GetFields(reader);
+            var source = parsers[0](reader);
+            var values = GetListValues(reader, parsers, list);
 
-            int startIndex = 0;
-            var parserSource = GetRowParser<TSource>(reader, fields, ref startIndex);
-            var parserT = GetRowParser<T>(reader, fields, ref startIndex);
-
-            while (reader.Read())
-            {
-                var source = parserSource(reader);
-                var t = ParserRow(reader, parserT, listT);
-
-                map(source, t);
-                listSource.Add(source);
-            }
+            var result = map((TSource)source, (T)values[0]);
+            ((IList)list[0]).Add(result);
         }
 
-        return listSource;
+        return (IEnumerable<TSource>)list[0];
     }
 
     public static IEnumerable<TSource> Get<TSource, T1, T2>(this Query query, Func<TSource, T1, T2, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
-        where T1 : IIdentifier
-        where T2 : IIdentifier
     {
         var factory = ((XQuery)query).QueryFactory;
 
         var compiled = factory.Compiler.Compile(query);
         var parameters = new DynamicParameters(compiled.NamedBindings);
 
-        List<TSource> listSource = new();
-        List<T1> listT1 = new();
-        List<T2> listT2 = new();
-        using (var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout))
+        var types = new Type[] { typeof(TSource), typeof(T1), typeof(T2) };
+
+        var list = GetListCollection(types);
+        using var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout);
+
+        var parsers = GetListParsers(reader, types, GetFields(reader));
+
+        while (reader.Read())
         {
-            var fields = GetFields(reader);
+            var source = parsers[0](reader);
+            var values = GetListValues(reader, parsers, list);
 
-            int startIndex = 0;
-            var parserSource = GetRowParser<TSource>(reader, fields, ref startIndex);
-            var parserT1 = GetRowParser<T1>(reader, fields, ref startIndex);
-            var parserT2 = GetRowParser<T2>(reader, fields, ref startIndex);
-
-            while (reader.Read())
-            {
-                var source = parserSource(reader);
-                var t1 = ParserRow(reader, parserT1, listT1);
-                var t2 = ParserRow(reader, parserT2, listT2);
-
-                map(source, t1, t2);
-                listSource.Add(source);
-            }
+            var result = map((TSource)source, (T1)values[0], (T2)values[1]);
+            ((IList)list[0]).Add(result);
         }
 
-        return listSource;
+        return (IEnumerable<TSource>)list[0];
     }
 
     public static IEnumerable<TSource> Get<TSource, T1, T2, T3>(this Query query, Func<TSource, T1, T2, T3, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
-        where T1 : IIdentifier
-        where T2 : IIdentifier
-        where T3 : IIdentifier
     {
         var factory = ((XQuery)query).QueryFactory;
 
         var compiled = factory.Compiler.Compile(query);
         var parameters = new DynamicParameters(compiled.NamedBindings);
 
-        List<TSource> listSource = new();
-        List<T1> listT1 = new();
-        List<T2> listT2 = new();
-        List<T3> listT3 = new();
-        using (var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout))
+        var types = new Type[] { typeof(TSource), typeof(T1), typeof(T2), typeof(T3) };
+
+        var list = GetListCollection(types);
+        using var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout);
+
+        var parsers = GetListParsers(reader, types, GetFields(reader));
+
+        while (reader.Read())
         {
-            var fields = GetFields(reader);
+            var source = parsers[0](reader);
+            var values = GetListValues(reader, parsers, list);
 
-            int startIndex = 0;
-            var parserSource = GetRowParser<TSource>(reader, fields, ref startIndex);
-            var parserT1 = GetRowParser<T1>(reader, fields, ref startIndex);
-            var parserT2 = GetRowParser<T2>(reader, fields, ref startIndex);
-            var parserT3 = GetRowParser<T3>(reader, fields, ref startIndex);
-
-            while (reader.Read())
-            {
-                var source = parserSource(reader);
-                var t1 = ParserRow(reader, parserT1, listT1);
-                var t2 = ParserRow(reader, parserT2, listT2);
-                var t3 = ParserRow(reader, parserT3, listT3);
-
-                map(source, t1, t2, t3);
-                listSource.Add(source);
-            }
+            var result = map((TSource)source, (T1)values[0], (T2)values[1], (T3)values[2]);
+            ((IList)list[0]).Add(result);
         }
 
-        return listSource;
+        return (IEnumerable<TSource>)list[0];
     }
 
     public static IEnumerable<TSource> Get<TSource, T1, T2, T3, T4>(this Query query, Func<TSource, T1, T2, T3, T4, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
-        where T1 : IIdentifier
-        where T2 : IIdentifier
-        where T3 : IIdentifier
-        where T4 : IIdentifier
     {
         var factory = ((XQuery)query).QueryFactory;
 
         var compiled = factory.Compiler.Compile(query);
         var parameters = new DynamicParameters(compiled.NamedBindings);
 
-        List<TSource> listSource = new();
-        List<T1> listT1 = new();
-        List<T2> listT2 = new();
-        List<T3> listT3 = new();
-        List<T4> listT4 = new();
-        using (var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout))
+        var types = new Type[] { typeof(TSource), typeof(T1), typeof(T2), typeof(T3), typeof(T4) };
+
+        var list = GetListCollection(types);
+        using var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout);
+
+        var parsers = GetListParsers(reader, types, GetFields(reader));
+
+        while (reader.Read())
         {
-            var fields = GetFields(reader);
+            var source = parsers[0](reader);
+            var values = GetListValues(reader, parsers, list);
 
-            int startIndex = 0;
-            var parserSource = GetRowParser<TSource>(reader, fields, ref startIndex);
-            var parserT1 = GetRowParser<T1>(reader, fields, ref startIndex);
-            var parserT2 = GetRowParser<T2>(reader, fields, ref startIndex);
-            var parserT3 = GetRowParser<T3>(reader, fields, ref startIndex);
-            var parserT4 = GetRowParser<T4>(reader, fields, ref startIndex);
-
-            while (reader.Read())
-            {
-                var source = parserSource(reader);
-                var t1 = ParserRow(reader, parserT1, listT1);
-                var t2 = ParserRow(reader, parserT2, listT2);
-                var t3 = ParserRow(reader, parserT3, listT3);
-                var t4 = ParserRow(reader, parserT4, listT4);
-
-                map(source, t1, t2, t3, t4);
-                listSource.Add(source);
-            }
+            var result = map((TSource)source, (T1)values[0], (T2)values[1], (T3)values[2], (T4)values[3]);
+            ((IList)list[0]).Add(result);
         }
 
-        return listSource;
+        return (IEnumerable<TSource>)list[0];
     }
 
-    public static Query MappingQuery<T>(this Query query, Expression<Func<T, object?>> memberExpression, QuantityInformation information = QuantityInformation.Full, string? alias = null)
+    public static IEnumerable<TSource> Get<TSource, T1, T2, T3, T4, T5>(this Query query, Func<TSource, T1, T2, T3, T4, T5, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
+    {
+        var factory = ((XQuery)query).QueryFactory;
+
+        var compiled = factory.Compiler.Compile(query);
+        var parameters = new DynamicParameters(compiled.NamedBindings);
+
+        var types = new Type[] { typeof(TSource), typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) };
+
+        var list = GetListCollection(types);
+        using var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout);
+
+        var parsers = GetListParsers(reader, types, GetFields(reader));
+
+        while (reader.Read())
+        {
+            var source = parsers[0](reader);
+            var values = GetListValues(reader, parsers, list);
+
+            var result = map((TSource)source, (T1)values[0], (T2)values[1], (T3)values[2], (T4)values[3], (T5)values[4]);
+            ((IList)list[0]).Add(result);
+        }
+
+        return (IEnumerable<TSource>)list[0];
+    }
+
+    public static IEnumerable<TSource> Get<TSource, T1, T2, T3, T4, T5, T6>(this Query query, Func<TSource, T1, T2, T3, T4, T5, T6, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
+    {
+        var factory = ((XQuery)query).QueryFactory;
+
+        var compiled = factory.Compiler.Compile(query);
+        var parameters = new DynamicParameters(compiled.NamedBindings);
+
+        var types = new Type[] { typeof(TSource), typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6) };
+
+        var list = GetListCollection(types);
+        using var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout);
+
+        var parsers = GetListParsers(reader, types, GetFields(reader));
+
+        while (reader.Read())
+        {
+            var source = parsers[0](reader);
+            var values = GetListValues(reader, parsers, list);
+
+            var result = map((TSource)source, (T1)values[0], (T2)values[1], (T3)values[2], (T4)values[3], (T5)values[4], (T6)values[5]);
+            ((IList)list[0]).Add(result);
+        }
+
+        return (IEnumerable<TSource>)list[0];
+    }
+
+    public static IEnumerable<TSource> Get<TSource, T1, T2, T3, T4, T5, T6, T7>(this Query query, Func<TSource, T1, T2, T3, T4, T5, T6, T7, TSource> map, IDbTransaction? transaction = null, int? timeout = null)
+    {
+        var factory = ((XQuery)query).QueryFactory;
+
+        var compiled = factory.Compiler.Compile(query);
+        var parameters = new DynamicParameters(compiled.NamedBindings);
+
+        var types = new Type[] { typeof(TSource), typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7) };
+
+        var list = GetListCollection(types);
+        using var reader = factory.Connection.ExecuteReader(compiled.Sql, parameters, transaction, timeout);
+
+        var parsers = GetListParsers(reader, types, GetFields(reader));
+
+        while (reader.Read())
+        {
+            var source = parsers[0](reader);
+            var values = GetListValues(reader, parsers, list);
+
+            var result = map((TSource)source, (T1)values[0], (T2)values[1], (T3)values[2], (T4)values[3], (T5)values[4], (T6)values[5], (T7)values[6]);
+            ((IList)list[0]).Add(result);
+        }
+
+        return (IEnumerable<TSource>)list[0];
+    }
+
+    public static Query MappingQuery<T>(this Query query, Expression<Func<T, object?>> memberExpression, QuantityInformation information = QuantityInformation.Full, string? alias = null, JoinType joinType = JoinType.Left)
     {
         alias ??= query.GenerateJoinAlias();
 
@@ -208,10 +242,19 @@ public static partial class QueryExtension
                 _ => throw new NotImplementedException()
             };
 
+            var curTable = $"{table} as {alias}";
+            var columnFirst = $"{alias}.id";
+            var columnSecond = $"{refTable}.{refName}";
+
             return query
                 .When(!string.IsNullOrEmpty(select), q => q
                     .Select($"{alias}.{select}"))
-                .LeftJoin($"{table} as {alias}", $"{alias}.id", $"{refTable}.{refName}");
+                .When(joinType == JoinType.Left, q => 
+                    q.LeftJoin(curTable, columnFirst, columnSecond))
+                .When(joinType == JoinType.Right, q => 
+                    q.RightJoin(curTable, columnFirst, columnSecond))
+                .When(joinType == JoinType.Inner, q => 
+                    q.Join(curTable, columnFirst, columnSecond));
         }
 
         throw new Exception("memberExpression должен быть свойством.");
@@ -284,20 +327,48 @@ public static partial class QueryExtension
         return fields;
     }
 
-    private static Func<IDataReader, T> GetRowParser<T>(IDataReader reader, string[] fields, ref int startIndex)
+    private static IList<object> GetListCollection(Type[] types)
     {
-        int n1 = Find(fields, startIndex);
-        int n2 = Find(fields, n1 + 1);
-        if (n2 == -1)
+        var list = new List<object>();
+        for (int i = 0; i < types.Length; i++)
         {
-            n2 = fields.Length;
+            var listType = typeof(List<>);
+            var concreteType = listType.MakeGenericType(types[i]);
+            var newList = Activator.CreateInstance(concreteType);
+
+            if (newList == null)
+            {
+                throw new NullReferenceException(nameof(newList));
+            }
+
+            list.Add(newList);
         }
 
-        int len = n2 - n1;
+        return list;
+    }
 
-        startIndex = n2;
+    private static IList<Func<IDataReader, object>> GetListParsers(IDataReader reader, Type[] types, string[] fields)
+    {
+        int startIndex = 0;
+        var list = new List<Func<IDataReader, object>>();
+        for (int i = 0; i < types.Length; i++)
+        {
+            var parser = GetRowParser(reader, types[i], fields, ref startIndex);
+            list.Add(parser);
+        }
 
-        return reader.GetRowParser<T>(startIndex: n1, length: len, returnNullIfFirstMissing: true);
+        return list;
+    }
+
+    private static IList<object> GetListValues(IDataReader reader, IList<Func<IDataReader, object>> parsers, IList<object> cache)
+    {
+        var list = new List<object>();
+        for (int i = 1; i < parsers.Count; i++)
+        {
+            list.Add(ParserRow(reader, parsers[i], (IList)cache[i]));
+        }
+
+        return list;
     }
 
     private static int Find(string[] fields, int startIndex)
@@ -313,13 +384,28 @@ public static partial class QueryExtension
         return -1;
     }
 
-    private static T ParserRow<T>(IDataReader reader, Func<IDataReader, T> parser, List<T> cache)
-        where T : IIdentifier
+    private static Func<IDataReader, object> GetRowParser(IDataReader reader, Type type, string[] fields, ref int startIndex)
+    {
+        int n1 = Find(fields, startIndex);
+        int n2 = Find(fields, n1 + 1);
+        if (n2 == -1)
+        {
+            n2 = fields.Length;
+        }
+
+        int len = n2 - n1;
+
+        startIndex = n2;
+
+        return reader.GetRowParser(type, startIndex: n1, length: len, returnNullIfFirstMissing: true);
+    }
+
+    private static object ParserRow(IDataReader reader, Func<IDataReader, object> parser, IList cache)
     {
         var t = parser(reader);
         if (t is Identifier identifier)
         {
-            var inT = cache.FirstOrDefault(x => x.Identical(identifier));
+            var inT = cache.OfType<Identifier>().FirstOrDefault(x => x.Identical(identifier));
             if (inT != null)
             {
                 t = inT;

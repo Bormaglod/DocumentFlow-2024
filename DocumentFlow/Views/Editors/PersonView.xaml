@@ -42,6 +42,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -113,7 +114,7 @@
                                          Style="{StaticResource MaskedEditStyle}"
                                          MaxLength="100"
                                          Mask="[A-Za-z0-9._%-]+@[A-Za-z0-9]+.[A-Za-z]{2,3}"
-                                         Watermark="e.g. info@yndex.ru"/>
+                                         Watermark="e.g. info@yandex.ru"/>
             </Grid>
         </ScrollViewer>
         <syncfusion:SfGridSplitter Name="gridSplitter"

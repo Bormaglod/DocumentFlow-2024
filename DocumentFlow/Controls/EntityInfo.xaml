@@ -10,7 +10,7 @@
              d:DesignHeight="160" d:DesignWidth="600"
              x:Name="EntityInfoControl">
     <UserControl.Resources>
-        <converter:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
+        <converter:NullToBoolConverter x:Key="nullToBoolConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -38,7 +38,7 @@
             <Button HorizontalAlignment="Right"
                     Grid.Column="1"
                     Margin="5,0,0,0" 
-                    IsEnabled="{Binding ElementName=EntityInfoControl, Path=DocumentInfo, Converter={StaticResource NotNullToBoolConverter}}"
+                    IsEnabled="{Binding ElementName=EntityInfoControl, Path=DocumentInfo, Converter={StaticResource nullToBoolConverter}, ConverterParameter=inverse}"
                     Click="Button_Click">
                 <ContentControl IsTabStop="False">
                     <Image Source="/Images/icons8-copy-16.png" 

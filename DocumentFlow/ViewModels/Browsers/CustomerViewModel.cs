@@ -110,7 +110,7 @@ public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTran
     {
         if (columnInfo.MappingName == nameof(Directory.Code))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

@@ -258,9 +258,9 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
             new ToolBarButtonModel("Удалить", "trash") { Command = WipeRows },
             new ToolBarSeparatorModel(),
             new ToolBarButtonModel("Копия", "copy-edit") { Command = CopyRow },
-            new ToolBarGroupingButtonModel("Группа", "folder-add") { Command = CreateGroup },
+            new ToolBarNavigationButtonModel("Группа", "folder-add") { Command = CreateGroup },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonComboModel("Печать", "print"),
+            new ToolBarButtonComboModel("Печать", "print", Reports),
             new ToolBarButtonModel("Настройки", "settings"));
     }
 

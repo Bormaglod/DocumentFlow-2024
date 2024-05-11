@@ -29,7 +29,7 @@ public sealed class OperationViewModel : DirectoryViewModel<Operation>, ISelfTra
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

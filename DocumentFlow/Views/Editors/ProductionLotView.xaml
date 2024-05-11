@@ -1,0 +1,172 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Editors.ProductionLotView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:controls="clr-namespace:DocumentFlow.Controls"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
+             xmlns:editors="clr-namespace:DocumentFlow.Views.Editors"
+             xmlns:views="clr-namespace:DocumentFlow.Views.Browsers"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="700" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:ProductionLotViewModel, IsDesignTimeCreatable=True}"
+             UseLayoutRounding="True">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorButtonResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="{Binding NestedWindowsHeight}"/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <Grid Margin="10" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Номер"
+                               Margin="0,0,10,5"/>
+                <syncfusion:IntegerTextBox Value="{Binding DocumentNumber, UpdateSourceTrigger=PropertyChanged,TargetNullValue=0}"
+                                           Width="70" Height="25"
+                                           IsEnabled="{Binding EnabledDocumentNumber}"
+                                           Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
+                <TextBlock Text="от"
+                           Margin="10,0,10,5"/>
+                <syncfusion:DateTimeEdit DateTime="{Binding DocumentDate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                         Style="{StaticResource DateTimeEditStyle}"
+                                         TodayButtonAction="DateTime"
+                                         Pattern="FullDateTime"/>
+                <TextBlock Text="Организация"
+                           Margin="10,0,10,5"/>
+                <controls:ComboBox ItemsSource="{Binding Organizations}"
+                                   SelectedItem="{Binding Organization}"
+                                   Style="{StaticResource ExtComboBoxStyle}"
+                                   Width="200"/>
+            </StackPanel>
+            <Border Grid.Row="1" 
+                    Background="Gray" 
+                    Margin="0,5,0,5" 
+                    Height="1"/>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Заказ"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="0"/>
+                <TextBlock Text="Изделие"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="1"/>
+                <TextBlock Text="Калькуляция"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="2"/>
+                <TextBlock Text="Количество"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="3"/>
+                <controls:SelectBox ItemsSource="{Binding Orders}" 
+                                    SelectedItem="{Binding Order}"
+                                    Grid.Row="0" Grid.Column="1"
+                                    TypeContent="Document"
+                                    Style="{StaticResource SelectBoxStyle}"
+                                    EditorType="{x:Type editors:ProductionOrderView}"
+                                    Width="400">
+                    <controls:SelectBox.Columns>
+                        <common:DateTimeGridComboColumn MappingName="DocumentDate"
+                                                        Header="Дата"
+                                                        Width="110"
+                                                        Pattern="CustomPattern"
+                                                        CustomPattern="D"/>
+                        <common:TextGridComboColumn MappingName="DocumentNumber"
+                                                    Header="Номер"
+                                                    Width="70"/>
+                        <common:TextGridComboColumn MappingName="Contractor"
+                                                    Header="Контрагент"/>
+                        <common:CurrencyGridComboColumn MappingName="FullCost"
+                                                        Header="Сумма заказа"
+                                                        Width="100"/>
+                        <common:TextGridComboColumn MappingName="State"
+                                                    Header="Состояние"
+                                                    Width="100"/>
+                    </controls:SelectBox.Columns>
+                </controls:SelectBox>
+                <controls:ComboBox ItemsSource="{Binding Products}" 
+                                   SelectedItem="{Binding Product}"
+                                   Grid.Row="1" Grid.Column="1"
+                                   Style="{StaticResource ExtComboBoxStyle}"
+                                   EditorType="{x:Type editors:GoodsView}"
+                                   Width="600"/>
+                <controls:ComboBox ItemsSource="{Binding Calculations}" 
+                                   SelectedItem="{Binding Calculation}"
+                                   Grid.Row="2" Grid.Column="1"
+                                   Style="{StaticResource ExtComboBoxStyle}"
+                                   EditorType="{x:Type editors:CalculationView}"
+                                   Width="400"/>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="3" Grid.Column="1">
+                    <syncfusion:DoubleTextBox Value="{Binding Quantity}"
+                                              NumberDecimalDigits="3"
+                                              Style="{StaticResource DoubleTextBoxStyle}"
+                                              Width="100" Height="25"/>
+                    <TextBlock Text="{Binding Product.Measurement.Abbreviation}" 
+                               d:Text="шт."
+                               Margin="5,0,0,14"/>
+                </StackPanel>
+            </Grid>
+            <controls:LotEditor Grid.Row="3"
+                                Operations="{Binding Operations}"
+                                LotQuantity="{Binding Quantity}"
+                                OperationsPerformed="{Binding OperationsPerformed}"
+                                WorkedEmployes="{Binding WorkedEmployes}"
+                                AddOperationCommand="{Binding AddOperationCommand}"/>
+        </Grid>
+        <syncfusion:SfGridSplitter Name="gridSplitter"
+                                   HorizontalAlignment="Stretch"
+                                   ResizeBehavior="PreviousAndNext"
+                                   Width="auto"
+                                   Grid.Row="2"/>
+        <syncfusion:TabControlExt Grid.Row="3"
+                                  Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Выполненные работы">
+                <views:OperationsPerformedView Margin="5"
+                                               Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                               SizeMode="Small"
+                                               AllowFiltering="False"
+                                               IsGroupDropAreaExpanded="False"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Документы">
+                <controls:DocumentsList Margin="5" 
+                                        DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Информация">
+                <controls:EntityInfo Margin="5"
+                                     DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+        </syncfusion:TabControlExt>
+    </Grid>
+</UserControl>

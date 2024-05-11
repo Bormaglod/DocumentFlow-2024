@@ -12,18 +12,24 @@ namespace DocumentFlow.Common.Converters;
 
 public class BoolToRowVisibilityConverter : IValueConverter
 {
+    private readonly string direction = "inverse";
+
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool val = (bool)value;
-        GridLength gridLength = val ? GridLength.Auto : new(0);
+        bool flag = (bool)value;
+
+        if (parameter is string strParameter && string.Compare(direction, strParameter, true) == 0)
+        {
+            flag = !flag;
+        }
+
+        GridLength gridLength = flag ? GridLength.Auto : new(0);
 
         return gridLength;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        GridLength val = (GridLength)value;
-
-        return val.Value != 0;
+        throw new NotImplementedException();
     }
 }

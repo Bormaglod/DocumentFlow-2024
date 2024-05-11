@@ -6,13 +6,17 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 
+using DocumentFlow.Common;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Messages;
 using DocumentFlow.Models.Entities;
 
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DocumentFlow.Controls;
 
@@ -21,9 +25,13 @@ namespace DocumentFlow.Controls;
 /// </summary>
 public partial class SelectBox : UserControl
 {
+    private readonly ObservableCollection<GridComboColumn> columns = new();
+
     public SelectBox()
     {
         InitializeComponent();
+
+        columns.CollectionChanged += Columns_CollectionChanged;
     }
 
     public Guid? SelectedValue
@@ -42,12 +50,6 @@ public partial class SelectBox : UserControl
     {
         get => (IEnumerable<DocumentInfo>)GetValue(ItemsSourceProperty);
         set => SetValue(ItemsSourceProperty, value);
-    }
-
-    public string SelectedText
-    {
-        get { return (string)GetValue(SelectedTextProperty); }
-        set { SetValue(SelectedTextProperty, value); }
     }
 
     public TypeContent TypeContent
@@ -74,27 +76,41 @@ public partial class SelectBox : UserControl
         set => SetValue(ShowClearButtonProperty, value);
     }
 
+    public bool ShowSelectButton
+    {
+        get => (bool)GetValue(ShowSelectButtonProperty);
+        set => SetValue(ShowSelectButtonProperty, value);
+    }
+
+    public ICommand ItemSelected
+    {
+        get => (ICommand)GetValue(ItemSelectedProperty);
+        set => SetValue(ItemSelectedProperty, value);
+    }
+
+    public bool IsEnabledEditor
+    {
+        get => (bool)GetValue(IsEnabledEditorProperty);
+        set => SetValue(IsEnabledEditorProperty, value);
+    }
+
+    public ObservableCollection<GridComboColumn> Columns => columns;
+
     public static readonly DependencyProperty SelectedValueProperty = DependencyProperty.Register(
         nameof(SelectedValue),
         typeof(Guid?),
         typeof(SelectBox),
-        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedValueChanged));
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
         nameof(SelectedItem),
         typeof(object),
         typeof(SelectBox),
-        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedItemChanged));
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register(
         nameof(ItemsSource), 
         typeof(IEnumerable<DocumentInfo>), 
-        typeof(SelectBox),
-        new FrameworkPropertyMetadata(OnItemsSourceChanged));
-
-    public static readonly DependencyProperty SelectedTextProperty = DependencyProperty.Register(
-        nameof(SelectedText),
-        typeof(string),
         typeof(SelectBox));
 
     public static readonly DependencyProperty TypeContentProperty = DependencyProperty.Register(
@@ -118,35 +134,31 @@ public partial class SelectBox : UserControl
         typeof(SelectBox),
         new FrameworkPropertyMetadata(true));
 
-    private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is SelectBox selectBox)
-        {
-            if (e.NewValue is Guid id)
-            {
-                selectBox.SelectedItem = selectBox.ItemsSource.FirstOrDefault(x => x.Id == id)!;
-            }
-            else
-            {
-                selectBox.SelectedItem = null!;
-            }
-        }
-    }
+    public static readonly DependencyProperty ShowSelectButtonProperty = DependencyProperty.Register(
+        nameof(ShowSelectButton),
+        typeof(bool),
+        typeof(SelectBox),
+        new FrameworkPropertyMetadata(true));
 
-    private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is SelectBox selectBox)
-        {
-            selectBox.SelectedText = e.NewValue?.ToString() ?? string.Empty;
-        }
-    }
+    public static readonly DependencyProperty ItemSelectedProperty = DependencyProperty.Register(
+        nameof(ItemSelected),
+        typeof(ICommand),
+        typeof(SelectBox));
 
-    private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    public static readonly DependencyProperty IsEnabledEditorProperty = DependencyProperty.Register(
+        nameof(IsEnabledEditor),
+        typeof(bool),
+        typeof(SelectBox),
+        new FrameworkPropertyMetadata(true));
+
+    private void Columns_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (d is SelectBox selectBox)
-        {
-            var id = selectBox.SelectedItem != null ? selectBox.SelectedItem.Id : selectBox.SelectedValue;
-            selectBox.SelectedItem = id == null ? null! : selectBox.ItemsSource.FirstOrDefault(x => x.Id == id)!;
+        if (e.Action == NotifyCollectionChangedAction.Add) 
+        { 
+            if (e.NewItems != null && e.NewItems.Count > 0 && e.NewItems[0] is GridComboColumn info && info.Order == 0) 
+            {
+                info.Order = columns.Max(x => x.Order) + 1;
+            }
         }
     }
 
@@ -154,8 +166,9 @@ public partial class SelectBox : UserControl
     {
         DirectoryWindow window = new()
         {
-            ItemsSource = ItemsSource.OfType<Directory>(),
-            CanSelectFolder = CanSelectFolder
+            ItemsSource = ItemsSource,
+            CanSelectFolder = CanSelectFolder,
+            Columns = Columns
         };
 
         if (SelectedItem != null)
@@ -169,23 +182,57 @@ public partial class SelectBox : UserControl
 
         if (window.ShowDialog() == true) 
         {
-            SelectedValue = window.SelectedItem.Id;
+            SelectedItem = window.SelectedItem!;
+            SelectedValue = window.SelectedItem?.Id;
+            ItemSelected?.Execute(SelectedItem);
+        }
+    }
+
+    private void SelectDocumentValue()
+    {
+        DocumentWindow window = new()
+        {
+            ItemsSource = ItemsSource,
+            Columns = Columns
+        };
+
+        if (SelectedItem != null)
+        {
+            var item = ItemsSource.FirstOrDefault(x => x.Id == SelectedItem.Id);
+            if (item is BaseDocument info)
+            {
+                window.SelectedItem = info;
+            }
+        }
+
+        if (window.ShowDialog() == true)
+        {
+            SelectedItem = window.SelectedItem!;
+            SelectedValue = window.SelectedItem?.Id;
+            ItemSelected?.Execute(SelectedItem);
         }
     }
 
     private void ButtonClear_Click(object sender, RoutedEventArgs e)
     {
         SelectedValue = null;
+        SelectedItem = null!;
     }
 
     private void ButtonSelect_Click(object sender, RoutedEventArgs e)
     {
+        if (ItemsSource == null)
+        {
+            return;
+        }
+
         switch (TypeContent)
         {
             case TypeContent.Directory:
                 SelectDirectoryValue();
                 break;
             case TypeContent.Document:
+                SelectDocumentValue();
                 break;
         }
     }
@@ -195,6 +242,23 @@ public partial class SelectBox : UserControl
         if (EditorType != null && SelectedItem != null)
         {
             WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(EditorType, SelectedItem));
+        }
+    }
+
+    private void SelectBox_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (SelectedItem != null)
+        {
+            SelectedValue = SelectedItem.Id;
+        }
+
+        if (ItemsSource != null && SelectedValue.HasValue)
+        {
+            var item = ItemsSource.FirstOrDefault(x => x.Id == SelectedValue);
+            if (item != null)
+            {
+                SelectedItem = item;
+            }
         }
     }
 }

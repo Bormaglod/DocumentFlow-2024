@@ -33,7 +33,9 @@ public abstract partial class DirectoryEditorViewModel<T> : EntityEditorViewMode
             new ToolBarButtonModel("Обновить", "sync") { Command = Refresh },
             new ToolBarSeparatorModel(),
             new ToolBarButtonModel("Сохранить", "save") { Command = Save },
-            new ToolBarButtonModel("Сохранить и закрыть", "save-close") { Command = SaveAndClose });
+            new ToolBarButtonModel("Сохранить и закрыть", "save-close") { Command = SaveAndClose },
+            new ToolBarSeparatorModel(),
+            new ToolBarButtonComboModel("Печать", "print", Reports));
 
         folders = Array.Empty<T>();
     }

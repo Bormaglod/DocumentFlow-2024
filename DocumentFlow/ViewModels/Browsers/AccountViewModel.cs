@@ -28,7 +28,7 @@ public sealed class AccountViewModel : DirectoryViewModel<Account>, ISelfTransie
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

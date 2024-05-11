@@ -42,6 +42,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -99,7 +100,7 @@
                                          NoneDateText="Введите дату"
                                          ShowMaskOnNullValue="False"/>
                 <syncfusion:IntegerTextBox Value="{Binding StartingHits, Mode=TwoWay, TargetNullValue=0, UpdateSourceTrigger=PropertyChanged}"
-                                           Width="150"
+                                           Width="150" Height="25"
                                            Grid.Row="5" Grid.Column="1"
                                            Style="{StaticResource IntegerTextBoxStyle}"/>
                 <CheckBox IsChecked="{Binding IsTools, Mode=TwoWay}"

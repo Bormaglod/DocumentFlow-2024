@@ -70,22 +70,26 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="ItemName"
                                            HeaderText="Наименование"
-                                           ColumnSizer="AutoLastColumnFill"/>
+                                           ColumnSizer="AutoLastColumnFill"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridNumericColumn MappingName="Bik"
                                               HeaderText="БИК"
                                               Width="100" 
                                               ParsingMode="Decimal" 
                                               UseBindingValue="True"
-                                              DisplayBinding="{Binding Bik, ConverterParameter=BIK, Converter={StaticResource DecimalConverter}}"/>
+                                              DisplayBinding="{Binding Bik, ConverterParameter=BIK, Converter={StaticResource DecimalConverter}}"
+                                              AllowGrouping="False"/>
                 <syncfusion:GridNumericColumn MappingName="Account"
                                               HeaderText="Корр. счёт"
                                               Width="180" 
                                               ParsingMode="Decimal" 
                                               UseBindingValue="True"
-                                              DisplayBinding="{Binding Account, ConverterParameter=BANK, Converter={StaticResource DecimalConverter}}"/>
+                                              DisplayBinding="{Binding Account, ConverterParameter=BANK, Converter={StaticResource DecimalConverter}}"
+                                              AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Town"
                                            HeaderText="Город"
                                            Width="200"/>

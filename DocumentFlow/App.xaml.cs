@@ -47,14 +47,15 @@ public partial class App : Application
 #if !DEBUG
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "Автоком",
+        "5.0.0",
         "settings",
 #endif
-"appsettings.local.json"
-);
+        "appsettings.local.json");
 
         var browserSettings = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Автоком",
+            "5.0.0",
             "settings",
             "browsers"
         );
@@ -70,7 +71,7 @@ public partial class App : Application
                 {
                     foreach (var item in Directory.GetFiles(browserSettings, "*.json"))
                     {
-                        builder.AddJsonFile(item, optional: true);
+                        builder.AddJsonFile(item, optional: true, reloadOnChange: true);
                     }
                 }
             })

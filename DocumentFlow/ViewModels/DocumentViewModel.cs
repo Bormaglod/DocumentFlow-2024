@@ -6,6 +6,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Common.Converters;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
@@ -21,17 +23,21 @@ using SqlKata;
 
 using Syncfusion.UI.Xaml.Utility;
 
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
-public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>
+public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICustomGroupingView, IDocumentGridViewModel
     where T : BaseDocument
 {
     private IConfigurationSection? filterSection;
 
     [ObservableProperty]
     private State? selectedState;
+
+    [ObservableProperty]
+    private bool allowFiltering = true;
 
     public DocumentViewModel() { }
 
@@ -118,6 +124,12 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>
     #endregion
 
     #endregion
+
+    public virtual IReadOnlyList<(string MappingName, IValueConverter Converter)> GroupingColumns => new List<(string, IValueConverter)>()
+    {
+        ( "DocumentDate", new GroupDateTimeConverter("DocumentDateByDate") { Grouping = DateTimeGrouping.ByDate, Text = "По дням" } ),
+        ( "DocumentDate", new GroupDateTimeConverter("DocumentDateByMonth") { Grouping = DateTimeGrouping.ByMonth, Text = "По месяцам" } )
+    };
 
     public DateTime? DateFrom { get; set; }
 

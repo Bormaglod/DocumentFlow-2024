@@ -23,7 +23,7 @@ public sealed class WireViewModel : DirectoryViewModel<Wire>, ISelfTransientLife
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 }

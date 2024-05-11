@@ -15,6 +15,7 @@ public interface IEntityGridViewModel
     DocumentInfo? Owner { get; set; }
     bool AvailableNavigation { get; set; }
     bool AvailableGrouping { get; set; }
+    bool IsGroupDropAreaExpanded { get; set; }
     SizeMode SizeMode { get; set; }
     object? SelectedItem { get; }
 }

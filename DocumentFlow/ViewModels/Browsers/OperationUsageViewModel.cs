@@ -93,7 +93,7 @@ public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage
     {
         if (columnInfo.MappingName == nameof(Goods))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

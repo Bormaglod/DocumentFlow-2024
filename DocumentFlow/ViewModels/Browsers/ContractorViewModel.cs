@@ -26,7 +26,7 @@ public sealed class ContractorViewModel : DirectoryViewModel<Contractor>, ISelfT
     {
         if (columnInfo.MappingName == nameof(Directory.Code))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

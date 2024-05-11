@@ -23,7 +23,7 @@ public sealed class EquipmentViewModel : DirectoryViewModel<Equipment>, ISelfTra
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 }

@@ -16,4 +16,25 @@ public interface IPurchaseRequestRepository : IDocumentRepository<PurchaseReques
     IList<PurchaseRequestPrice> GetContent(IDbConnection connection, PurchaseRequest request);
     void CopyContent(PurchaseRequest requestFrom, PurchaseRequest requestTo);
     void CopyContent(IDbConnection connection, PurchaseRequest requestFrom, PurchaseRequest requestTo, IDbTransaction? transaction);
+
+    /// <summary>
+    /// Возвращает список активных заявок, т.е. состояние заявки не должно быть в одном из: "Не установлено", "Составлен", "Отменён", "Выполнен".
+    /// К списку заявок будет добавлена заявка <paramref name="includingRequest"/> при условии, что она не равна null и контрагент этой
+    /// заявки тот же самый, чтот и <paramref name="contractor"/>.
+    /// </summary>
+    /// <param name="contractor"></param>
+    /// <param name="includingRequest"></param>
+    /// <returns></returns>
+    IList<PurchaseRequest> GetActive(Contractor contractor, PurchaseRequest? includingRequest);
+
+    /// <summary>
+    /// Возвращает список активных заявок, т.е. состояние заявки не должно быть в одном из: "Не установлено", "Составлен", "Отменён", "Выполнен".
+    /// К списку заявок будет добавлена заявка <paramref name="includingRequest"/> при условии, что она не равна null и контрагент этой
+    /// заявки тот же самый, чтот и <paramref name="contractor"/>.
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="contractor"></param>
+    /// <param name="includingRequest"></param>
+    /// <returns></returns>
+    IList<PurchaseRequest> GetActive(IDbConnection connection, Contractor contractor, PurchaseRequest? includingRequest);
 }

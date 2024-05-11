@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using Dapper;
 
 using DocumentFlow.Common;
@@ -20,13 +22,17 @@ namespace DocumentFlow.Dialogs;
 /// <summary>
 /// Логика взаимодействия для ProductPriceWindow.xaml
 /// </summary>
-public partial class ProductPriceWindow : Window, INotifyPropertyChanged
+[INotifyPropertyChanged]
+public partial class ProductPriceWindow : Window
 {
+    [ObservableProperty]
     private Product? selectedProduct;
-    private decimal price;
-    private IEnumerable<Product>? itemsSource;
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    [ObservableProperty]
+    private decimal price;
+
+    [ObservableProperty]
+    private IEnumerable<Product>? itemsSource;
 
     public ProductPriceWindow()
     {
@@ -48,45 +54,6 @@ public partial class ProductPriceWindow : Window, INotifyPropertyChanged
                 product.Measurement = measurement;
                 return product;
             });
-    }
-
-    public IEnumerable<Product>? ItemsSource 
-    { 
-        get => itemsSource; 
-        set
-        {
-            if (itemsSource != value) 
-            { 
-                itemsSource = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ItemsSource)));
-            }
-        }
-    }
-
-    public Product? SelectedProduct 
-    { 
-        get => selectedProduct; 
-        set
-        {
-            if (selectedProduct != value)
-            {
-                selectedProduct = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedProduct)));
-            }
-        }
-    }
-
-    public decimal Price 
-    { 
-        get => price; 
-        set
-        {
-            if (price != value) 
-            { 
-                price = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
-            }
-        }
     }
 
     public bool Create([MaybeNullWhen(false)] out PriceApproval row)

@@ -8,11 +8,12 @@ using Dapper;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Exceptions;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
-using Humanizer;
+using SqlKata.Execution;
 
 using System.Data;
 
@@ -49,6 +50,37 @@ public class CalculationRepository : DirectoryRepository<Calculation>, ICalculat
 
         sql = "insert into calculation_deduction (owner_id, code, item_name, item_id, price, item_cost, value) select :id_to, code, item_name, item_id, price, item_cost, value from calculation_deduction where owner_id = :id_from";
         connection.Execute(sql, new { id_to = toCalculation.Id, id_from = fromCalculation.Id }, transaction: transaction);
+    }
+
+    public IReadOnlyList<CalculationOperation> GetOperations(Calculation calculation, bool includeMaterialInfo = false)
+    {
+        using var conn = GetConnection();
+        return GetOperations(conn, calculation, includeMaterialInfo);
+    }
+
+    public IReadOnlyList<CalculationOperation> GetOperations(IDbConnection connection, Calculation calculation, bool includeMaterialInfo = false)
+    {
+        var query = connection.GetQuery<CalculationOperation>()
+            .WhereFalse("t0.deleted")
+            .Where("t0.owner_id", calculation.Id);
+
+        if (includeMaterialInfo)
+        {
+            return query
+                .MappingQuery<CalculationOperation>(x => x.Material)
+                .Get<CalculationOperation, Material>((op, material) =>
+                {
+                    op.Material = material;
+                    return op;
+                })
+                .ToList();
+        }
+        else
+        {
+            return query
+                .Get<CalculationOperation>()
+                .ToList();
+        }
     }
 
     public void SetState(Calculation calculation)

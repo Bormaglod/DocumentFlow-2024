@@ -6,10 +6,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:local="clr-namespace:DocumentFlow"
-             xmlns:c="clr-namespace:DocumentFlow.Controls"
+             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:controls="clr-namespace:DocumentFlow.Controls"
              xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
              xmlns:editors="clr-namespace:DocumentFlow.Views.Editors"
              xmlns:selectors="clr-namespace:DocumentFlow.Common.Selectors"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
              mc:Ignorable="d" 
              local:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="700" d:DesignWidth="800"
@@ -23,6 +25,8 @@
                 <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridSummaryResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <selectors:TableSummaryStyleSelector x:Key="tableSummaryStyleSelector"/>
+            <converters:BoolToRowVisibilityConverter x:Key="boolToRowVisibilityConverter"/>
+            <converters:NullToBoolConverter x:Key="nullToBoolConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -51,20 +55,21 @@
                     <TextBlock Text="Номер"
                                Margin="0,0,10,5"/>
                     <syncfusion:IntegerTextBox Value="{Binding DocumentNumber, TargetNullValue=0}"
-                                               Width="70"
+                                               Width="70" Height="25"
                                                IsEnabled="{Binding EnabledDocumentNumber}"
                                                Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
                     <TextBlock Text="от"
                                Margin="10,0,10,5"/>
                     <syncfusion:DateTimeEdit DateTime="{Binding DocumentDate, Mode=TwoWay}"
                                              Style="{StaticResource DateTimeEditStyle}"
+                                             TodayButtonAction="DateTime"
                                              Pattern="FullDateTime"/>
                     <TextBlock Text="Организация"
                                Margin="10,0,10,5"/>
-                    <c:ComboBox ItemsSource="{Binding Organizations}"
-                                SelectedItem="{Binding Organization}"
-                                Style="{StaticResource ExtComboBoxStyle}"
-                                Width="200"/>
+                    <controls:ComboBox ItemsSource="{Binding Organizations}"
+                                       SelectedItem="{Binding Organization}"
+                                       Style="{StaticResource ExtComboBoxStyle}"
+                                       Width="200"/>
                 </StackPanel>
                 <Border Grid.Row="1" 
                         Background="Gray" 
@@ -90,25 +95,43 @@
                     <TextBlock Text="Заявка на покупку"
                                Style="{StaticResource TextBlockStyle}"
                                Grid.Row="2"/>
-                    <c:SelectBox ItemsSource="{Binding Contractors}" 
-                                 SelectedItem="{Binding Contractor}"
-                                 Grid.Row="0" Grid.Column="1"
-                                 Style="{StaticResource SelectBoxStyle}"
-                                 EditorType="{x:Type editors:ContractorView}"
-                                 Width="400"/>
-                    <c:SelectBox ItemsSource="{Binding Contracts}" 
-                                 SelectedItem="{Binding Contract}"
-                                 Grid.Row="1" Grid.Column="1"
-                                 Style="{StaticResource SelectBoxStyle}"
-                                 EditorType="{x:Type editors:ContractView}"
-                                 Width="600"/>
-                    <c:SelectBox ItemsSource="{Binding PurchaseRequests}" 
-                                 SelectedItem="{Binding PurchaseRequest}"
-                                 Grid.Row="2" Grid.Column="1"
-                                 Style="{StaticResource SelectBoxStyle}"
-                                 EditorType="{x:Type editors:PurchaseRequestView}"
-                                 TypeContent="Document"
-                                 Width="600"/>
+                    <controls:SelectBox ItemsSource="{Binding Contractors}" 
+                                        SelectedItem="{Binding Contractor}"
+                                        Grid.Row="0" Grid.Column="1"
+                                        Style="{StaticResource SelectBoxStyle}"
+                                        EditorType="{x:Type editors:ContractorView}"
+                                        Width="400"/>
+                    <controls:SelectBox ItemsSource="{Binding Contracts}" 
+                                        SelectedItem="{Binding Contract}"
+                                        Grid.Row="1" Grid.Column="1"
+                                        Style="{StaticResource SelectBoxStyle}"
+                                        EditorType="{x:Type editors:ContractView}"
+                                        Width="600"
+                                        IsEnabled="{Binding PurchaseRequest, Converter={StaticResource nullToBoolConverter}}"/>
+                    <controls:SelectBox ItemsSource="{Binding PurchaseRequests}" 
+                                        SelectedItem="{Binding PurchaseRequest}"
+                                        Grid.Row="2" Grid.Column="1"
+                                        Style="{StaticResource SelectBoxStyle}"
+                                        EditorType="{x:Type editors:PurchaseRequestView}"
+                                        TypeContent="Document"
+                                        ItemSelected="{Binding PurchaseRequestSelected}"
+                                        Width="600">
+                        <controls:SelectBox.Columns>
+                            <common:DateTimeGridComboColumn MappingName="DocumentDate"
+                                                            Header="Дата"
+                                                            Width="110"
+                                                            Pattern="CustomPattern"
+                                                            CustomPattern="D"/>
+                            <common:TextGridComboColumn MappingName="DocumentNumber"
+                                                        Header="Номер"
+                                                        Width="70"/>
+                            <common:TextGridComboColumn MappingName="Contract"
+                                                        Header="Договор"/>
+                            <common:CurrencyGridComboColumn MappingName="FullCost"
+                                                            Header="Сумма заказа"
+                                                            Width="100"/>
+                        </controls:SelectBox.Columns>
+                    </controls:SelectBox>
                 </Grid>
                 <Grid Grid.Row="3" 
                       Margin="0,0,0,10">
@@ -239,11 +262,13 @@
                            Text="Документы 1С"
                            Background="#BFCDDB"
                            Margin="0,0,0,10"
-                           Padding="0,5,0,5"/>
-                <Grid Grid.Row="5">
+                           Padding="0,5,0,5"
+                           Visibility="{Binding Contract.TaxPayer, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <Grid Grid.Row="5"
+                      Visibility="{Binding Contract.TaxPayer, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="{Binding Upd, Converter={StaticResource boolToRowVisibilityConverter}, ConverterParameter=inverse}"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
@@ -253,48 +278,59 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Накладная"
-                               Margin="0,0,5,5"/>
+                               Style="{StaticResource TextBlockStyle}"/>
                     <TextBlock Text="№"
                                Grid.Column="1"
-                               Margin="0,0,5,5"/>
+                               Margin="0,0,5,14"/>
                     <TextBox Text="{Binding WaybillNumber}"
                              Grid.Column="2"
                              Width="100"
-                             Margin="0,0,5,5"
                              Style="{StaticResource TextBoxStyle}"/>
                     <TextBlock Text="от"
                                Grid.Column="3"
-                               Margin="0,0,5,5"/>
+                               Margin="5,0,5,14"/>
                     <syncfusion:DateTimeEdit DateTime="{Binding WaybillDate}"
                                              Grid.Column="4"
                                              Width="100"
                                              HorizontalAlignment="Left"
-                                             Margin="0,0,5,5"/>
+                                             Style="{StaticResource DateTimeEditStyle}"/>
                     <TextBlock Text="Счёт-фактура"
                                Grid.Row="1"
-                               Margin="0,0,5,5"/>
+                               Style="{StaticResource TextBlockStyle}"/>
                     <TextBlock Text="№"
                                Grid.Row="1" Grid.Column="1"
-                               Margin="0,0,5,5"/>
+                               Margin="0,0,5,14"/>
                     <TextBox Text="{Binding InvoiceNumber}"
                              Grid.Row="1" Grid.Column="2"
                              Width="100"
-                             Margin="0,0,5,5"
                              Style="{StaticResource TextBoxStyle}"/>
                     <TextBlock Text="от"
                                Grid.Row="1" Grid.Column="3"
-                               Margin="0,0,5,5"/>
+                               Margin="5,0,5,14"/>
                     <syncfusion:DateTimeEdit DateTime="{Binding InvoiceDate}"
                                              Grid.Row="1" Grid.Column="4"
                                              Width="100"
                                              HorizontalAlignment="Left"
-                                             Margin="0,0,5,5"/>
+                                             Style="{StaticResource DateTimeEditStyle}"/>
                 </Grid>
                 <StackPanel Grid.Row="6"
-                            Orientation="Horizontal">
+                            Orientation="Horizontal" 
+                            Visibility="{Binding Contract.TaxPayer, Converter={StaticResource boolToVisiblityConverter}}">
                     <TextBlock Text="Универсальный передаточный документ" 
                                Margin="0,0,10,0"/>
                     <CheckBox IsChecked="{Binding Upd}" />
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="{Binding Upd, Converter={StaticResource boolToVisiblityConverter}}"
+                                d:Visibility="Visible"
+                                Margin="10,0,0,0">
+                        <TextBlock Text="Счёт-фактура №"/>
+                        <TextBlock Text="{Binding WaybillNumber}" 
+                                   d:Text="УТ-40824"
+                                   Margin="5,0,0,0"/>
+                        <TextBlock Text="от"
+                                   Margin="5,0,5,0"/>
+                        <TextBlock Text="{Binding WaybillDate, StringFormat=dd.MM.yyyy}"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
@@ -306,12 +342,12 @@
         <syncfusion:TabControlExt Grid.Row="3"
                                   Style="{StaticResource TabControlStyle}">
             <syncfusion:TabItemExt Header="Документы">
-                <c:DocumentsList Margin="5" 
-                                 DocumentInfo="{Binding Entity}"/>
+                <controls:DocumentsList Margin="5" 
+                                        DocumentInfo="{Binding Entity}"/>
             </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Информация">
-                <c:EntityInfo Margin="5"
-                              DocumentInfo="{Binding Entity}"/>
+                <controls:EntityInfo Margin="5"
+                                     DocumentInfo="{Binding Entity}"/>
             </syncfusion:TabItemExt>
         </syncfusion:TabControlExt>
     </Grid>

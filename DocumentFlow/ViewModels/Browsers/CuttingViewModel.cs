@@ -25,7 +25,7 @@ public sealed class CuttingViewModel : DirectoryViewModel<Cutting>, ISelfTransie
     {
         if (columnInfo.MappingName == nameof(Directory.ItemName))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

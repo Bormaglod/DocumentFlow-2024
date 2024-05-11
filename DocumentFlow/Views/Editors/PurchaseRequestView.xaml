@@ -49,13 +49,14 @@
                     <TextBlock Text="Номер"
                                Margin="0,0,10,5"/>
                     <syncfusion:IntegerTextBox Value="{Binding DocumentNumber, TargetNullValue=0}"
-                                               Width="70"
+                                               Width="70" Height="25"
                                                IsEnabled="{Binding EnabledDocumentNumber}"
                                                Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
                     <TextBlock Text="от"
                                Margin="10,0,10,5"/>
                     <syncfusion:DateTimeEdit DateTime="{Binding DocumentDate, Mode=TwoWay}"
                                              Style="{StaticResource DateTimeEditStyle}"
+                                             TodayButtonAction="DateTime"
                                              Pattern="FullDateTime"/>
                     <TextBlock Text="Организация"
                                Margin="10,0,10,5"/>
@@ -209,6 +210,10 @@
                         <syncfusion:SfDataGrid.TableSummaryRows>
                             <syncfusion:GridTableSummaryRow ShowSummaryInRow="False">
                                 <syncfusion:GridSummaryRow.SummaryColumns>
+                                    <syncfusion:GridSummaryColumn Name="ItemsCount" 
+                                                                  MappingName="Product"
+                                                                  Format="'Всего наименований: {Count:d}'"
+                                                                  SummaryType="CountAggregate"/>
                                     <syncfusion:GridSummaryColumn Name="ProductCost" 
                                                                   MappingName="ProductCost"
                                                                   Format="'{Sum:c}'"

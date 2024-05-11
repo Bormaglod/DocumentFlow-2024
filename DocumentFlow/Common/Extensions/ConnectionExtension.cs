@@ -226,19 +226,21 @@ public static class ConnectionExtension
 
         var cmd = $"insert into {name}{discriminator} ({fields}) values ({values}) returning {returning}";
 
+        var allPropertiesExceptComputed = allProperties.Except(denyWritingProperties).ToList();
+
         int rowsAffected = 0;
         if (entity is IEnumerable e)
         {
             foreach (var entityItem in e)
             {
-                var results = connection.QuerySingle(cmd, GetParameters(entityItem, allProperties), transaction, commandTimeout);
+                var results = connection.QuerySingle(cmd, GetParameters(entityItem, allPropertiesExceptComputed), transaction, commandTimeout);
                 PopulateIdValue(entityItem, results, keyProperties);
                 rowsAffected++;
             }
         }
         else
         {
-            var results = connection.QuerySingle(cmd, GetParameters(entity, allProperties), transaction, commandTimeout);
+            var results = connection.QuerySingle(cmd, GetParameters(entity, allPropertiesExceptComputed), transaction, commandTimeout);
             PopulateIdValue(entity, results, keyProperties);
             rowsAffected = 1;
         }
@@ -265,7 +267,7 @@ public static class ConnectionExtension
         var fields = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
         {
             string name;
-            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            if (x.PropertyType.IsSubclassOf(typeof(Identifier)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
                 name = attr == null || string.IsNullOrEmpty(attr.FieldKey) ? x.Name.Underscore() + "_id" : attr.FieldKey;
@@ -281,7 +283,7 @@ public static class ConnectionExtension
         var values = string.Join(", ", allPropertiesExceptKeyAndComputed.Select(x =>
         {
             string name;
-            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            if (x.PropertyType.IsSubclassOf(typeof(Identifier)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
                 name = attr == null || string.IsNullOrEmpty(attr.PropertyKey) ? x.Name + "Id" : attr.PropertyKey;
@@ -300,7 +302,8 @@ public static class ConnectionExtension
 
         var cmd = $"insert into {name}{discriminator} ({fields}) values ({values}) returning {returning}";
 
-        var results = connection.QuerySingle(cmd, GetParameters(entity, allProperties), transaction, commandTimeout);
+        var allPropertiesExceptComputed = allProperties.Except(denyWritingProperties.Union(deniesProperties)).ToList();
+        var results = connection.QuerySingle(cmd, GetParameters(entity, allPropertiesExceptComputed), transaction, commandTimeout);
 
         copy = Activator.CreateInstance(type);
 
@@ -338,7 +341,7 @@ public static class ConnectionExtension
         var sets = string.Join(", ", nonIdProps.Select(x =>
         {
             string name;
-            if (x.PropertyType.IsSubclassOf(typeof(DocumentInfo)))
+            if (x.PropertyType.IsSubclassOf(typeof(Identifier)))
             {
                 var attr = x.GetCustomAttribute<ForeignKeyAttribute>(true);
                 var fname = attr == null || string.IsNullOrEmpty(attr.FieldKey) ? $"{x.Name.Underscore()}_id" : attr.FieldKey;
@@ -358,17 +361,19 @@ public static class ConnectionExtension
 
         var cmd = $"update {name}{discriminator} set {sets} where {keys}";
 
+        var allPropertiesExceptComputed = allProperties.Except(denyWritingProperties).ToList();
+
         int rowsAffected = 0;
         if (entity is IEnumerable e)
         {
             foreach (var entityItem in e)
             {
-                rowsAffected += connection.Execute(cmd, GetParameters(entityItem, allProperties), transaction, commandTimeout);
+                rowsAffected += connection.Execute(cmd, GetParameters(entityItem, allPropertiesExceptComputed), transaction, commandTimeout);
             }
         }
         else
         {
-            rowsAffected = connection.Execute(cmd, GetParameters(entity, allProperties), transaction, commandTimeout);
+            rowsAffected = connection.Execute(cmd, GetParameters(entity, allPropertiesExceptComputed), transaction, commandTimeout);
         }
 
         return rowsAffected;

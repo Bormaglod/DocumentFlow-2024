@@ -55,10 +55,12 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridTextColumn MappingName="Code"
                                            HeaderText="Номер"
-                                           Width="120"/>
+                                           Width="120"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridDateTimeColumn MappingName="DocumentDate"
                                                HeaderText="Дата"
                                                Width="150"
@@ -67,7 +69,8 @@
                                                TextAlignment="Right"/>
                 <syncfusion:GridTextColumn MappingName="ItemName"
                                            HeaderText="Наименование"
-                                           ColumnSizer="AutoLastColumnFill"/>
+                                           ColumnSizer="AutoLastColumnFill"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridDateTimeColumn MappingName="DateStart"
                                                HeaderText="Дата начала"
                                                Width="150"

@@ -50,12 +50,13 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}"/>
-                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.Person}}"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}" d:Height="auto"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}" d:Height="auto"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}" d:Height="auto"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}" d:Height="auto"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.LegalEntity}}" d:Height="auto"/>
+                    <RowDefinition Height="{Binding SubjectsCivil, Converter={StaticResource enumToRowVisibleConverter}, ConverterParameter={x:Static enums:SubjectsCivilLow.Person}}" d:Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>

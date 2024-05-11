@@ -27,6 +27,8 @@ public partial class PreviewReportWindow : Window
         {
             model.SetViewer(pdfViewer);
         }
+
+        pdfViewer.ReferencePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ThirdParty");
     }
 
     private void HideVerticalToolbar()

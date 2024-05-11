@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using DocumentFlow.Common;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models;
@@ -19,18 +21,32 @@ namespace DocumentFlow.Dialogs;
 /// <summary>
 /// Логика взаимодействия для EmailSendWindow.xaml
 /// </summary>
-public partial class EmailSendWindow : Window, INotifyPropertyChanged
+[INotifyPropertyChanged]
+public partial class EmailSendWindow : Window
 {
+    [ObservableProperty]
     private ObservableCollection<EmailAddress> emailFrom = new();
+
+    [ObservableProperty]
     private ObservableCollection<EmailAddress> emailTo = new();
-    private ObservableCollection<string> attachments = new();
-    private int selectedIndex = -1;
-    private string? subject;
-    private string? body;
-    private EmailAddress? emailFromSelected;
+
+    [ObservableProperty]
     private ObservableCollection<EmailAddress> emailToSelected = new();
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    [ObservableProperty]
+    private EmailAddress? emailFromSelected;
+    
+    [ObservableProperty]
+    private ObservableCollection<string> attachments = new();
+
+    [ObservableProperty]
+    private int selectedIndex = -1;
+
+    [ObservableProperty]
+    private string? subject;
+
+    [ObservableProperty]
+    private string? body;
 
     public EmailSendWindow()
     {
@@ -41,110 +57,6 @@ public partial class EmailSendWindow : Window, INotifyPropertyChanged
 
         EmailFrom = new(orgs.Concat(ourEmps));
         EmailTo = new(ServiceLocator.Context.GetService<IEmployeeRepository>().GetEmails());
-    }
-
-    public ObservableCollection<EmailAddress> EmailFrom
-    {
-        get => emailFrom;
-        set
-        {
-            if (emailFrom != value)
-            {
-                emailFrom = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EmailFrom)));
-            }
-        }
-    }
-
-    public ObservableCollection<EmailAddress> EmailTo
-    {
-        get => emailTo;
-        set
-        {
-            if (emailTo != value)
-            {
-                emailTo = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EmailTo)));
-            }
-        }
-    }
-
-    public ObservableCollection<EmailAddress> EmailToSelected
-    {
-        get => emailToSelected;
-        set
-        {
-            if (emailToSelected != value)
-            {
-                emailToSelected = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EmailToSelected)));
-            }
-        }
-    }
-
-    public EmailAddress? EmailFromSelected
-    {
-        get => emailFromSelected;
-        set
-        {
-            if (emailFromSelected != value)
-            {
-                emailFromSelected = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EmailFromSelected)));
-            }
-        }
-    }
-
-    public ObservableCollection<string> Attachments
-    {
-        get => attachments;
-        set
-        {
-            if (attachments != value)
-            {
-                attachments = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Attachments)));
-            }
-        }
-    }
-
-    public int SelectedIndex
-    {
-        get => selectedIndex;
-        set
-        {
-            if (selectedIndex != value)
-            {
-                selectedIndex = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedIndex)));
-            }
-        }
-    }
-
-    public string? Subject
-    {
-        get => subject;
-        set
-        {
-            if (subject != value)
-            {
-                subject = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Subject)));
-            }
-        }
-    }
-
-    public string? Body
-    {
-        get => body;
-        set
-        {
-            if (body != value)
-            {
-                body = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Body)));
-            }
-        }
     }
 
     public bool ShowDialog([MaybeNullWhen(false)] out EmailInfo emailInfo)

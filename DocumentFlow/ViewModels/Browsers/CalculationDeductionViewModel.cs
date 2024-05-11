@@ -62,7 +62,7 @@ public sealed class CalculationDeductionViewModel : DirectoryViewModel<Calculati
     {
         if (columnInfo.MappingName == nameof(CalculationDeduction.Deduction))
         {
-            columnInfo.AlwaysVisible = true;
+            columnInfo.State = ColumnVisibleState.AlwaysVisible;
         }
     }
 

@@ -27,15 +27,6 @@
             <selectors:TableSummaryStyleSelector x:Key="tableSummaryStyleSelector"/>
             <selectors:DocumentStateItemsSelector x:Key="documentStateItemsSelector"/>
             <selectors:GroupSummaryStyleSelector x:Key="groupSummaryStyleSelector"/>
-            <Style x:Key="customCellStyle" 
-                   TargetType="syncfusion:GridCell"
-                   BasedOn="{StaticResource SyncfusionGridCellStyle}">
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Path=State.Id}" Value="1001">
-                        <Setter Property="Foreground" Value="Red"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -80,11 +71,12 @@
                                GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}"
                                TableSummaryCellStyleSelector="{StaticResource tableSummaryStyleSelector}"
                                GroupSummaryCellStyleSelector="{StaticResource groupSummaryStyleSelector}"
-                               CellStyle="{StaticResource customCellStyle}">
+                               CellStyle="{StaticResource stateRowStyle}">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id"
                                            Width="180"
-                                           IsHidden="True"/>
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
                 <syncfusion:GridDateTimeColumn MappingName="DocumentDate"
                                                CustomPattern="dd.MM.yyyy hh:mm:ss"
                                                Pattern="CustomPattern"
@@ -93,7 +85,8 @@
                 <syncfusion:GridNumericColumn MappingName="DocumentNumber"
                                               HeaderText="Номер"
                                               Width="100"
-                                              NumberDecimalDigits="0"/>
+                                              NumberDecimalDigits="0"
+                                              AllowGrouping="False"/>
                 <syncfusion:GridDateTimeColumn MappingName="PurchaseRequestDate"
                                                CustomPattern="dd.MM.yyyy"
                                                Pattern="CustomPattern"
@@ -151,18 +144,8 @@
                                                HeaderText="Состояние"
                                                Width="150"
                                                AllowEditing="True"
-                                               ItemsSourceSelector="{StaticResource documentStateItemsSelector}">
-                    <syncfusion:GridComboBoxColumn.CellStyle>
-                        <Style TargetType="syncfusion:GridCell"
-                               BasedOn="{StaticResource customCellStyle}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=State.Id}" Value="1002">
-                                    <Setter Property="Foreground" Value="Green"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </syncfusion:GridComboBoxColumn.CellStyle>
-                </syncfusion:GridComboBoxColumn>
+                                               ItemsSourceSelector="{StaticResource documentStateItemsSelector}"
+                                               CellStyle="{StaticResource stateCellStyle}"/>
             </syncfusion:SfDataGrid.Columns>
             <syncfusion:SfDataGrid.StackedHeaderRows>
                 <syncfusion:StackedHeaderRow>

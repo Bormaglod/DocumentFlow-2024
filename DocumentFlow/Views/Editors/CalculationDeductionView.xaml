@@ -44,6 +44,7 @@
                     <RowDefinition Height="{Binding Deduction, Converter={StaticResource deductionRowVisibleConverter}, ConverterParameter=inverse}"/>
                     <RowDefinition Height="{Binding Deduction, Converter={StaticResource deductionRowVisibleConverter}, ConverterParameter=inverse}"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -84,7 +85,7 @@
                                            Grid.Row="3" Grid.Column="1"
                                            Style="{StaticResource PercentTextBoxStyle}"/>
                 <syncfusion:CurrencyTextBox Value="{Binding ItemCost, UpdateSourceTrigger=PropertyChanged}"
-                                            Width="100"
+                                            Width="100" Height="25"
                                             Grid.Row="4" Grid.Column="1"
                                             Style="{StaticResource CurrencyTextBoxDisabledStyle}"
                                             CurrencyDecimalDigits="2">

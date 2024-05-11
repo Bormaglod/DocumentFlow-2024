@@ -6,7 +6,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="25" d:DesignWidth="400">
+             d:DesignHeight="25" d:DesignWidth="400"
+             Loaded="SelectBox_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:NullToVisibilityConverter x:Key="nullToVisibilityConverter"/>
@@ -22,14 +23,15 @@
         </Grid.ColumnDefinitions>
         <TextBox x:Name="textValue" 
                  Grid.Column="0"
-                 Margin="0,0,5,0"
-                 Text="{Binding ElementName=selectBox, Path=SelectedText}"
-                 IsReadOnly="True"/>
+                 Text="{Binding ElementName=selectBox, Path=SelectedItem}"
+                 IsReadOnly="True"
+                 IsEnabled="{Binding ElementName=selectBox, Path=IsEnabledEditor}"/>
         <Button x:Name="buttonClear" 
                 Grid.Column="1"
-                Margin="0,0,5,0"
+                Margin="5,0,0,0"
                 Width="25" 
                 Visibility="{Binding ElementName=selectBox, Path=ShowClearButton, Converter={StaticResource boolToVisibilityConverter}}"
+                IsEnabled="{Binding ElementName=selectBox, Path=IsEnabledEditor}"
                 Click="ButtonClear_Click">
             <ContentControl IsTabStop="False">
                 <Image Source="/Images/icons8-delete-16.png" 
@@ -39,6 +41,9 @@
         <Button x:Name="buttonSelect" 
                 Grid.Column="2"
                 Width="25" 
+                Visibility="{Binding ElementName=selectBox, Path=ShowSelectButton, Converter={StaticResource boolToVisibilityConverter}}"
+                IsEnabled="{Binding ElementName=selectBox, Path=IsEnabledEditor}"
+                Margin="5,0,0,0"
                 Click="ButtonSelect_Click">
             <ContentControl IsTabStop="False">
                 <Image Source="/Images/icons8-select-16.png" 

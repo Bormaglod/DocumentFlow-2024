@@ -25,8 +25,9 @@ namespace DocumentFlow.ViewModels.Editors;
 
 public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillReceipt>, ISelfTransientLifetime
 {
-    private readonly IWaybillReceiptRepository requestRepository = null!;
+    private readonly IWaybillReceiptRepository waybillRepository = null!;
     private readonly IContractorRepository contractorRepository = null!;
+    private readonly IPurchaseRequestRepository requestRepository = null!;
 
     [ObservableProperty]
     private Contractor? contractor;
@@ -70,10 +71,12 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
     public WaybillReceiptViewModel() { }
 
     public WaybillReceiptViewModel(
-        IWaybillReceiptRepository requestRepository,
+        IWaybillReceiptRepository waybillRepository,
+        IPurchaseRequestRepository requestRepository,
         IContractorRepository contractorRepository,
         IOrganizationRepository organizationRepository) : base(organizationRepository)
     {
+        this.waybillRepository = waybillRepository;
         this.requestRepository = requestRepository;
         this.contractorRepository = contractorRepository;
     }
@@ -210,6 +213,29 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
 
     #endregion
 
+    #region PurchaseRequestSelected
+
+    private ICommand? purchaseRequestSelected;
+
+    public ICommand PurchaseRequestSelected
+    {
+        get
+        {
+            purchaseRequestSelected ??= new DelegateCommand(OnPurchaseRequestSelected);
+            return purchaseRequestSelected;
+        }
+    }
+
+    private void OnPurchaseRequestSelected(object parameter)
+    {
+        if (parameter is PurchaseRequest request)
+        {
+            Contract = request.Contract;
+        }
+    }
+
+    #endregion
+
     #endregion
 
     protected override string GetStandardHeader() => "Поступление";
@@ -219,6 +245,9 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;
         Organization = entity.Organization;
+
+        // Заявку надо записать раньше контрагента, т.к. она будет использована в OnContractorChanged
+        PurchaseRequest = entity.PurchaseRequest;
         Contractor = entity.Contractor;
         Contract = entity.Contract;
         WaybillNumber = entity.WaybillNumber;
@@ -233,6 +262,7 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         entity.DocumentNumber = DocumentNumber;
         entity.DocumentDate = DocumentDate;
         entity.Organization = Organization;
+        entity.PurchaseRequest = PurchaseRequest;
         entity.Contractor = Contractor;
         entity.Contract = Contract;
         entity.WaybillDate = WaybillDate;
@@ -240,6 +270,7 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         entity.InvoiceDate = InvoiceDate;
         entity.InvoiceNumber = InvoiceNumber;
         entity.Upd = Upd;
+        
     }
 
     protected override IEnumerable<short> DisabledStates() => new[] { State.Canceled, State.Completed };
@@ -251,18 +282,21 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
             .MappingQuery<WaybillReceipt>(x => x.State)
             .MappingQuery<WaybillReceipt>(x => x.Organization)
             .MappingQuery<WaybillReceipt>(x => x.Contractor)
-            .MappingQuery<WaybillReceipt>(x => x.Contract);
+            .MappingQuery<WaybillReceipt>(x => x.Contract)
+            .MappingQuery<WaybillReceipt>(x => x.PurchaseRequest);
     }
 
     protected override void Load(IDbConnection connection)
     {
-        Load<State, Organization, Contractor, Contract>(connection, (request, state, org, contractor, contract) =>
+        Load<State, Organization, Contractor, Contract, PurchaseRequest>(connection, (waybill, state, org, contractor, contract, request) =>
         {
-            request.State = state;
-            request.Organization = org;
-            request.Contractor = contractor;
-            request.Contract = contract;
-            return request;
+            waybill.State = state;
+            waybill.Organization = org;
+            waybill.Contractor = contractor;
+            waybill.Contract = contract;
+            waybill.PurchaseRequest = request;
+
+            return waybill;
         });
     }
 
@@ -274,7 +308,7 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
 
         if (entity != null)
         {
-            Materials = requestRepository.GetContent(connection, entity);
+            Materials = waybillRepository.GetContent(connection, entity);
         }
     }
 
@@ -291,10 +325,12 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         if (value == null)
         {
             Contracts = null;
+            PurchaseRequests = null;
         }
         else
         {
             Contracts = contractorRepository.GetContracts(value);
+            PurchaseRequests = requestRepository.GetActive(value, PurchaseRequest);
         }
     }
 }

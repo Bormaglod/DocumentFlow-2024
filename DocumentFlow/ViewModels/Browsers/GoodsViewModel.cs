@@ -32,6 +32,23 @@ public sealed class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLife
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.GoodsView);
 
+    public override DocumentInfo? GetReportingDocument(Report report)
+    {
+        if (SelectedItem is Goods goods) 
+        {
+            return goods.Calculation;
+        }
+
+        return null;
+    }
+
+    protected override void RegisterReports()
+    {
+        base.RegisterReports();
+        RegisterReport(Report.Specification);
+        RegisterReport(Report.ProcessMap);
+    }
+
     protected override Query SelectQuery(Query query)
     {
         query = base

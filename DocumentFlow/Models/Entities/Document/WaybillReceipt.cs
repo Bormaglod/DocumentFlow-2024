@@ -4,10 +4,19 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
+using DocumentFlow.Common.Data;
+
 namespace DocumentFlow.Models.Entities;
 
-public class WaybillReceipt : Waybill
+public partial class WaybillReceipt : Waybill
 {
+    [ObservableProperty]
+    [property: DenyWriting]
+    [property: ForeignKey(FieldKey = "owner_id")]
+    public PurchaseRequest? purchaseRequest;
+
     public int? PurchaseRequestNumber { get; protected set; }
     public DateTime? PurchaseRequestDate { get; protected set; }
     public bool? PaymentExists
@@ -27,7 +36,4 @@ public class WaybillReceipt : Waybill
             return null;
         }
     }
-
-    /*[WritableCollection]
-    public IList<WaybillReceiptPrice> Prices { get; protected set; } = null!;*/
 }

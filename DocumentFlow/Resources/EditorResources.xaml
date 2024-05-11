@@ -219,7 +219,7 @@
     <Style x:Key="SelectBoxStyle" 
            TargetType="{x:Type c:SelectBox}">
         <Setter Property="Margin" Value="0,0,0,5"/>
-        <Setter Property="IsEnabled" Value="{Binding Path=DataContext.Enabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
+        <Setter Property="IsEnabledEditor" Value="{Binding Path=DataContext.Enabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
 

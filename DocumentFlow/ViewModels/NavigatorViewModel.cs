@@ -12,10 +12,7 @@ using DocumentFlow.Messages;
 using DocumentFlow.Models;
 using DocumentFlow.Views.Browsers;
 
-using Syncfusion.Windows.Shared;
-
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
@@ -32,7 +29,10 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
             AddFolder("Документы",
                 AddItem<PurchaseRequestView>("Заявка на приобретение материалов"),
                 AddFolder("Склад"),
-                AddFolder("Производство"),
+                AddFolder("Производство", 
+                    AddItem<ProductionOrderView>("Заказ на изготовление"),
+                    AddItem<ProductionLotView>("Партии"),
+                    AddItem<OperationsPerformedView>("Выполненные работы")),
                 AddFolder("Расчёты с контрагентами"),
                 AddItem<WaybillReceiptView>("Поступление"),
                 AddFolder("Зар. плата")));
@@ -71,32 +71,6 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
 
     public ReadOnlyObservableCollection<NavigatorModel> Models { get; }
 
-    #region SelectActiveItem
-
-    private ICommand? selectActiveItem;
-
-    public ICommand SelectActiveItem
-    {
-        get
-        {
-            selectActiveItem ??= new DelegateCommand<MouseButtonEventArgs>(OnSelectActiveItem);
-            return selectActiveItem;
-        }
-    }
-
-    // Если элемент SfTreeNavigator уже выбран, то при нажатии на него, не вызывается OnSelectedItemChanged и
-    // соответственно не активируется нужное окно. Поэтому пришлось активировать выбранное окно всякий раз,
-    // когда пользователь нажимает кнопку мыши.
-    private void OnSelectActiveItem(MouseButtonEventArgs e)
-    {
-        if (((Syncfusion.Windows.Controls.Navigation.SfTreeNavigator)e.Source).SelectedItem is NavigatorModel model)
-        {
-            OpenPage(model);
-        }
-    }
-
-    #endregion
-
     private static NavigatorModel AddFolder(string header, params NavigatorModel[] items)
     {
         NavigatorModel folder = new() { Header = header, ImageName = "icons8-folder-16" };
@@ -108,7 +82,7 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
         return folder;
     }
 
-    private static void OpenPage(NavigatorModel model)
+    private void OpenPage(NavigatorModel model)
     {
         if (model.ViewType != null)
         {

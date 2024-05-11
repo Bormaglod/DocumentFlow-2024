@@ -11,9 +11,18 @@ namespace DocumentFlow.Common.Converters;
 
 public class NullToBoolConverter : IValueConverter
 {
+    private readonly string direction = "inverse";
+
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value == null;
+        bool flag = value == null;
+
+        if (parameter is string strParameter && string.Compare(direction, strParameter, true) == 0)
+        {
+            flag = !flag;
+        }
+
+        return flag;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

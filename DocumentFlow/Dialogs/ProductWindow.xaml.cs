@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using DocumentFlow.Common;
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
@@ -21,32 +23,58 @@ namespace DocumentFlow.Dialogs;
 /// <summary>
 /// Логика взаимодействия для ProductWindow.xaml
 /// </summary>
-public partial class ProductWindow : Window, INotifyPropertyChanged
+[INotifyPropertyChanged]
+public partial class ProductWindow : Window
 {
     private enum DialogStatus { None, Create, Edit };
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    private ProductContent content;
+    private DialogStatus dialogStatus = DialogStatus.None;
 
+    [ObservableProperty]
     private Product? product;
+
+    [ObservableProperty]
     private Calculation? calculation;
+
+    [ObservableProperty]
     private decimal amount;
+
+    [ObservableProperty]
     private decimal price;
+
+    [ObservableProperty]
     private decimal productCost;
+
+    [ObservableProperty]
     private int tax;
+
+    [ObservableProperty]
     private decimal taxValue;
+
+    [ObservableProperty]
     private decimal fullCost;
 
+    [ObservableProperty]
     private IEnumerable<Product>? products;
+
+    [ObservableProperty]
     private IEnumerable<Calculation>? calculations;
+
+    [ObservableProperty]
     private IEnumerable<int> taxes = new List<int>() { 0, 10, 20 };
 
-    private ProductContent content;
+    [ObservableProperty]
     private bool withCalculation;
-    private bool withLot;
-    private bool includePrice;
-    private bool isTaxPayer;
 
-    private DialogStatus dialogStatus = DialogStatus.None;
+    [ObservableProperty]
+    private bool withLot;
+
+    [ObservableProperty]
+    private bool includePrice;
+
+    [ObservableProperty]
+    private bool isTaxPayer;
 
     public ProductWindow()
     {
@@ -54,225 +82,6 @@ public partial class ProductWindow : Window, INotifyPropertyChanged
     }
 
     public Contract? Contract { get; set; }
-
-    public IEnumerable<Product>? Products
-    {
-        get => products;
-        set
-        {
-            if (products != value)
-            {
-                products = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Products)));
-            }
-        }
-    }
-
-    public IEnumerable<Calculation>? Calculations
-    {
-        get => calculations;
-        set
-        {
-            if (calculations != value)
-            {
-                calculations = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Calculations)));
-            }
-        }
-    }
-
-    public IEnumerable<int> Taxes
-    {
-        get => taxes;
-        set
-        {
-            if (taxes != value)
-            {
-                taxes = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Taxes)));
-            }
-        }
-    }
-
-    public Product? Product
-    {
-        get => product;
-        set
-        {
-            if (product != value)
-            {
-                product = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Product)));
-                UpdateCalculations();
-                UpdatePrice();
-
-                if (dialogStatus == DialogStatus.None)
-                {
-                    if (WithCalculation)
-                    {
-                        selectCalculation.Focus();
-                    }
-                    else
-                    {
-                        textAmount.Focus();
-                    }
-                }
-            }
-        }
-    }
-
-    public Calculation? Calculation
-    {
-        get => calculation;
-        set
-        {
-            if (calculation != value)
-            {
-                calculation = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Calculation)));
-            }
-        }
-    }
-
-    public decimal Amount
-    {
-        get => amount;
-        set
-        {
-            if (amount != value)
-            {
-                amount = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Amount)));
-
-                ProductCost = Price * value;
-            }
-        }
-    }
-
-    public decimal Price
-    {
-        get => price;
-        set
-        {
-            if (price != value)
-            {
-                price = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
-
-                ProductCost = Amount * value;
-            }
-        }
-    }
-
-    public decimal ProductCost
-    {
-        get => productCost;
-        set
-        {
-            if (productCost != value)
-            {
-                productCost = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProductCost)));
-
-                TaxValue = value * Tax / 100;
-            }
-        }
-    }
-
-    public int Tax
-    {
-        get => tax;
-        set
-        {
-            if (tax != value)
-            {
-                tax = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tax)));
-
-                TaxValue = ProductCost * value / 100;
-            }
-        }
-    }
-
-    public decimal TaxValue
-    {
-        get => taxValue;
-        set
-        {
-            if (taxValue != value)
-            {
-                taxValue = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TaxValue)));
-
-                FullCost = ProductCost + value;
-            }
-        }
-    }
-
-    public decimal FullCost
-    {
-        get => fullCost;
-        set
-        {
-            if (fullCost != value)
-            {
-                fullCost = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FullCost)));
-            }
-        }
-    }
-
-    public bool WithCalculation
-    {
-        get => withCalculation;
-        set
-        {
-            if (withCalculation != value)
-            {
-                withCalculation = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WithCalculation)));
-            }
-        }
-    }
-
-    public bool WithLot
-    {
-        get => withLot;
-        set
-        {
-            if (withLot != value)
-            {
-                withLot = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WithLot)));
-            }
-        }
-    }
-
-    public bool IncludePrice
-    {
-        get => includePrice;
-        set
-        {
-            if (includePrice != value)
-            {
-                includePrice = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IncludePrice)));
-            }
-        }
-    }
-
-    public bool IsTaxPayer
-    {
-        get => isTaxPayer;
-        set
-        {
-            if (isTaxPayer != value)
-            {
-                isTaxPayer = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(isTaxPayer)));
-            }
-        }
-    }
 
     public bool Create<T>([MaybeNullWhen(false)] out T row) where T : ProductPrice, new()
     {
@@ -306,7 +115,7 @@ public partial class ProductWindow : Window, INotifyPropertyChanged
                 FullCost = FullCost
             };
 
-            if (product is IProductCalculation p && Calculation != null)
+            if (Product is IProductCalculation p && Calculation != null)
             {
                 p.Calculation = Calculation;
             }
@@ -495,5 +304,48 @@ public partial class ProductWindow : Window, INotifyPropertyChanged
     private void ProductWindow_ContentRendered(object sender, EventArgs e)
     {
         //selectProduct.Focus();
+    }
+
+    partial void OnProductChanged(Product? value)
+    {
+        UpdateCalculations();
+        UpdatePrice();
+
+        if (dialogStatus == DialogStatus.None)
+        {
+            if (WithCalculation)
+            {
+                selectCalculation.Focus();
+            }
+            else
+            {
+                textAmount.Focus();
+            }
+        }
+    }
+
+    partial void OnAmountChanged(decimal value)
+    {
+        ProductCost = Price * value;
+    }
+
+    partial void OnPriceChanged(decimal value)
+    {
+        ProductCost = Amount * value;
+    }
+
+    partial void OnProductCostChanged(decimal value)
+    {
+        TaxValue = value * Tax / 100;
+    }
+
+    partial void OnTaxChanged(int value)
+    {
+        TaxValue = ProductCost * value / 100;
+    }
+
+    partial void OnTaxValueChanged(decimal value)
+    {
+        FullCost = ProductCost + value;
     }
 }

@@ -23,4 +23,11 @@ public sealed class CalculationViewModel : DirectoryViewModel<Calculation>, ISel
     {
         return base.CanEditSelected(selectedItem) && selectedItem.CalculationState != Common.Enums.CalculationState.Expired;
     }
+
+    protected override void RegisterReports()
+    {
+        base.RegisterReports();
+        RegisterReport(Report.Specification);
+        RegisterReport(Report.ProcessMap);
+    }
 }

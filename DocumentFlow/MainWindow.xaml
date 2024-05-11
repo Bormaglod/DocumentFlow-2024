@@ -20,7 +20,8 @@
         Width="{Binding Width, Mode=TwoWay}"
         Height="{Binding Height, Mode=TwoWay}"
         d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:MainWindowViewModel}"
-        local:ViewModelLocator.AutoWireViewModel="True">
+        local:ViewModelLocator.AutoWireViewModel="True"
+        UseLayoutRounding="True">
     <Window.Resources>
         <DataTemplate x:Key="HeaderTemplate">
             <TextBlock Text="{Binding Header, Mode=TwoWay}" />
