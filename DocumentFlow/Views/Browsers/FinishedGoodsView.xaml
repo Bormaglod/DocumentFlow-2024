@@ -1,0 +1,196 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Browsers.FinishedGoodsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:commands="clr-namespace:DocumentFlow.Commands"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Browsers"
+             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:selectors="clr-namespace:DocumentFlow.Common.Selectors"
+             xmlns:triggers="clr-namespace:DocumentFlow.Common.Triggers"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:c="clr-namespace:DocumentFlow.Controls"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="450" d:DesignWidth="900"
+             d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:FinishedGoodsViewModel}"
+             UseLayoutRounding="True">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/GridButtonResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <common:DocumentInfoAggregate x:Key="infoAggregate"/>
+            <selectors:TableSummaryStyleSelector x:Key="tableSummaryStyleSelector"/>
+            <selectors:GroupSummaryStyleSelector x:Key="groupSummaryStyleSelector"/>
+            <converters:NullToBoolConverter x:Key="nullToBoolConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.Copy}}"/>
+        <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
+        <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
+        <KeyBinding Key="F5" Command="{Binding Refresh}"/>
+    </UserControl.InputBindings>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <triggers:EventCommandAction Command="{Binding ControlLoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <c:DocumentFilter DateRangeFrom="{Binding DateFrom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                          DateRangeTo="{Binding DateTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsVisibleStates="True"
+                          States="{Binding States}"
+                          SelectedState="{Binding SelectedState, Mode=TwoWay}"
+                          ApplyFilter="{Binding ApplyCommand}"
+                          Grid.Row="1"
+                          Margin="5"
+                          Visibility="{Binding AllowFiltering, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <syncfusion:SfDataGrid x:Name="gridContent" 
+                               Grid.Row="2"
+                               ShowBusyIndicator="True"
+                               EditTrigger="OnTap"
+                               IsGroupDropAreaExpanded="{Binding IsGroupDropAreaExpanded}"
+                               ItemsSource="{Binding DataSource}"
+                               SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                               HeaderContextMenu="{StaticResource GridHeaderContextMenu}"
+                               RecordContextMenu="{StaticResource GridRecordContextMenu}"
+                               GroupDropAreaContextMenu="{StaticResource GroupDropAreaContextMenu}"
+                               GroupDropItemContextMenu="{StaticResource GroupDropItemContextMenu}"
+                               TableSummaryCellStyleSelector="{StaticResource tableSummaryStyleSelector}"
+                               GroupSummaryCellStyleSelector="{StaticResource groupSummaryStyleSelector}">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="Id"
+                                           Width="180"
+                                           IsHidden="True"
+                                           AllowGrouping="False"/>
+                <syncfusion:GridDateTimeColumn MappingName="DocumentDate"
+                                               CustomPattern="dd.MM.yyyy hh:mm:ss"
+                                               Pattern="CustomPattern"
+                                               HeaderText="Дата"
+                                               Width="130"/>
+                <syncfusion:GridNumericColumn MappingName="DocumentNumber"
+                                              HeaderText="Номер"
+                                              Width="100"
+                                              NumberDecimalDigits="0"
+                                              AllowGrouping="False"/>
+                <syncfusion:GridTextColumn MappingName="Lot"
+                                           HeaderText="Партия"
+                                           Width="100"
+                                           IsHidden="True"
+                                           x:Name="columnLot"/>
+                <syncfusion:GridDateTimeColumn MappingName="Lot.DocumentDate"
+                                               HeaderText="Дата"
+                                               Pattern="ShortDate"
+                                               Width="100"
+                                               AllowGrouping="False"
+                                               x:Name="columnLotDate"/>
+                <syncfusion:GridNumericColumn MappingName="Lot.DocumentNumber"
+                                              HeaderText="Номер"
+                                              NumberDecimalDigits="0"
+                                              Width="90"
+                                              AllowGrouping="False"
+                                              x:Name="columnLotNumber"/>
+                <syncfusion:GridTextColumn MappingName="Lot.Calculation.Goods"
+                                           HeaderText="Изделие"
+                                           ColumnSizer="AutoWithLastColumnFill"/>
+                <syncfusion:GridNumericColumn MappingName="Quantity"
+                                              HeaderText="Количество"
+                                              Width="100"
+                                              NumberDecimalDigits="3"
+                                              AllowGrouping="False"/>
+                <syncfusion:GridTextColumn MappingName="Lot.Calculation.Goods.Measurement.Abbreviation"
+                                           HeaderText="Ед. изм."
+                                           Width="80"
+                                           TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="Price"
+                                               HeaderText="1 ед. изм."
+                                               Width="100"
+                                               AllowGrouping="False"/>
+                <syncfusion:GridCurrencyColumn MappingName="ProductCost"
+                                               HeaderText="Всего"
+                                               Width="100"
+                                               CurrencyGroupSizes="3"
+                                               AllowGrouping="False"/>
+            </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="DocumentDate" 
+                                                  SortDirection="Ascending"/>
+            </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <syncfusion:SfDataGrid.StackedHeaderRows>
+                <syncfusion:StackedHeaderRow>
+                    <syncfusion:StackedHeaderRow.StackedColumns>
+                        <syncfusion:StackedColumn ChildColumns="Lot.DocumentDate,Lot.DocumentNumber" 
+                                                  HeaderText="Партия" 
+                                                  MappingName="Lot"/>
+                        <syncfusion:StackedColumn ChildColumns="Price,ProductCost" 
+                                                  HeaderText="Себестоимость" 
+                                                  MappingName="CostPrice"/>
+                    </syncfusion:StackedHeaderRow.StackedColumns>
+                </syncfusion:StackedHeaderRow>
+            </syncfusion:SfDataGrid.StackedHeaderRows>
+            <syncfusion:SfDataGrid.TableSummaryRows>
+                <syncfusion:GridTableSummaryRow ShowSummaryInRow="False">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="Quantity" 
+                                                      MappingName="Quantity"
+                                                      Format="'{Sum}'"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom"/>
+                        <syncfusion:GridSummaryColumn Name="ProductCost" 
+                                                      MappingName="ProductCost"
+                                                      Format="'{Sum:c}'"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom"/>
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridTableSummaryRow>
+            </syncfusion:SfDataGrid.TableSummaryRows>
+            <syncfusion:SfDataGrid.GroupSummaryRows>
+                <syncfusion:GridTableSummaryRow ShowSummaryInRow="False">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="Quantity" 
+                                                      MappingName="Quantity"
+                                                      Format="'{Sum}'"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom"/>
+                        <syncfusion:GridSummaryColumn Name="ProductCost" 
+                                                      MappingName="ProductCost"
+                                                      Format="'{Sum:c}'"
+                                                      CustomAggregate="{StaticResource infoAggregate}"
+                                                      SummaryType="Custom"/>
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridTableSummaryRow>
+            </syncfusion:SfDataGrid.GroupSummaryRows>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding SelectCurrentRow}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="GridContextMenuOpening">
+                    <i:InvokeCommandAction Command="{Binding PopulateListDocuments}"
+                                           CommandParameter="{Binding}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="CurrentCellEndEdit">
+                    <triggers:DocumentStateEndEditTrigger />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="CurrentCellBeginEdit">
+                    <triggers:DocumentStateBeginEditTrigger />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</UserControl>

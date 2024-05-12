@@ -159,6 +159,13 @@
                                                AllowFiltering="False"
                                                IsGroupDropAreaExpanded="False"/>
             </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Готовая продукция">
+                <views:FinishedGoodsView Margin="5"
+                                         Owner="{Binding Path=DataContext.Entity, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                         SizeMode="Small"
+                                         AllowFiltering="False"
+                                         IsGroupDropAreaExpanded="False"/>
+            </syncfusion:TabItemExt>
             <syncfusion:TabItemExt Header="Документы">
                 <controls:DocumentsList Margin="5" 
                                         DocumentInfo="{Binding Entity}"/>

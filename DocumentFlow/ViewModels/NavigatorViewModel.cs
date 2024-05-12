@@ -32,7 +32,8 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
                 AddFolder("Производство", 
                     AddItem<ProductionOrderView>("Заказ на изготовление"),
                     AddItem<ProductionLotView>("Партии"),
-                    AddItem<OperationsPerformedView>("Выполненные работы")),
+                    AddItem<OperationsPerformedView>("Выполненные работы"),
+                    AddItem<FinishedGoodsView>("Готовая продукция")),
                 AddFolder("Расчёты с контрагентами"),
                 AddItem<WaybillReceiptView>("Поступление"),
                 AddFolder("Зар. плата")));
