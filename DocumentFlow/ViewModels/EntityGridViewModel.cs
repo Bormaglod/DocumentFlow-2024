@@ -29,6 +29,8 @@ using Humanizer;
 
 using Microsoft.Extensions.Configuration;
 
+using Minio.DataModel;
+
 using SqlKata;
 using SqlKata.Execution;
 
@@ -422,9 +424,23 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
                     alwaysVisibleColumns.Add(column);
                 }
 
+                string prefix = string.Empty;
+                foreach (var row in grid.StackedHeaderRows)
+                {
+                    foreach (var stackedColumn in row.StackedColumns)
+                    {
+                        var childs = stackedColumn.ChildColumns.Split(",", StringSplitOptions.TrimEntries);
+                        if (childs.Contains(column.MappingName))
+                        {
+                            prefix += stackedColumn.HeaderText + ": ";
+                            break;
+                        }
+                    }
+                }
+                
                 var item = new MenuItemModel()
                 {
-                    Header = column.HeaderText,
+                    Header = prefix + column.HeaderText,
                     IsChecked = !column.IsHidden,
                     IsEnabled = !alwaysVisibleColumns.Contains(column),
                     Tag = column,
