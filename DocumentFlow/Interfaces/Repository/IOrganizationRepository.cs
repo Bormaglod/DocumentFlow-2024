@@ -14,4 +14,6 @@ public interface IOrganizationRepository : ICompanyRepository<Organization>
 {
     IReadOnlyList<EmailAddress> GetEmails();
     IReadOnlyList<EmailAddress> GetEmails(IDbConnection connection);
+    IReadOnlyList<Organization> GetOrganizations();
+    IReadOnlyList<Organization> GetOrganizations(IDbConnection connection);
 }

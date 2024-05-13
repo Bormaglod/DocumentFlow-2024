@@ -18,6 +18,9 @@ public partial class FinishedGoods : AccountingDocument
     private ProductionLot? lot;
 
     [ObservableProperty]
+    private Goods? goods;
+
+    [ObservableProperty]
     private decimal quantity;
 
     [ObservableProperty]
@@ -25,29 +28,4 @@ public partial class FinishedGoods : AccountingDocument
 
     [ObservableProperty]
     private decimal? productCost;
-
-    
-    /*public decimal Quantity
-    {
-        get => quantity;
-        set
-        {
-            if (SetProperty(ref quantity, value) && IsLoaded)
-            {
-                ProductCost = quantity * price;
-            }
-        }
-    }*/
-
-    /*public decimal? Price 
-    { 
-        get => price; 
-        set
-        {
-            if (SetProperty(ref price, value) && IsLoaded) 
-            {
-                ProductCost = quantity * price;
-            }
-        }
-    }*/
 }

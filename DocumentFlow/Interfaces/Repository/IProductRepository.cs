@@ -17,4 +17,6 @@ public interface IProductRepository<T> : IDirectoryRepository<T>
     decimal GetAveragePrice(IDbConnection connection, T product, DateTime? relevanceDate = null);
     decimal GetRemainder(T product, DateTime? actualDate = null);
     decimal GetRemainder(IDbConnection connection, T product, DateTime? actualDate = null);
+    IReadOnlyList<T> GetProducts(bool withMeasurements = false);
+    IReadOnlyList<T> GetProducts(IDbConnection connection, bool withMeasurements = false);
 }

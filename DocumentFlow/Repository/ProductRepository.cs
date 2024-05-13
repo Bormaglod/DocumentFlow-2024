@@ -6,11 +6,15 @@
 
 using Dapper;
 
+using DocumentFlow.Common.Data;
+using DocumentFlow.Common.Enums;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using SqlKata;
+using SqlKata.Execution;
 
 using System.Data;
 
@@ -60,4 +64,37 @@ public abstract class ProductRepository<T> : DirectoryRepository<T>, IProductRep
         return base.GetSlimQuery(connection, owner, isDefaultSorting)
             .Select("t0.price");
     }
+
+    public IReadOnlyList<T> GetProducts(bool withMeasurements = false)
+    {
+        using var conn = GetConnection();
+        return GetProducts(conn, withMeasurements);
+    }
+
+    public IReadOnlyList<T> GetProducts(IDbConnection connection, bool withMeasurements = false)
+    {
+        QueryParameters parameters = new()
+        {
+            Quantity = QuantityInformation.DirectoryExt
+        };
+
+        var query = connection.GetQuery<T>(parameters)
+            .When(withMeasurements, q => q
+                .MappingQuery<T>(x => x.Measurement)
+            );
+
+        if (withMeasurements)
+        {
+            return query.Get<T, Measurement>((product, measurement) =>
+            {
+                product.Measurement = measurement;
+                return product;
+            }).ToList();
+        }
+        else
+        {
+            return query.Get<T>().ToList();
+        }
+    }
+
 }

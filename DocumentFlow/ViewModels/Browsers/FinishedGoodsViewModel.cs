@@ -26,7 +26,7 @@ public class FinishedGoodsViewModel : DocumentViewModel<FinishedGoods>, ISelfTra
     {
     }
 
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.PurchaseRequestView);
+    public override Type? GetEditorViewType() => typeof(Views.Editors.FinishedGoodsView);
 
     protected override Query SelectQuery(Query query)
     {

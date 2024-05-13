@@ -116,7 +116,8 @@ public abstract partial class DocumentEditorViewModel<T> : EntityEditorViewModel
     protected override void InitializeEntityCollections(IDbConnection connection, T? entity = null)
     {
         base.InitializeEntityCollections(connection, entity);
-        Organizations = organizationRepository.GetSlim(connection);
+        Organizations = organizationRepository.GetOrganizations(connection);
+        Organization = Organizations.FirstOrDefault(x => x.DefaultOrg);
     }
 
     protected virtual IEnumerable<short> DisabledStates() => Array.Empty<short>();

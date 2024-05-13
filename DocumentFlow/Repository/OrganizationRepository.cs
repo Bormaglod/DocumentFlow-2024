@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
@@ -17,6 +18,20 @@ namespace DocumentFlow.Repository;
 public class OrganizationRepository : CompanyRepository<Organization>, IOrganizationRepository, ITransientLifetime
 {
     public OrganizationRepository(IDatabase database) : base(database) { }
+
+    public IReadOnlyList<Organization> GetOrganizations()
+    {
+        using var conn = GetConnection();
+        return GetOrganizations();
+    }
+
+    public IReadOnlyList<Organization> GetOrganizations(IDbConnection connection)
+    {
+        return connection.GetQuery<Organization>()
+            .WhereFalse("deleted")
+            .Get<Organization>()
+            .ToList();
+    }
 
     public IReadOnlyList<EmailAddress> GetEmails()
     {

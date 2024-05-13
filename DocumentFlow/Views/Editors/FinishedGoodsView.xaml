@@ -1,0 +1,192 @@
+﻿<UserControl x:Class="DocumentFlow.Views.Editors.FinishedGoodsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:DocumentFlow"
+             xmlns:controls="clr-namespace:DocumentFlow.Controls"
+             xmlns:vm="clr-namespace:DocumentFlow.ViewModels.Editors"
+             xmlns:editors="clr-namespace:DocumentFlow.Views.Editors"
+             xmlns:common="clr-namespace:DocumentFlow.Common"
+             xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
+             xmlns:commands="clr-namespace:DocumentFlow.Commands"
+             mc:Ignorable="d" 
+             local:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="700" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:FinishedGoodsViewModel, IsDesignTimeCreatable=True}"
+             UseLayoutRounding="True">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorButtonResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DocumentFlow;component/Resources/EditorResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:NullToBoolConverter x:Key="nullToBoolConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="{Binding NestedWindowsHeight}"/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel>
+            <ToolBar ToolBarTray.IsLocked="True"
+                     ItemsSource="{Binding ToolBarItems.Buttons}"/>
+        </ToolBarPanel>
+        <ScrollViewer Grid.Row="1">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Номер"
+                               Margin="0,0,10,5"/>
+                    <syncfusion:IntegerTextBox Value="{Binding DocumentNumber, TargetNullValue=0}"
+                                               Width="70" Height="25"
+                                               IsEnabled="{Binding EnabledDocumentNumber}"
+                                               Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
+                    <TextBlock Text="от"
+                               Margin="10,0,10,5"/>
+                    <syncfusion:DateTimeEdit DateTime="{Binding DocumentDate, Mode=TwoWay}"
+                                             Style="{StaticResource DateTimeEditStyle}"
+                                             TodayButtonAction="DateTime"
+                                             Pattern="FullDateTime"/>
+                    <TextBlock Text="Организация"
+                               Margin="10,0,10,5"/>
+                    <controls:ComboBox ItemsSource="{Binding Organizations}"
+                                       SelectedItem="{Binding Organization}"
+                                       Style="{StaticResource ExtComboBoxStyle}"
+                                       Width="200"/>
+                </StackPanel>
+                <Border Grid.Row="1" 
+                        Background="Gray" 
+                        Margin="0,5,0,5" 
+                        Height="1"/>
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Производственная партия"
+                               Style="{StaticResource TextBlockStyle}"/>
+                    <controls:SelectBox ItemsSource="{Binding Lots}"
+                                        SelectedItem="{Binding Lot}"
+                                        TypeContent="Document"
+                                        EditorType="{x:Type editors:ProductionLotView}"
+                                        Width="300"
+                                        Grid.Column="1"
+                                        Style="{StaticResource SelectBoxStyle}"
+                                        ItemSelected="{Binding LotSelectedCommand}">
+                        <controls:SelectBox.Columns>
+                            <common:DateTimeGridComboColumn MappingName="DocumentDate"
+                                                            Header="Дата"
+                                                            Width="110"
+                                                            Pattern="CustomPattern"
+                                                            CustomPattern="D"/>
+                            <common:TextGridComboColumn MappingName="DocumentNumber"
+                                                        Header="Номер"
+                                                        Width="70"/>
+                            <common:TextGridComboColumn MappingName="Order"
+                                                        Header="Заказ"/>
+                            <common:TextGridComboColumn MappingName="Calculation.Goods"
+                                                        Header="Изделие"/>
+                        </controls:SelectBox.Columns>
+                    </controls:SelectBox>
+                    <TextBlock Text="Изделие"
+                               Style="{StaticResource TextBlockStyle}"
+                               Grid.Row="1"/>
+                    <controls:SelectBox ItemsSource="{Binding Products}"
+                                        SelectedItem="{Binding Product}"
+                                        EditorType="{x:Type editors:GoodsView}"
+                                        Width="500"
+                                        Grid.Row="1" Grid.Column="1"
+                                        ShowClearButton="False"
+                                        Style="{StaticResource SelectBoxStyle}"
+                                        IsEnabledEditor="{Binding Lot, Converter={StaticResource nullToBoolConverter}}"
+                                        ItemSelected="{Binding ProductSelectedCommand}"/>
+                    <TextBlock Text="Количество"
+                               Style="{StaticResource TextBlockStyle}"
+                               Grid.Row="2"/>
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="2" Grid.Column="1">
+                        <syncfusion:DoubleTextBox Value="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"
+                                                  Style="{StaticResource DoubleTextBoxStyle}"
+                                                  NumberDecimalDigits="3"
+                                                  Width="80" Height="25"/>
+                        <TextBlock Text="{Binding Product.Measurement.Abbreviation}"
+                                   Margin="5,0,0,0"/>
+                    </StackPanel>
+                    <TextBlock Text="Себестоимость 1 ед. изм."
+                               Style="{StaticResource TextBlockStyle}"
+                               Grid.Row="3"/>
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="3" Grid.Column="1">
+                        <syncfusion:CurrencyTextBox Value="{Binding Price, UpdateSourceTrigger=PropertyChanged}"
+                                                    Style="{StaticResource CurrencyTextBoxStyle}"
+                                                    Width="80" Height="25"
+                                                    x:Name="textPrice"
+                                                    NullValue="{x:Null}"
+                                                    UseNullOption="True" 
+                                                    WatermarkText="Не установлено"
+                                                    WatermarkTextIsVisible="True"/>
+                        <syncfusion:ButtonAdv SizeMode="Small"
+                                              SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-broom-16.png"
+                                              Margin="5,0,0,5"
+                                              Width="25"
+                                              Command="{Binding Source={x:Static commands:CommonCommands.ClearTextValue}}"
+                                              CommandParameter="{Binding ElementName=textPrice}"/>
+                    </StackPanel>
+                    
+                    <TextBlock Text="Себестоимость (всего)"
+                               Style="{StaticResource TextBlockStyle}"
+                               Grid.Row="4"/>
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="4" Grid.Column="1">
+                        <syncfusion:CurrencyTextBox Value="{Binding ProductCost, UpdateSourceTrigger=PropertyChanged, TargetNullValue=0}"
+                                                    Style="{StaticResource CurrencyTextBoxStyle}"
+                                                    Width="100" Height="25"
+                                                    x:Name="textCost"/>
+                        <syncfusion:ButtonAdv SizeMode="Small"
+                                              SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-broom-16.png"
+                                              Margin="5,0,0,5"
+                                              Width="25"
+                                              Command="{Binding Source={x:Static commands:CommonCommands.ClearTextValue}}"
+                                              CommandParameter="{Binding ElementName=textCost}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+        <syncfusion:SfGridSplitter Name="gridSplitter"
+                                   HorizontalAlignment="Stretch"
+                                   ResizeBehavior="PreviousAndNext"
+                                   Width="auto"
+                                   Grid.Row="2"/>
+        <syncfusion:TabControlExt Grid.Row="3"
+                                  Style="{StaticResource TabControlStyle}">
+            <syncfusion:TabItemExt Header="Документы">
+                <controls:DocumentsList Margin="5" 
+                                        DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+            <syncfusion:TabItemExt Header="Информация">
+                <controls:EntityInfo Margin="5"
+                                     DocumentInfo="{Binding Entity}"/>
+            </syncfusion:TabItemExt>
+        </syncfusion:TabControlExt>
+    </Grid>
+</UserControl>

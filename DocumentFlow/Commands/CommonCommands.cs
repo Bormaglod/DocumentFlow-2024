@@ -87,4 +87,28 @@ public static class CommonCommands
     }
 
     #endregion
+
+    #region ClearTextValue
+
+    static ICommand? clearTextValue;
+
+    public static ICommand ClearTextValue
+    {
+        get
+        {
+            clearTextValue ??= new DelegateCommand(OnClearTextValue);
+            return clearTextValue;
+        }
+    }
+    private static void OnClearTextValue(object parameter)
+    {
+        switch (parameter)
+        {
+            case CurrencyTextBox currency: 
+                currency.Value = null;
+                break;
+        }
+    }
+
+    #endregion
 }

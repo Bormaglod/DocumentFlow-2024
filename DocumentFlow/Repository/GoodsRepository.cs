@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using Dapper;
+
 using DocumentFlow.Common;
 using DocumentFlow.Common.Exceptions;
 using DocumentFlow.Common.Extensions;
@@ -75,5 +77,16 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository, ITran
             .When(goods.Calculation != null, w => w.OrWhere("id", goods.Calculation!.Id))
             .Get<Calculation>()
             .ToList();
+    }
+
+    public Calculation? GetCurrentCalculation(Goods goods)
+    {
+        using var conn = GetConnection();
+        return GetCurrentCalculation(conn, goods);
+    }
+
+    public Calculation? GetCurrentCalculation(IDbConnection connection, Goods goods)
+    {
+        return connection.QueryFirstOrDefault<Calculation>("select c.* from calculation c join goods g on g.calculation_id = c.id where g.id = :Id", new { goods.Id });
     }
 }
