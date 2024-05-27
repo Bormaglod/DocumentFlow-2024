@@ -202,17 +202,27 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
     {
         base.InitializeEntityCollections(connection, entity);
 
+        Orders = orderRepository.GetActive(entity?.Order);
         if (entity != null)
         {
             if (entity.Order != null)
             {
                 Products = orderRepository.GetProducts(entity.Order);
-                Orders = orderRepository.GetActive(entity.Order);
             }
 
             OperationsPerformed = new ObservableCollection<OperationsPerformed>(operationsPerformedRepository.GetOperations(entity));
             WorkedEmployes = new ObservableCollection<Employee>(operationsPerformedRepository.GetWorkedEmployes(entity));
         }
+    }
+
+    partial void OnOrderChanged(ProductionOrder? value)
+    {
+        if (value != null)
+        {
+            Products = orderRepository.GetProducts(value);
+        }
+
+        Owner = value;
     }
 
     partial void OnProductChanged(Goods? value)

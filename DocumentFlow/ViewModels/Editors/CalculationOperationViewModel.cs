@@ -6,6 +6,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
+using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
@@ -33,7 +34,7 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
     private string[]? previousOperation;
 
     [ObservableProperty]
-    private IList<CalculationOperationProperty>? properties;
+    private DependentCollection<CalculationOperationProperty>? properties;
 
     [ObservableProperty]
     private CalculationOperationProperty? propertySelected;
@@ -227,8 +228,12 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
 
         if (entity != null) 
         {
-            Properties = repoCalcOperation.GetProperties(connection, entity);
+            Properties = new DependentCollection<CalculationOperationProperty>(entity, repoCalcOperation.GetProperties(connection, entity));
         }
+        else
+        {
+            Properties ??= new DependentCollection<CalculationOperationProperty>();
+        }    
 
         ExistingProperties = new();
         foreach (var item in repoProperty.GetSlim(connection))
@@ -237,10 +242,11 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
         }
     }
 
-    protected override void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null)
+    protected override void UpdateDependents(IDbConnection connection, CalculationOperation operation, IDbTransaction? transaction = null)
     {
         if (Properties != null)
         {
+            Properties.Owner = operation;
             connection.UpdateDependents(Properties, transaction);
         }
     }

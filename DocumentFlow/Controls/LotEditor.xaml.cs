@@ -5,20 +5,20 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Converters;
 using DocumentFlow.Models.Entities;
-using System.Collections.Specialized;
+
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
+using Syncfusion.UI.Xaml.Grid.Helpers;
 
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Data;
-using DocumentFlow.Common.Converters;
-using Syncfusion.UI.Xaml.Grid.Helpers;
+using System.Windows.Input;
 
 namespace DocumentFlow.Controls;
 
@@ -119,6 +119,8 @@ public partial class LotEditor : UserControl
         }
 
         info.Source.Add(operation);
+
+        gridContent.View.Refresh();
     }
 
     private void AddEmployee(Employee employee)
@@ -213,45 +215,55 @@ public partial class LotEditor : UserControl
 
         // Список всех операций необходимых для изготовления изделия из партии
         operations.Clear();
-        foreach (var item in Operations.OrderBy(x => x.Code))
+
+        if (Operations != null)
         {
-            operations.Add(new OperationInfo() { Operation = item, LotQuantity = LotQuantity });
+            foreach (var item in Operations.OrderBy(x => x.Code))
+            {
+                operations.Add(new OperationInfo() { Operation = item, LotQuantity = LotQuantity });
+            }
         }
 
-        // Список занятых в изготовлении партии
-        gridContent.Columns.Suspend();
-        for (int i = 0; i < WorkedEmployes.Count; i++)
+        if (WorkedEmployes != null)
         {
-            foreach (var op in operations)
+            // Список занятых в изготовлении партии
+            gridContent.Columns.Suspend();
+            for (int i = 0; i < WorkedEmployes.Count; i++)
             {
-                op.Employees.Add(new EmpInfo(WorkedEmployes[i]));
+                foreach (var op in operations)
+                {
+                    op.Employees.Add(new EmpInfo(WorkedEmployes[i]));
+                }
+
+                AddColumnEmployee(i);
             }
 
-            AddColumnEmployee(i);
+            gridContent.Columns.Resume();
+            gridContent.RefreshColumns();
         }
 
-        gridContent.Columns.Resume();
-        gridContent.RefreshColumns();
-
-        // Список произведенных работ
-        foreach (var item in OperationsPerformed)
+        if (OperationsPerformed != null)
         {
-            if (item.Operation == null)
+            // Список произведенных работ
+            foreach (var item in OperationsPerformed)
             {
-                continue;
+                if (item.Operation == null)
+                {
+                    continue;
+                }
+
+                var op = operations.FirstOrDefault(x => x.Operation.Id == item.Operation.Id);
+                if (op == null)
+                {
+                    continue;
+                }
+
+                op.Source.Add(item);
             }
 
-            var op = operations.FirstOrDefault(x => x.Operation.Id == item.Operation.Id);
-            if (op == null)
-            {
-                continue;
-            }
-
-            op.Source.Add(item);
+            gridContent.GridColumnSizer.ResetAutoCalculationforAllColumns();
+            gridContent.GridColumnSizer.Refresh();
         }
-
-        gridContent.GridColumnSizer.ResetAutoCalculationforAllColumns();
-        gridContent.GridColumnSizer.Refresh();
 
         gridContent.View.Refresh();
 

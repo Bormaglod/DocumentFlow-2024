@@ -30,6 +30,7 @@ public class BrowserSettings
         var path = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Автоком",
+            "5.0.0",
             "settings",
             "browsers"
         );

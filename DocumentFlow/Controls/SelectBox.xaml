@@ -6,8 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="25" d:DesignWidth="400"
-             Loaded="SelectBox_Loaded">
+             d:DesignHeight="25" d:DesignWidth="400">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:NullToVisibilityConverter x:Key="nullToVisibilityConverter"/>

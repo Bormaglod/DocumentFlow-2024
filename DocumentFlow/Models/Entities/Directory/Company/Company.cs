@@ -34,4 +34,6 @@ public partial class Company : Directory
     [ObservableProperty]
     [property: DenyCopying]
     private Account? account;
+
+    public bool ContainsContract(Contract contract) => contract.OwnerId == Id;
 }

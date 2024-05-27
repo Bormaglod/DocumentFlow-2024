@@ -76,6 +76,9 @@ public partial class ProductWindow : Window
     [ObservableProperty]
     private bool isTaxPayer;
 
+    [ObservableProperty]
+    private bool isInvalidCalculation = false;
+
     public ProductWindow()
     {
         InitializeComponent();
@@ -115,7 +118,7 @@ public partial class ProductWindow : Window
                 FullCost = FullCost
             };
 
-            if (Product is IProductCalculation p && Calculation != null)
+            if (row is IProductCalculation p && Calculation != null)
             {
                 p.Calculation = Calculation;
             }
@@ -280,13 +283,13 @@ public partial class ProductWindow : Window
         if (content == ProductContent.Materials || content == ProductContent.All)
         {
             var materialsRepository = ServiceLocator.Context.GetService<IMaterialRepository>();
-            materials = materialsRepository.GetSlim();
+            materials = materialsRepository.GetProducts(withMeasurements: true);
         }
 
         if (content == ProductContent.Goods || content == ProductContent.All)
         {
             var goodsRepository = ServiceLocator.Context.GetService<IGoodsRepository>();
-            goods = goodsRepository.GetSlim();
+            goods = goodsRepository.GetProducts(withMeasurements: true);
         }
 
         return materials
@@ -304,6 +307,18 @@ public partial class ProductWindow : Window
     private void ProductWindow_ContentRendered(object sender, EventArgs e)
     {
         //selectProduct.Focus();
+    }
+
+    private void UpdateTaxValue(decimal taxValue)
+    {
+        if (taxValue == TaxValue)
+        {
+            FullCost = ProductCost;
+        }
+        else
+        {
+            TaxValue = taxValue;
+        }
     }
 
     partial void OnProductChanged(Product? value)
@@ -324,6 +339,11 @@ public partial class ProductWindow : Window
         }
     }
 
+    partial void OnCalculationChanged(Calculation? value)
+    {
+        IsInvalidCalculation = value == null || value.CalculationState != CalculationState.Approved;
+    }
+
     partial void OnAmountChanged(decimal value)
     {
         ProductCost = Price * value;
@@ -336,12 +356,12 @@ public partial class ProductWindow : Window
 
     partial void OnProductCostChanged(decimal value)
     {
-        TaxValue = value * Tax / 100;
+        UpdateTaxValue(value * Tax / 100);
     }
 
     partial void OnTaxChanged(int value)
     {
-        TaxValue = ProductCost * value / 100;
+        UpdateTaxValue(ProductCost * value / 100);
     }
 
     partial void OnTaxValueChanged(decimal value)

@@ -4,7 +4,6 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Data;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
@@ -58,7 +57,7 @@ public class OperationRepository : DirectoryRepository<Operation>, IOperationRep
             Alias = "og"
         };
 
-        var list = connection.GetQuery<OperationGoods>(parameters)
+        return connection.GetQuery<OperationGoods>(parameters)
             .MappingQuery<OperationGoods>(x => x.Goods, QuantityInformation.Directory)
             .Where("og.owner_id", operation.Id)
             .Get<OperationGoods, Goods>(
@@ -67,8 +66,7 @@ public class OperationRepository : DirectoryRepository<Operation>, IOperationRep
                     og.Goods = goods;
                     return og;
                 }
-            );
-
-        return new DependentCollection<OperationGoods>(operation, list);
+            )
+            .ToList();
     }
 }

@@ -37,6 +37,7 @@
                                AllowSorting="False" 
                                AutoGenerateColumns="False"
                                AllowResizingColumns="True"
+                               GridLinesVisibility="Both"
                                ItemsSource="{Binding ElementName=lotEditor, Path=OperationInfos}"
                                QueryRowHeight="GridContent_QueryRowHeight"
                                CellDoubleTapped="GridContent_CellDoubleTapped"

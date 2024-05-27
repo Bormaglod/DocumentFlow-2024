@@ -6,7 +6,6 @@
 
 using Dapper;
 
-using DocumentFlow.Common.Collections;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
@@ -30,13 +29,11 @@ public class CalculationOperationRepository : CalculationItemRepository<Calculat
     public IList<CalculationOperationProperty> GetProperties(IDbConnection connection, CalculationOperation operation)
     {
         var sql = "select cop.*, p.* from calculation_operation_property as cop join property p on p.id = cop.property_id where cop.operation_id = :Id";
-        var list = connection.Query<CalculationOperationProperty, Property, CalculationOperationProperty>(sql, (cop, prop) =>
+        return connection.Query<CalculationOperationProperty, Property, CalculationOperationProperty>(sql, (cop, prop) =>
         {
             cop.Property = prop;
             return cop;
-        }, operation);
-
-        return new DependentCollection<CalculationOperationProperty>(operation, list);
+        }, operation).ToList();
     }
 
     public IReadOnlyList<CalculationOperation> GetPreviousOperations(Calculation calculation, CalculationOperation? operation)

@@ -15,16 +15,32 @@ namespace DocumentFlow.Common.Collections;
 public sealed class DependentCollection<T> : ObservableCollection<T>, IDependentCollection
     where T : class, IDependentEntity
 {
-    private readonly DocumentInfo owner;
+    private DocumentInfo? owner;
+
+    public DependentCollection() : base() { }
 
     public DependentCollection(DocumentInfo owner, IEnumerable<T> collection) : base(collection)
     {
         this.owner = owner;
 
         owner.PropertyChanged += Owner_PropertyChanged;
+
         foreach (var item in collection.OfType<INotifyPropertyChanged>())
         {
             item.PropertyChanged += Changed_PropertyChanged;
+        }
+    }
+
+    public DocumentInfo? Owner
+    {
+        get => owner;
+        set
+        {
+            if (owner != value)
+            {
+                owner = value;
+                SetChildOwners();
+            }
         }
     }
 
@@ -43,9 +59,9 @@ public sealed class DependentCollection<T> : ObservableCollection<T>, IDependent
     {
         base.InsertItem(index, item);
 
-        if (owner.Id != default)
+        if (Owner != null && Owner.Id != default)
         {
-            item.SetOwner(owner);
+            item.SetOwner(Owner);
         }
 
         if (item.Id == 0)
@@ -101,14 +117,24 @@ public sealed class DependentCollection<T> : ObservableCollection<T>, IDependent
         base.ClearItems();
     }
 
+    private void SetChildOwners()
+    {
+        if (Owner == null)
+        {
+            return;
+        }
+
+        foreach (var part in Items)
+        {
+            part.SetOwner(Owner);
+        }
+    }
+
     private void Owner_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(DocumentInfo.Id))
         {
-            foreach (var part in Items)
-            {
-                part.SetOwner(owner);
-            }
+            SetChildOwners();
         }
     }
 

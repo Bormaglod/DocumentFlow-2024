@@ -43,6 +43,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Материал / изделие"
                        Grid.Row="0" Grid.Column="0"
@@ -59,9 +60,17 @@
             <c:SelectBox x:Name="selectCalculation" 
                          SelectedItem="{Binding ElementName=productWindow, Path=Calculation}" 
                          ItemsSource="{Binding ElementName=productWindow, Path=Calculations}"
-                         Grid.Row="1" Grid.Column="1"
                          Style="{StaticResource SelectBoxStyle}" 
-                         ShowClearButton="False"/>
+                         ShowClearButton="False"
+                         Grid.Row="1" Grid.Column="1" />
+            <TextBlock Text="!" 
+                       Grid.Row="1"
+                       Grid.Column="2" 
+                       FontSize="18" 
+                       FontWeight="Bold"
+                       Margin="5,0,0,5"
+                       Foreground="Red"
+                       Visibility="{Binding ElementName=productWindow, Path=IsInvalidCalculation, Converter={StaticResource boolToVisibilityConverter}}"/>
             <TextBlock Text="Партия"
                        Grid.Row="2" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>
@@ -72,20 +81,20 @@
                        Grid.Row="3" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>
             <syncfusion:DoubleTextBox x:Name="textAmount" 
-                                      Value="{Binding ElementName=productWindow, Path=Amount}" 
+                                      Value="{Binding ElementName=productWindow, Path=Amount, UpdateSourceTrigger=PropertyChanged}" 
                                       Grid.Row="3" Grid.Column="1"
                                       Style="{StaticResource DoubleTextBoxStyle}"
                                       NumberDecimalDigits="3"/>
             <TextBlock Text="Цена"
                        Grid.Row="4" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>
-            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=Price}" 
+            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=Price, UpdateSourceTrigger=PropertyChanged}" 
                                         Grid.Row="4" Grid.Column="1"
                                         Style="{StaticResource CurrencyTextBoxStyle}"/>
             <TextBlock Text="Сумма"
                        Grid.Row="5" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>
-            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=ProductCost}" 
+            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=ProductCost, UpdateSourceTrigger=PropertyChanged}" 
                                         Grid.Row="5" Grid.Column="1"
                                         Style="{StaticResource CurrencyTextBoxStyle}"/>
             <TextBlock Text="НДС%"
@@ -101,7 +110,7 @@
                        Grid.Row="7" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"
                        IsEnabled="{Binding ElementName=productWindow, Path=IsTaxPayer, Converter={StaticResource boolToVisibilityConverter}}"/>
-            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=TaxValue}" 
+            <syncfusion:CurrencyTextBox Value="{Binding ElementName=productWindow, Path=TaxValue, UpdateSourceTrigger=PropertyChanged}" 
                                         Grid.Row="7" Grid.Column="1"
                                         Style="{StaticResource CurrencyTextBoxStyle}"/>
             <TextBlock Text="Всего с НДС"

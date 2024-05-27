@@ -91,8 +91,7 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
             return;
         }
 
-        var sql = $"call execute_system_operation(:Id, 'accept'::system_operation, true, '{typeof(T).Name.Underscore()}')";
-        ExecuteSqlById(sql, row);
+        ExecuteSystemOperation(row, SystemOperation.Accept, true);
     }
 
     #endregion
@@ -117,8 +116,7 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
             return;
         }
 
-        var sql = $"call execute_system_operation(:Id, 'accept'::system_operation, false, '{typeof(T).Name.Underscore()}')";
-        ExecuteSqlById(sql, row);
+        ExecuteSystemOperation(row, SystemOperation.Accept, false);
     }
 
     #endregion

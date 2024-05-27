@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common;
@@ -171,9 +172,10 @@ public partial class SelectBox : UserControl
             Columns = Columns
         };
 
-        if (SelectedItem != null)
+        var id = SelectedItem?.Id ?? SelectedValue;
+        if (id != null)
         {
-            var item = ItemsSource.FirstOrDefault(x => x.Id == SelectedItem.Id);
+            var item = ItemsSource.FirstOrDefault(x => x.Id == id);
             if (item is Directory info)
             {
                 window.SelectedItem = info;
@@ -196,9 +198,10 @@ public partial class SelectBox : UserControl
             Columns = Columns
         };
 
-        if (SelectedItem != null)
+        var id = SelectedItem?.Id ?? SelectedValue;
+        if (id != null)
         {
-            var item = ItemsSource.FirstOrDefault(x => x.Id == SelectedItem.Id);
+            var item = ItemsSource.FirstOrDefault(x => x.Id == id);
             if (item is BaseDocument info)
             {
                 window.SelectedItem = info;
@@ -242,23 +245,6 @@ public partial class SelectBox : UserControl
         if (EditorType != null && SelectedItem != null)
         {
             WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(EditorType, SelectedItem));
-        }
-    }
-
-    private void SelectBox_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (SelectedItem != null)
-        {
-            SelectedValue = SelectedItem.Id;
-        }
-
-        if (ItemsSource != null && SelectedValue.HasValue)
-        {
-            var item = ItemsSource.FirstOrDefault(x => x.Id == SelectedValue);
-            if (item != null)
-            {
-                SelectedItem = item;
-            }
         }
     }
 }

@@ -8,6 +8,12 @@ using System.ComponentModel;
 
 namespace DocumentFlow.Common.Enums;
 
+public enum SystemOperation
+{
+    Accept,
+    Delete
+}
+
 public enum JoinType
 {
     Left,
@@ -96,6 +102,7 @@ public enum MessageDestination
 
 public enum MessageAction
 {
+    None,
     Refresh,
     Add,
     Delete
@@ -125,9 +132,15 @@ public enum SubjectsCivilLow
 
 public enum ContractorType
 {
-    [Description("С продавцом")]
+    /// <summary>
+    /// Тип договора "С поставщиком".
+    /// </summary>
+    [Description("С поставщиком")]
     Seller,
 
+    /// <summary>
+    /// Тип договора "С покупателем".
+    /// </summary>
     [Description("С покупателем")]
     Buyer
 }
@@ -170,12 +183,21 @@ public enum MaterialKind
 
 public enum CalculationState
 {
+    /// <summary>
+    /// Калькуляция подготовлена или редактируется.
+    /// </summary>
     [Description("Подготовлена")]
     Prepare,
 
+    /// <summary>
+    /// Калькуляция утверждена, изменения нежелательны.
+    /// </summary>
     [Description("Утверждена")]
     Approved,
 
+    /// <summary>
+    /// Калькуляция в архиве, изменения недопускаются.
+    /// </summary>
     [Description("В архиве")]
     Expired
 }

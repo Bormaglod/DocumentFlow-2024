@@ -29,8 +29,6 @@ using Humanizer;
 
 using Microsoft.Extensions.Configuration;
 
-using Minio.DataModel;
-
 using SqlKata;
 using SqlKata.Execution;
 
@@ -136,6 +134,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     }
 
     public ToolBarViewModel ToolBarItems { get; } = new();
+
+    public bool IsDependent { get; set; }
 
     public bool SupportAccepting => GetSupportAccepting();
 
@@ -359,7 +359,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
             return;
         }
 
-        grid = view.DataGrid;
+        grid = view.GetDataGrid();
         if (grid == null)
         {
             return;
@@ -629,6 +629,11 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     public void RefreshDataSource()
     {
+        if (Owner == null && IsDependent)
+        {
+            return;
+        }
+
         try
         {
             using var conn = CurrentDatabase.OpenConnection();
@@ -778,6 +783,42 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual bool CheckCopyRow(T row) => true;
 
+    protected void ExecuteSqlById(string sql, T row)
+    {
+        try
+        {
+            using var conn = CurrentDatabase.OpenConnection();
+            using var transaction = conn.BeginTransaction();
+
+            try
+            {
+                conn.Execute(sql, new { row.Id }, transaction);
+
+                transaction.Commit();
+
+                if (DataSource != null)
+                {
+                    DataSource[DataSource.IndexOf(row)] = GetDataById(row.Id);
+                }
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    protected void ExecuteSystemOperation(T row, SystemOperation operation, bool value)
+    {
+        var sql = $"call execute_system_operation(:Id, '{operation.ToString().Underscore()}'::system_operation, {value}, '{typeof(T).Name.Underscore()}')";
+        ExecuteSqlById(sql, row);
+    }
+
     private void InitializeViewer()
     {
         RegisterReports();
@@ -867,42 +908,11 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
-    protected void ExecuteSqlById(string sql, T row)
-    {
-        try
-        {
-            using var conn = CurrentDatabase.OpenConnection();
-            using var transaction = conn.BeginTransaction();
-
-            try
-            {
-                conn.Execute(sql, new { row.Id }, transaction);
-
-                transaction.Commit();
-
-                if (DataSource != null)
-                {
-                    DataSource[DataSource.IndexOf(row)] = GetDataById(row.Id);
-                }
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
     private void SetMarkedValue(bool mark)
     {
         if (SelectedItem is T row && CheckDeleteRow(row))
         {
-            var sql = $"update {typeof(T).Name.Underscore()} set deleted = {mark} where id = :Id";
-            ExecuteSqlById(sql, row);
+            ExecuteSystemOperation(row, SystemOperation.Delete, mark);
         }
     }
 
@@ -976,5 +986,10 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         {
             MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    partial void OnOwnerChanged(DocumentInfo? value)
+    {
+        //RefreshDataSource();
     }
 }

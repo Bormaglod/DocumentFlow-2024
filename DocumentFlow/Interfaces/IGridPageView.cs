@@ -10,5 +10,5 @@ namespace DocumentFlow.Interfaces;
 
 public interface IGridPageView : IPageView
 {
-    SfDataGrid DataGrid { get; }
+    SfDataGrid? GetDataGrid();
 }

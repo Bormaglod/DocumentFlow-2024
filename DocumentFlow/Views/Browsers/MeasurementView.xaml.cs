@@ -4,23 +4,18 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Common.Controls;
 using DocumentFlow.Interfaces;
-
-using Syncfusion.UI.Xaml.Grid;
-
-using System.Windows.Controls;
 
 namespace DocumentFlow.Views.Browsers;
 
 /// <summary>
 /// Логика взаимодействия для MeasurementView.xaml
 /// </summary>
-public partial class MeasurementView : UserControl, IGridPageView, ISelfTransientLifetime
+public partial class MeasurementView : BaseViewerControl, ISelfTransientLifetime
 {
     public MeasurementView()
     {
         InitializeComponent();
     }
-
-    public SfDataGrid DataGrid => gridContent;
 }

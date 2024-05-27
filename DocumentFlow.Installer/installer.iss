@@ -9,7 +9,7 @@
 ; Имя приложения
 #define   Name       "DocumentFlow 2024"
 ; Версия приложения
-#define   Version    "5.0.0.40511"
+#define   Version    "5.0.0.40527"
 ; Имя исполняемого модуля
 #define   ExeName    "DocumentFlow.exe"
 
@@ -49,7 +49,14 @@ ArchitecturesInstallIn64BitMode=x64
 
 [Files]
 Source: "C:\Projects\DocumentFlow-2024\DocumentFlow\bin\Release\DocumentFlow.exe"; DestDir: "{app}"
-Source: "C:\Projects\DocumentFlow-2024\DocumentFlow\bin\Release\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
+Source: "C:\Projects\DocumentFlow-2024\DocumentFlow\bin\Release\*.dll"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
+Source: "..\DocumentFlow\bin\Release\appsettings.json"; DestDir: "{app}"
+Source: "..\DocumentFlow\bin\Release\appsettings.auth.json"; DestDir: "{app}"
+Source: "..\DocumentFlow\bin\Release\appsettings.local.json"; DestDir: "{localappdata}\Автоком\5.0.0\settings"
+Source: "..\DocumentFlow\bin\Release\DocumentFlow.deps.json"; DestDir: "{app}"
+Source: "..\DocumentFlow\bin\Release\DocumentFlow.runtimeconfig.json"; DestDir: "{app}"
+Source: "C:\Projects\DocumentFlow-2024\DocumentFlow\bin\Release\*.config"; DestDir: "{app}"
+
 
 [Icons]
 Name: "{group}\DocumentFlow"; Filename: "{app}\{#ExeName}"

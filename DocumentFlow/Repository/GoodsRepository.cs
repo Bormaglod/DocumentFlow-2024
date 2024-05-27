@@ -73,6 +73,7 @@ public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository, ITran
     public IReadOnlyList<Calculation> GetCalculations(IDbConnection connection, Goods goods)
     {
         return GetCustomSlimQuery<Calculation>(connection, goods)
+            .Select("state")
             .WhereRaw("state = 'approved'::calculation_state")
             .When(goods.Calculation != null, w => w.OrWhere("id", goods.Calculation!.Id))
             .Get<Calculation>()

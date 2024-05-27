@@ -7,6 +7,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
@@ -33,7 +34,7 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
     private OperationType? operationType;
 
     [ObservableProperty]
-    private IList<OperationGoods>? operationGoods;
+    private DependentCollection<OperationGoods>? operationGoods;
 
     [ObservableProperty]
     private OperationGoods? operationGoodsSelected;
@@ -213,14 +214,19 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         
         if (operation != null)
         {
-            OperationGoods = repoOperation.GetGoods(connection, operation);
+            OperationGoods = new DependentCollection<OperationGoods>(operation, repoOperation.GetGoods(connection, operation));
         }
+        else
+        {
+            OperationGoods ??= new DependentCollection<OperationGoods>();
+        }    
     }
 
-    protected override void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null)
+    protected override void UpdateDependents(IDbConnection connection, Operation operation, IDbTransaction? transaction = null)
     {
         if (OperationGoods != null)
         {
+            OperationGoods.Owner = operation;
             connection.UpdateDependents(OperationGoods, transaction);
         }
     }

@@ -6,7 +6,6 @@
 
 using Dapper;
 
-using DocumentFlow.Common.Collections;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
@@ -91,12 +90,10 @@ public class MaterialRepository : ProductRepository<Material>, IMaterialReposito
     public IList<CompatiblePart> GetCompatibleParts(IDbConnection connection, Material material)
     {
         var sql = "select cp.*, m.id, m.code, m.item_name from compatible_part as cp join material m on m.id = cp.compatible_id where cp.owner_id = :Id";
-        var list = connection.Query<CompatiblePart, Material, CompatiblePart>(sql, (cp, material) =>
+        return connection.Query<CompatiblePart, Material, CompatiblePart>(sql, (cp, material) =>
         {
             cp.Compatible = material;
             return cp;
-        }, material);
-
-        return new DependentCollection<CompatiblePart>(material, list);
+        }, material).ToList();
     }
 }

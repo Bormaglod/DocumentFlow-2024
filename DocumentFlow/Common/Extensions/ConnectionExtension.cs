@@ -26,6 +26,16 @@ namespace DocumentFlow.Common.Extensions;
 
 public static class ConnectionExtension
 {
+    /// <summary>
+    /// Возвращает подготовленный запрос с установленными параметрами <paramref name="parameters"/>. Если параметры запроса не
+    /// устанавливаются, то запрос формируется по следующим правилам: имя таблицы формируется из наименования типа, псевдоним таблицы - t0, 
+    /// в выборку включаются все поля.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="connection"></param>
+    /// <param name="parameters"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public static Query GetQuery<T>(this IDbConnection connection, QueryParameters? parameters = null)
     {
         var factory = new QueryFactory(connection, new PostgresCompiler());
@@ -59,16 +69,13 @@ public static class ConnectionExtension
         return query;
     }
 
-    public static void UpdateDependents(this IDbConnection connection, object collection, IDbTransaction? transaction = null)
+    public static void UpdateDependents(this IDbConnection connection, IDependentCollection collection, IDbTransaction? transaction = null)
     {
-        if (collection is IDependentCollection dependent)
-        {
-            connection.Insert(dependent.NewItems, transaction);
-            connection.Update(dependent.UpdateItems, transaction);
-            connection.ExecuteCommand(SQLCommand.Wipe, dependent.RemoveItems, transaction);
+        connection.Insert(collection.NewItems, transaction);
+        connection.Update(collection.UpdateItems, transaction);
+        connection.ExecuteCommand(SQLCommand.Wipe, collection.RemoveItems, transaction);
 
-            dependent.CompleteChanged();
-        }
+        collection.CompleteChanged();
     }
 
     public static int Insert(this IDbConnection connection, object entity, IDbTransaction? transaction = null, int? commandTimeout = null)
@@ -80,7 +87,7 @@ public static class ConnectionExtension
             var entityGroups = entities.GroupBy(x => x.GetType());
             foreach (var grp in entityGroups)
             {
-                if (grp.Any()) 
+                if (grp.Any())
                 {
                     if (grp.First() is IDiscriminator entityGroup)
                     {
@@ -447,11 +454,11 @@ public static class ConnectionExtension
         return false;
     }
 
-    private static string GetDiscriminator(object entity) 
-    { 
+    private static string GetDiscriminator(object entity)
+    {
         if (entity is IEnumerable<object> entities)
         {
-            if (entities.Any()) 
+            if (entities.Any())
             {
                 entity = entities.First();
             }
@@ -467,7 +474,7 @@ public static class ConnectionExtension
             {
                 ArgumentNullException.ThrowIfNull(discriminator.Discriminator);
             }
-            
+
             return $"_{discriminator.Discriminator}";
         }
         else

@@ -38,6 +38,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
     private string? headerDetails;
     private EntityEditStatus entityEditStatus = EntityEditStatus.Created;
     private readonly List<MenuItemModel> reports = new();
+    private bool isRefreshing = false;
 
     [ObservableProperty]
     private Guid id;
@@ -66,13 +67,11 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
     }
 
     public ToolBarViewModel ToolBarItems { get; } = new();
-
     public IEditorPageView? View { get; set; }
-
     public DocumentInfo? DocumentInfo => Entity;
+    public bool IsRefreshing => isRefreshing;
 
     protected EntityEditStatus Status => entityEditStatus;
-
     protected IEnumerable<MenuItemModel> Reports => reports;
 
     #region Commands
@@ -92,9 +91,22 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
     private void OnRefresh(object parameter)
     {
-        if (Id != Guid.Empty)
+        isRefreshing = true;
+        try
         {
-            LoadEntity();
+            if (Id != Guid.Empty)
+            {
+                LoadEntity();
+            }
+            else
+            {
+                using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
+                InitializeEntityCollections(conn);
+            }
+        }
+        finally
+        {
+            isRefreshing = false;
         }
     }
 
@@ -191,6 +203,15 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
     protected virtual void InitializeToolBar(IDatabase? database = null) { }
 
+    /// <summary>
+    /// Метод предназначен для создания и заполнения коллекций используемых в данной модели. Этот методы вызывается
+    /// после загрузки данных документа (до заполнения свойств модели, т.е. перед вызовом метода <see cref="RaiseAfterLoadDocument(T)"/>. 
+    /// Параметр <paramref name="entity"/> при этом содержит загруженный объект. Либо этот метод вызывается при создании документа - тогда
+    /// параметр <paramref name="entity"/> равен null. Кроме того - при вызове команды <see cref="Refresh"/>, если документ создан.
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="entity"></param>
+    /// <param name="isRefresh"></param>
     protected virtual void InitializeEntityCollections(IDbConnection connection, T? entity = null) { }
 
     protected virtual void UpdateUIControls(T entity) { }
@@ -320,7 +341,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
     protected abstract void UpdateEntity(T entity);
 
-    protected virtual void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null) { }
+    protected virtual void UpdateDependents(IDbConnection connection, T entity, IDbTransaction? transaction = null) { }
 
     protected virtual Query SelectQuery(Query query) => query;
 
@@ -352,7 +373,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
     protected bool OnSave(bool sendNotify = true)
     {
-        MessageAction action;
+        MessageAction action = MessageAction.None;
 
         Entity ??= new();
         Entity.OwnerId = Owner?.Id;
@@ -377,7 +398,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
                     action = MessageAction.Refresh;
                 }
 
-                UpdateDependents(conn, transaction);
+                UpdateDependents(conn, Entity, transaction);
 
                 transaction.Commit();
 
@@ -393,6 +414,11 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
             }
             catch
             {
+                if (action == MessageAction.Add)
+                {
+                    Entity.Id = Guid.Empty;
+                }
+
                 transaction.Rollback();
                 throw;
             }

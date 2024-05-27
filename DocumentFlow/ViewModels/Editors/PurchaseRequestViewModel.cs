@@ -7,6 +7,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Collections;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
@@ -38,7 +40,7 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
     private string? note;
 
     [ObservableProperty]
-    private IList<PurchaseRequestPrice>? materials;
+    private DependentCollection<PurchaseRequestPrice>? materials;
 
     [ObservableProperty]
     private PurchaseRequestPrice? materialSelected;
@@ -244,18 +246,28 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
     {
         base.InitializeEntityCollections(connection, entity);
 
-        Contractors = contractorRepository.GetSlim();
+        Contractors = contractorRepository.GetSuppliers();
 
         if (entity != null) 
         {
-            Materials = requestRepository.GetContent(connection, entity);
+            Materials = new DependentCollection<PurchaseRequestPrice>(entity, requestRepository.GetContent(connection, entity));
+        }
+        else
+        {
+            Materials ??= new DependentCollection<PurchaseRequestPrice>();
+        }
+
+        if (IsRefreshing && Contractor != null)
+        {
+            Contracts = contractorRepository.GetContracts(Contractor, ContractorType.Seller);
         }
     }
 
-    protected override void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null)
+    protected override void UpdateDependents(IDbConnection connection, PurchaseRequest request, IDbTransaction? transaction = null)
     {
         if (Materials != null)
         {
+            Materials.Owner = request;
             connection.UpdateDependents(Materials, transaction);
         }
     }
@@ -267,13 +279,21 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
 
     partial void OnContractorChanged(Contractor? value)
     {
+        if (Contract != null)
+        {
+            if (value == null || !value.ContainsContract(Contract))
+            {
+                Contract = null;
+            }
+        }
+
         if (value == null)
         {
             Contracts = null;
         }
         else
         {
-            Contracts = contractorRepository.GetContracts(value);
+            Contracts = contractorRepository.GetContracts(value, ContractorType.Seller);
         }
     }
 }

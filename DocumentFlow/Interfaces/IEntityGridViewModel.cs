@@ -16,6 +16,7 @@ public interface IEntityGridViewModel
     bool AvailableNavigation { get; set; }
     bool AvailableGrouping { get; set; }
     bool IsGroupDropAreaExpanded { get; set; }
+    bool IsDependent { get; set; }
     SizeMode SizeMode { get; set; }
     object? SelectedItem { get; }
 }

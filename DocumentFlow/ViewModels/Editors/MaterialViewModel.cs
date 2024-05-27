@@ -6,8 +6,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using Dapper;
-
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Enums;
@@ -53,7 +51,7 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
     /// Возвращает список совместимых комплектующих.
     /// </summary>
     [ObservableProperty]
-    private IList<CompatiblePart>? compatibleParts;
+    private DependentCollection<CompatiblePart>? compatibleParts;
 
     [ObservableProperty]
     private CompatiblePart? compatibleSelected;
@@ -239,14 +237,19 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
 
         if (entity != null)
         {
-            CompatibleParts = materialRepository.GetCompatibleParts(connection, entity);
+            CompatibleParts = new DependentCollection<CompatiblePart>(entity, materialRepository.GetCompatibleParts(connection, entity));
+        }
+        else
+        {
+            CompatibleParts ??= new DependentCollection<CompatiblePart>();
         }
     }
 
-    protected override void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null)
+    protected override void UpdateDependents(IDbConnection connection, Material material, IDbTransaction? transaction = null)
     {
         if (CompatibleParts != null)
         {
+            CompatibleParts.Owner = material;
             connection.UpdateDependents(CompatibleParts, transaction);
         }
     }

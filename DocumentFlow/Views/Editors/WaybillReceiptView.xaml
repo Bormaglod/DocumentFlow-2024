@@ -27,6 +27,7 @@
             <selectors:TableSummaryStyleSelector x:Key="tableSummaryStyleSelector"/>
             <converters:BoolToRowVisibilityConverter x:Key="boolToRowVisibilityConverter"/>
             <converters:NullToBoolConverter x:Key="nullToBoolConverter"/>
+            <converters:NullToVisibilityConverter x:Key="nullToVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -40,300 +41,292 @@
             <ToolBar ToolBarTray.IsLocked="True"
                      ItemsSource="{Binding ToolBarItems.Buttons}"/>
         </ToolBarPanel>
-        <ScrollViewer Grid.Row="1">
-            <Grid Margin="10">
+        <Grid Grid.Row="1"
+              Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Номер" Margin="0,0,10,5"/>
+                <syncfusion:IntegerTextBox Value="{Binding DocumentNumber, TargetNullValue=0}"
+                                           Width="70" Height="25"
+                                           IsEnabled="{Binding EnabledDocumentNumber}"
+                                           Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
+                <TextBlock Text="от" Margin="10,0,10,5"/>
+                <syncfusion:DateTimeEdit DateTime="{Binding DocumentDate, Mode=TwoWay}"
+                                         Style="{StaticResource DateTimeEditStyle}"
+                                         TodayButtonAction="DateTime"
+                                         Pattern="FullDateTime"/>
+                <TextBlock Text="Организация" Margin="10,0,10,5"/>
+                <controls:ComboBox ItemsSource="{Binding Organizations}"
+                                   SelectedItem="{Binding Organization}"
+                                   Style="{StaticResource ExtComboBoxStyle}"
+                                   Width="200"/>
+            </StackPanel>
+            <Border Grid.Row="1" 
+                    Background="Gray" 
+                    Margin="0,5,0,5" 
+                    Height="1"/>
+            <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Номер"
-                               Margin="0,0,10,5"/>
-                    <syncfusion:IntegerTextBox Value="{Binding DocumentNumber, TargetNullValue=0}"
-                                               Width="70" Height="25"
-                                               IsEnabled="{Binding EnabledDocumentNumber}"
-                                               Style="{StaticResource IntegerTextBoxDisabledStyle}"/>
-                    <TextBlock Text="от"
-                               Margin="10,0,10,5"/>
-                    <syncfusion:DateTimeEdit DateTime="{Binding DocumentDate, Mode=TwoWay}"
-                                             Style="{StaticResource DateTimeEditStyle}"
-                                             TodayButtonAction="DateTime"
-                                             Pattern="FullDateTime"/>
-                    <TextBlock Text="Организация"
-                               Margin="10,0,10,5"/>
-                    <controls:ComboBox ItemsSource="{Binding Organizations}"
-                                       SelectedItem="{Binding Organization}"
-                                       Style="{StaticResource ExtComboBoxStyle}"
-                                       Width="200"/>
-                </StackPanel>
-                <Border Grid.Row="1" 
-                        Background="Gray" 
-                        Margin="0,5,0,5" 
-                        Height="1"/>
-                <Grid Grid.Row="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Контрагент"
-                               Style="{StaticResource TextBlockStyle}"
-                               Grid.Row="0"/>
-                    <TextBlock Text="Договор"
-                               Style="{StaticResource TextBlockStyle}"
-                               Grid.Row="1"/>
-                    <TextBlock Text="Заявка на покупку"
-                               Style="{StaticResource TextBlockStyle}"
-                               Grid.Row="2"/>
-                    <controls:SelectBox ItemsSource="{Binding Contractors}" 
-                                        SelectedItem="{Binding Contractor}"
-                                        Grid.Row="0" Grid.Column="1"
-                                        Style="{StaticResource SelectBoxStyle}"
-                                        EditorType="{x:Type editors:ContractorView}"
-                                        Width="400"/>
-                    <controls:SelectBox ItemsSource="{Binding Contracts}" 
-                                        SelectedItem="{Binding Contract}"
-                                        Grid.Row="1" Grid.Column="1"
-                                        Style="{StaticResource SelectBoxStyle}"
-                                        EditorType="{x:Type editors:ContractView}"
-                                        Width="600"
-                                        IsEnabled="{Binding PurchaseRequest, Converter={StaticResource nullToBoolConverter}}"/>
-                    <controls:SelectBox ItemsSource="{Binding PurchaseRequests}" 
-                                        SelectedItem="{Binding PurchaseRequest}"
-                                        Grid.Row="2" Grid.Column="1"
-                                        Style="{StaticResource SelectBoxStyle}"
-                                        EditorType="{x:Type editors:PurchaseRequestView}"
-                                        TypeContent="Document"
-                                        ItemSelected="{Binding PurchaseRequestSelected}"
-                                        Width="600">
-                        <controls:SelectBox.Columns>
-                            <common:DateTimeGridComboColumn MappingName="DocumentDate"
-                                                            Header="Дата"
-                                                            Width="110"
-                                                            Pattern="CustomPattern"
-                                                            CustomPattern="D"/>
-                            <common:TextGridComboColumn MappingName="DocumentNumber"
-                                                        Header="Номер"
-                                                        Width="70"/>
-                            <common:TextGridComboColumn MappingName="Contract"
-                                                        Header="Договор"/>
-                            <common:CurrencyGridComboColumn MappingName="FullCost"
-                                                            Header="Сумма заказа"
-                                                            Width="100"/>
-                        </controls:SelectBox.Columns>
-                    </controls:SelectBox>
-                </Grid>
-                <Grid Grid.Row="3" 
-                      Margin="0,0,0,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <ToolBar ToolBarTray.IsLocked="True"
-                             IsEnabled="{Binding Enabled}">
-                        <syncfusion:ButtonAdv Label="Добавить" 
-                                              SmallIcon="/Images/icons8-file-add-16.png" 
-                                              IconStretch="None"
-                                              Command="{Binding AddMaterial}"/>
-                        <syncfusion:ButtonAdv Label="Изменить" 
-                                              SmallIcon="/Images/icons8-file-edit-16.png" 
-                                              IconStretch="None"
-                                              Command="{Binding EditMaterial}"/>
-                        <syncfusion:ButtonAdv Label="Удалить" 
-                                              SmallIcon="/Images/icons8-file-delete-16.png" 
-                                              IconStretch="None"
-                                              Command="{Binding DeleteMaterial}"/>
-                        <Separator/>
-                        <syncfusion:ButtonAdv Label="Копия" 
-                                              SmallIcon="/Images/icons8-copy-edit-16.png" 
-                                              IconStretch="None"
-                                              Command="{Binding CopyMaterial}"/>
-                    </ToolBar>
-                    <syncfusion:SfDataGrid Grid.Row="1"
-                                           ItemsSource="{Binding Materials}"
-                                           SelectedItem="{Binding MaterialSelected}"
-                                           AutoGenerateColumns="False" 
-                                           AllowGrouping="False" 
-                                           NavigationMode="Row"
-                                           IsEnabled="{Binding Enabled}"
-                                           TableSummaryCellStyleSelector="{StaticResource tableSummaryStyleSelector}">
-                        <syncfusion:SfDataGrid.Columns>
-                            <syncfusion:GridTextColumn HeaderText="Материал" 
-                                                       MappingName="Product"
-                                                       ColumnSizer="AutoLastColumnFill"/>
-                            <syncfusion:GridTextColumn HeaderText="Артикул" 
-                                                       MappingName="Product.Code"
-                                                       Width="150"/>
-                            <syncfusion:GridTextColumn HeaderText="Ед. изм." 
-                                                       MappingName="Product.Measurement.Abbreviation"
-                                                       Width="80"
-                                                       TextAlignment="Center"/>
-                            <syncfusion:GridNumericColumn HeaderText="Количество"
-                                                          MappingName="Amount"
-                                                          Width="100"
-                                                          NumberDecimalDigits="3"
-                                                          NumberGroupSizes="3"/>
-                            <syncfusion:GridCurrencyColumn HeaderText="Цена"
-                                                           MappingName="Price"
-                                                           Width="100"/>
-                            <syncfusion:GridCurrencyColumn HeaderText="Сумма"
-                                                           MappingName="ProductCost"
-                                                           Width="100"
-                                                           CurrencyGroupSizes="3"/>
-                            <syncfusion:GridNumericColumn HeaderText="%НДС"
-                                                          MappingName="Tax"
-                                                          Width="60"
-                                                          NumberDecimalDigits="0"
-                                                          TextAlignment="Center"/>
-                            <syncfusion:GridCurrencyColumn HeaderText="НДС"
-                                                           MappingName="TaxValue"
-                                                           Width="100"
-                                                           CurrencyGroupSizes="3"/>
-                            <syncfusion:GridCurrencyColumn HeaderText="Всего с НДС"
-                                                           MappingName="FullCost"
-                                                           Width="100"
-                                                           CurrencyGroupSizes="3"/>
-                        </syncfusion:SfDataGrid.Columns>
-                        <syncfusion:SfDataGrid.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Добавить"
-                                          Command="{Binding AddMaterial}">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Images/icons8-file-add-16.png" Stretch="None"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Изменить"
-                                          Command="{Binding EditMaterial}">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Images/icons8-file-edit-16.png" Stretch="None"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Удалить"
-                                          Command="{Binding DeleteMaterial}">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Images/icons8-delete-16.png" Stretch="None"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <Separator/>
-                                <MenuItem Header="Копия"
-                                          Command="{Binding CopyMaterial}">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Images/icons8-copy-edit-16.png" Stretch="None"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </syncfusion:SfDataGrid.ContextMenu>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding EditMaterial}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <syncfusion:SfDataGrid.TableSummaryRows>
-                            <syncfusion:GridTableSummaryRow ShowSummaryInRow="False">
-                                <syncfusion:GridSummaryRow.SummaryColumns>
-                                    <syncfusion:GridSummaryColumn Name="ProductCost" 
-                                                                  MappingName="ProductCost"
-                                                                  Format="'{Sum:c}'"
-                                                                  SummaryType="DoubleAggregate"/>
-                                    <syncfusion:GridSummaryColumn Name="TaxValue" 
-                                                                  Format="'{Sum:c}'"
-                                                                  MappingName="TaxValue"
-                                                                  SummaryType="DoubleAggregate" />
-                                    <syncfusion:GridSummaryColumn Name="FullCost" 
-                                                                  MappingName="FullCost"
-                                                                  Format="'{Sum:c}'"
-                                                                  SummaryType="DoubleAggregate" />
-                                </syncfusion:GridSummaryRow.SummaryColumns>
-                            </syncfusion:GridTableSummaryRow>
-                        </syncfusion:SfDataGrid.TableSummaryRows>
-                    </syncfusion:SfDataGrid>
-                </Grid>
-                <TextBlock Grid.Row="4"
-                           Text="Документы 1С"
-                           Background="#BFCDDB"
-                           Margin="0,0,0,10"
-                           Padding="0,5,0,5"
-                           Visibility="{Binding Contract.TaxPayer, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                <Grid Grid.Row="5"
-                      Visibility="{Binding Contract.TaxPayer, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="{Binding Upd, Converter={StaticResource boolToRowVisibilityConverter}, ConverterParameter=inverse}"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Накладная"
-                               Style="{StaticResource TextBlockStyle}"/>
-                    <TextBlock Text="№"
-                               Grid.Column="1"
-                               Margin="0,0,5,14"/>
-                    <TextBox Text="{Binding WaybillNumber}"
-                             Grid.Column="2"
-                             Width="100"
-                             Style="{StaticResource TextBoxStyle}"/>
-                    <TextBlock Text="от"
-                               Grid.Column="3"
-                               Margin="5,0,5,14"/>
-                    <syncfusion:DateTimeEdit DateTime="{Binding WaybillDate}"
-                                             Grid.Column="4"
-                                             Width="100"
-                                             HorizontalAlignment="Left"
-                                             Style="{StaticResource DateTimeEditStyle}"/>
-                    <TextBlock Text="Счёт-фактура"
-                               Grid.Row="1"
-                               Style="{StaticResource TextBlockStyle}"/>
-                    <TextBlock Text="№"
-                               Grid.Row="1" Grid.Column="1"
-                               Margin="0,0,5,14"/>
-                    <TextBox Text="{Binding InvoiceNumber}"
-                             Grid.Row="1" Grid.Column="2"
-                             Width="100"
-                             Style="{StaticResource TextBoxStyle}"/>
-                    <TextBlock Text="от"
-                               Grid.Row="1" Grid.Column="3"
-                               Margin="5,0,5,14"/>
-                    <syncfusion:DateTimeEdit DateTime="{Binding InvoiceDate}"
-                                             Grid.Row="1" Grid.Column="4"
-                                             Width="100"
-                                             HorizontalAlignment="Left"
-                                             Style="{StaticResource DateTimeEditStyle}"/>
-                </Grid>
-                <StackPanel Grid.Row="6"
-                            Orientation="Horizontal" 
-                            Visibility="{Binding Contract.TaxPayer, Converter={StaticResource boolToVisiblityConverter}}">
-                    <TextBlock Text="Универсальный передаточный документ" 
-                               Margin="0,0,10,0"/>
-                    <CheckBox IsChecked="{Binding Upd}" />
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding Upd, Converter={StaticResource boolToVisiblityConverter}}"
-                                d:Visibility="Visible"
-                                Margin="10,0,0,0">
-                        <TextBlock Text="Счёт-фактура №"/>
-                        <TextBlock Text="{Binding WaybillNumber}" 
-                                   d:Text="УТ-40824"
-                                   Margin="5,0,0,0"/>
-                        <TextBlock Text="от"
-                                   Margin="5,0,5,0"/>
-                        <TextBlock Text="{Binding WaybillDate, StringFormat=dd.MM.yyyy}"/>
-                    </StackPanel>
-                </StackPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Контрагент"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="0"/>
+                <TextBlock Text="Договор"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="1"/>
+                <TextBlock Text="Заявка на покупку"
+                           Style="{StaticResource TextBlockStyle}"
+                           Grid.Row="2"/>
+                <controls:SelectBox ItemsSource="{Binding Contractors}" 
+                                    SelectedItem="{Binding Contractor}"
+                                    Grid.Row="0" Grid.Column="1"
+                                    Style="{StaticResource SelectBoxStyle}"
+                                    EditorType="{x:Type editors:ContractorView}"
+                                    Width="400"/>
+                <controls:SelectBox ItemsSource="{Binding Contracts}" 
+                                    SelectedItem="{Binding Contract}"
+                                    Grid.Row="1" Grid.Column="1"
+                                    Style="{StaticResource SelectBoxStyle}"
+                                    EditorType="{x:Type editors:ContractView}"
+                                    Width="600"
+                                    IsEnabled="{Binding PurchaseRequest, Converter={StaticResource nullToBoolConverter}}"/>
+                <controls:SelectBox ItemsSource="{Binding PurchaseRequests}" 
+                                    SelectedItem="{Binding PurchaseRequest}"
+                                    Grid.Row="2" Grid.Column="1"
+                                    Style="{StaticResource SelectBoxStyle}"
+                                    EditorType="{x:Type editors:PurchaseRequestView}"
+                                    TypeContent="Document"
+                                    ItemSelected="{Binding PurchaseRequestSelected}"
+                                    Width="600">
+                    <controls:SelectBox.Columns>
+                        <common:DateTimeGridComboColumn MappingName="DocumentDate"
+                                                        Header="Дата"
+                                                        Width="110"
+                                                        Pattern="CustomPattern"
+                                                        CustomPattern="D"/>
+                        <common:TextGridComboColumn MappingName="DocumentNumber"
+                                                    Header="Номер"
+                                                    Width="70"/>
+                        <common:TextGridComboColumn MappingName="Contract"
+                                                    Header="Договор"/>
+                        <common:CurrencyGridComboColumn MappingName="FullCost"
+                                                        Header="Сумма заказа"
+                                                        Width="100"/>
+                    </controls:SelectBox.Columns>
+                </controls:SelectBox>
             </Grid>
-        </ScrollViewer>
+            <Grid Grid.Row="3" Margin="0,0,0,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <ToolBar ToolBarTray.IsLocked="True"
+                         IsEnabled="{Binding Enabled}">
+                    <syncfusion:ButtonAdv Label="Добавить" 
+                                          SmallIcon="/Images/icons8-file-add-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding AddMaterial}"/>
+                    <syncfusion:ButtonAdv Label="Изменить" 
+                                          SmallIcon="/Images/icons8-file-edit-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding EditMaterial}"/>
+                    <syncfusion:ButtonAdv Label="Удалить" 
+                                          SmallIcon="/Images/icons8-file-delete-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding DeleteMaterial}"/>
+                    <Separator/>
+                    <syncfusion:ButtonAdv Label="Копия" 
+                                          SmallIcon="/Images/icons8-copy-edit-16.png" 
+                                          IconStretch="None"
+                                          Command="{Binding CopyMaterial}"/>
+                </ToolBar>
+                <syncfusion:SfDataGrid Grid.Row="1"
+                                       ItemsSource="{Binding Materials}"
+                                       SelectedItem="{Binding MaterialSelected}"
+                                       AutoGenerateColumns="False" 
+                                       AllowGrouping="False" 
+                                       NavigationMode="Row"
+                                       LiveDataUpdateMode="AllowSummaryUpdate"
+                                       IsEnabled="{Binding Enabled}"
+                                       GridLinesVisibility="Horizontal"
+                                       TableSummaryCellStyleSelector="{StaticResource tableSummaryStyleSelector}">
+                    <syncfusion:SfDataGrid.Columns>
+                        <syncfusion:GridTextColumn HeaderText="Материал" 
+                                                   MappingName="Product"
+                                                   ColumnSizer="AutoLastColumnFill"/>
+                        <syncfusion:GridTextColumn HeaderText="Артикул" 
+                                                   MappingName="Product.Code"
+                                                   Width="150"/>
+                        <syncfusion:GridTextColumn HeaderText="Ед. изм." 
+                                                   MappingName="Product.Measurement.Abbreviation"
+                                                   Width="80"
+                                                   TextAlignment="Center"/>
+                        <syncfusion:GridNumericColumn HeaderText="Количество"
+                                                      MappingName="Amount"
+                                                      Width="100"
+                                                      NumberDecimalDigits="3"
+                                                      NumberGroupSizes="3"/>
+                        <syncfusion:GridCurrencyColumn HeaderText="Цена"
+                                                       MappingName="Price"
+                                                       Width="100"/>
+                        <syncfusion:GridCurrencyColumn HeaderText="Сумма"
+                                                       MappingName="ProductCost"
+                                                       Width="100"
+                                                       CurrencyGroupSizes="3"/>
+                        <syncfusion:GridNumericColumn HeaderText="%НДС"
+                                                      MappingName="Tax"
+                                                      Width="60"
+                                                      NumberDecimalDigits="0"
+                                                      TextAlignment="Center"/>
+                        <syncfusion:GridCurrencyColumn HeaderText="НДС"
+                                                       MappingName="TaxValue"
+                                                       Width="100"
+                                                       CurrencyGroupSizes="3"/>
+                        <syncfusion:GridCurrencyColumn HeaderText="Всего с НДС"
+                                                       MappingName="FullCost"
+                                                       Width="100"
+                                                       CurrencyGroupSizes="3"/>
+                    </syncfusion:SfDataGrid.Columns>
+                    <syncfusion:SfDataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Добавить"
+                                      Command="{Binding AddMaterial}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-file-add-16.png" Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Изменить"
+                                      Command="{Binding EditMaterial}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-file-edit-16.png" Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Удалить"
+                                      Command="{Binding DeleteMaterial}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-delete-16.png" Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="Копия"
+                                      Command="{Binding CopyMaterial}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/icons8-copy-edit-16.png" Stretch="None"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </syncfusion:SfDataGrid.ContextMenu>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding EditMaterial}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <syncfusion:SfDataGrid.TableSummaryRows>
+                        <syncfusion:GridTableSummaryRow ShowSummaryInRow="False">
+                            <syncfusion:GridSummaryRow.SummaryColumns>
+                                <syncfusion:GridSummaryColumn Name="ProductCost" 
+                                                              MappingName="ProductCost"
+                                                              Format="'{Sum:c}'"
+                                                              SummaryType="DoubleAggregate"/>
+                                <syncfusion:GridSummaryColumn Name="TaxValue" 
+                                                              Format="'{Sum:c}'"
+                                                              MappingName="TaxValue"
+                                                              SummaryType="DoubleAggregate" />
+                                <syncfusion:GridSummaryColumn Name="FullCost" 
+                                                              MappingName="FullCost"
+                                                              Format="'{Sum:c}'"
+                                                              SummaryType="DoubleAggregate" />
+                            </syncfusion:GridSummaryRow.SummaryColumns>
+                        </syncfusion:GridTableSummaryRow>
+                    </syncfusion:SfDataGrid.TableSummaryRows>
+                </syncfusion:SfDataGrid>
+            </Grid>
+            <TextBlock Grid.Row="4"
+                       Text="Документы 1С"
+                       Background="#BFCDDB"
+                       Margin="0,0,0,10"
+                       Padding="0,5,0,5"
+                       Visibility="{Binding Contract, Converter={StaticResource nullToVisibilityConverter}}"/>
+            <Grid Grid.Row="5"
+                  Visibility="{Binding Contract, Converter={StaticResource nullToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="{Binding ShowInvoice, Converter={StaticResource boolToRowVisibilityConverter}}"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Накладная" Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Text="№"
+                           Grid.Column="1"
+                           Margin="0,0,5,14"/>
+                <TextBox Text="{Binding WaybillNumber, UpdateSourceTrigger=PropertyChanged}"
+                         Grid.Column="2"
+                         Width="100"
+                         Style="{StaticResource TextBoxStyle}"/>
+                <TextBlock Text="от"
+                           Grid.Column="3"
+                           Margin="5,0,5,14"/>
+                <syncfusion:DateTimeEdit DateTime="{Binding WaybillDate}"
+                                         Grid.Column="4"
+                                         Width="100"
+                                         HorizontalAlignment="Left"
+                                         Style="{StaticResource DateTimeEditStyle}"/>
+                <TextBlock Text="Счёт-фактура"
+                           Grid.Row="1"
+                           Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Text="№"
+                           Grid.Row="1" Grid.Column="1"
+                           Margin="0,0,5,14"/>
+                <TextBox Text="{Binding InvoiceNumber}"
+                         Grid.Row="1" Grid.Column="2"
+                         Width="100"
+                         Style="{StaticResource TextBoxStyle}"/>
+                <TextBlock Text="от"
+                           Grid.Row="1" Grid.Column="3"
+                           Margin="5,0,5,14"/>
+                <syncfusion:DateTimeEdit DateTime="{Binding InvoiceDate}"
+                                         Grid.Row="1" Grid.Column="4"
+                                         Width="100"
+                                         HorizontalAlignment="Left"
+                                         Style="{StaticResource DateTimeEditStyle}"/>
+            </Grid>
+            <StackPanel Grid.Row="6"
+                        Orientation="Horizontal" 
+                        Visibility="{Binding ShowUpd, Converter={StaticResource boolToVisiblityConverter}}">
+                <TextBlock Text="Универсальный передаточный документ" Margin="0,0,10,0"/>
+                <CheckBox IsChecked="{Binding Upd}" />
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding Upd, Converter={StaticResource boolToVisiblityConverter}}"
+                            d:Visibility="Visible"
+                            Margin="10,0,0,0">
+                    <TextBlock Text="Счёт-фактура №"/>
+                    <TextBlock Text="{Binding WaybillNumber}" Margin="5,0,0,0" d:Text="УТ-40824"/>
+                    <TextBlock Text="от" Margin="5,0,5,0"/>
+                    <TextBlock Text="{Binding WaybillDate, StringFormat=dd.MM.yyyy}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
         <syncfusion:SfGridSplitter Name="gridSplitter"
                                    HorizontalAlignment="Stretch"
                                    ResizeBehavior="PreviousAndNext"

@@ -79,6 +79,7 @@ public abstract class ProductRepository<T> : DirectoryRepository<T>, IProductRep
         };
 
         var query = connection.GetQuery<T>(parameters)
+            .Select("t0.price")
             .When(withMeasurements, q => q
                 .MappingQuery<T>(x => x.Measurement)
             );

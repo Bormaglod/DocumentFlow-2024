@@ -7,16 +7,21 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Collections;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
+using MailKit.Net.Imap;
+
 using SqlKata;
 
 using Syncfusion.Windows.Shared;
 
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Input;
@@ -39,7 +44,7 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
     private PurchaseRequest? purchaseRequest;
 
     [ObservableProperty]
-    private IList<WaybillReceiptPrice>? materials;
+    private DependentCollection<WaybillReceiptPrice>? materials;
 
     [ObservableProperty]
     private WaybillReceiptPrice? materialSelected;
@@ -67,6 +72,12 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
 
     [ObservableProperty]
     private bool upd;
+
+    [ObservableProperty]
+    private bool showInvoice;
+
+    [ObservableProperty]
+    private bool showUpd;
 
     public WaybillReceiptViewModel() { }
 
@@ -228,10 +239,38 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
 
     private void OnPurchaseRequestSelected(object parameter)
     {
-        if (parameter is PurchaseRequest request)
+        if (parameter is not PurchaseRequest request)
         {
-            Contract = request.Contract;
+            return;
         }
+
+        Contract = request.Contract;
+        
+        if (Materials == null)
+        {
+            return;
+        }
+
+        if (MessageBox.Show("Заполнить таблицу по данным заявки?", "Вопрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        {
+            Materials.Clear();
+            foreach (var item in requestRepository.GetContent(request))
+            {
+                var material = new WaybillReceiptPrice()
+                {
+                    Product = item.Product,
+                    Amount = item.Amount,
+                    Price = item.Price,
+                    ProductCost = item.ProductCost,
+                    FullCost = item.FullCost,
+                    Tax = item.Tax,
+                    TaxValue = item.TaxValue
+                };
+
+                Materials.Add(material);
+            }
+        }
+
     }
 
     #endregion
@@ -270,10 +309,9 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         entity.InvoiceDate = InvoiceDate;
         entity.InvoiceNumber = InvoiceNumber;
         entity.Upd = Upd;
-        
     }
 
-    protected override IEnumerable<short> DisabledStates() => new[] { State.Canceled, State.Completed };
+    protected override IEnumerable<short> DisabledStates() => new[] { State.Canceled };
 
     protected override Query SelectQuery(Query query)
     {
@@ -283,13 +321,19 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
             .MappingQuery<WaybillReceipt>(x => x.Organization)
             .MappingQuery<WaybillReceipt>(x => x.Contractor)
             .MappingQuery<WaybillReceipt>(x => x.Contract)
-            .MappingQuery<WaybillReceipt>(x => x.PurchaseRequest);
+            .MappingQuery<WaybillReceipt>(x => x.PurchaseRequest)
+            .MappingQuery<PurchaseRequest>(x => x.Contractor);
     }
 
     protected override void Load(IDbConnection connection)
     {
-        Load<State, Organization, Contractor, Contract, PurchaseRequest>(connection, (waybill, state, org, contractor, contract, request) =>
+        Load<State, Organization, Contractor, Contract, PurchaseRequest, Contractor>(connection, (waybill, state, org, contractor, contract, request, rc) =>
         {
+            if (request != null)
+            {
+                request.Contractor = rc;
+            }
+
             waybill.State = state;
             waybill.Organization = org;
             waybill.Contractor = contractor;
@@ -304,24 +348,51 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
     {
         base.InitializeEntityCollections(connection, entity);
 
-        Contractors = contractorRepository.GetSlim();
+        Contractors = contractorRepository.GetSuppliers();
 
         if (entity != null)
         {
-            Materials = waybillRepository.GetContent(connection, entity);
+            Materials = new DependentCollection<WaybillReceiptPrice>(entity, waybillRepository.GetContent(connection, entity));
+        }
+        else
+        {
+            Materials ??= new DependentCollection<WaybillReceiptPrice>();
+        }
+
+        if (IsRefreshing && Contractor != null)
+        {
+            Contracts = contractorRepository.GetContracts(Contractor, ContractorType.Seller);
+            PurchaseRequests = requestRepository.GetActive(Contractor, PurchaseRequest);
         }
     }
 
-    protected override void UpdateDependents(IDbConnection connection, IDbTransaction? transaction = null)
+    protected override void UpdateDependents(IDbConnection connection, WaybillReceipt waybill, IDbTransaction? transaction = null)
     {
         if (Materials != null)
         {
+            Materials.Owner = waybill;
             connection.UpdateDependents(Materials, transaction);
         }
     }
 
     partial void OnContractorChanged(Contractor? value)
     {
+        if (Contract != null)
+        {
+            if (value == null || !value.ContainsContract(Contract))
+            {
+                Contract = null;
+            }
+        }
+
+        if (PurchaseRequest != null)
+        {
+            if (value == null || PurchaseRequest?.Contractor?.Id != value.Id)
+            {
+                PurchaseRequest = null;
+            }
+        }
+
         if (value == null)
         {
             Contracts = null;
@@ -329,8 +400,32 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         }
         else
         {
-            Contracts = contractorRepository.GetContracts(value);
+            Contracts = contractorRepository.GetContracts(value, ContractorType.Seller);
             PurchaseRequests = requestRepository.GetActive(value, PurchaseRequest);
         }
+    }
+
+    partial void OnContractChanged(Contract? value)
+    {
+        if (value == null) 
+        {
+            ShowInvoice = false;
+            ShowUpd = false;
+        }
+        else
+        {
+            ShowInvoice = value.TaxPayer && !Upd;
+            ShowUpd = value.TaxPayer;
+        }
+    }
+
+    partial void OnUpdChanged(bool value)
+    {
+        ShowInvoice = (Contract?.TaxPayer ?? false) && !value;
+    }
+
+    partial void OnPurchaseRequestChanged(PurchaseRequest? value)
+    {
+        Owner = value;
     }
 }

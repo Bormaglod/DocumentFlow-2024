@@ -67,9 +67,11 @@ public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IP
             .When(includingRequest != null, q => q
                 .OrWhere("t0.id", includingRequest!.Id)
             )
+            .MappingQuery<PurchaseRequest>(x => x.Contractor)
             .MappingQuery<PurchaseRequest>(x => x.Contract)
-            .Get<PurchaseRequest, Contract>((pr, contract) =>
+            .Get<PurchaseRequest, Contractor, Contract>((pr, contractor, contract) =>
             {
+                pr.Contractor = contractor;
                 pr.Contract = contract;
                 return pr;
             })
