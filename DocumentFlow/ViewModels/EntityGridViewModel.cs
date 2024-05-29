@@ -68,22 +68,22 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     private readonly IConfiguration configuration;
     private SfDataGrid? grid;
-    private readonly List<GridColumn> alwaysVisibleColumns = new();
+    private readonly List<GridColumn> alwaysVisibleColumns = [];
     private readonly BrowserSettings settings = new();
-    private readonly List<MenuItemModel> reports = new();
+    private readonly List<MenuItemModel> reports = [];
     private bool isLoaded = false;
 
     [ObservableProperty]
     private ObservableCollection<T>? dataSource;
 
     [ObservableProperty]
-    private ObservableCollection<MenuItemModel> visibleColumnsMenuItems = new();
+    private ObservableCollection<MenuItemModel> visibleColumnsMenuItems = [];
 
     [ObservableProperty]
-    public ObservableCollection<MenuItemModel> documentMenuItems = new();
+    public ObservableCollection<MenuItemModel> documentMenuItems = [];
 
     [ObservableProperty]
-    public ObservableCollection<MenuItemModel> creationBasedMenuItems = new();
+    public ObservableCollection<MenuItemModel> creationBasedMenuItems = [];
 
     [ObservableProperty]
     private object? selectedItem;
@@ -740,7 +740,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected virtual Query WipeQuery(Query query) => query;
 
-    protected virtual Query? FilterQuery(Query query) => null;
+    protected virtual Query FilterQuery(Query query) => throw new NotImplementedException();
 
     protected Query RequiredQuery(IDbConnection connection, QueryParameters parameters)
     {
@@ -827,10 +827,12 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     private Query ApplyFilters(Query query)
     {
-        var filterQuery = FilterQuery(query);
-        if (filterQuery != null)
+        try
         {
-            query = query.Where(q => filterQuery);
+            query.Where(q => FilterQuery(query));
+        }
+        catch 
+        { 
         }
 
         return query;
