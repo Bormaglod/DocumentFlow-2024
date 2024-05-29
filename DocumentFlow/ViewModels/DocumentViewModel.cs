@@ -133,11 +133,11 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
 
     public DateTime? DateTo { get; set; }
 
-    public IEnumerable<State> States { get; } = new List<State>()
-    {
+    public IEnumerable<State> States { get; } =
+    [
         new() { Id = 0, StateName = "Все документы"},
         new() { Id = -1, StateName = "Активные"}
-    };
+    ];
 
     protected override bool GetSupportAccepting() => typeof(T).IsAssignableTo(typeof(AccountingDocument));
 
@@ -190,18 +190,18 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
             new ToolBarButtonModel("Настройки", "settings"));
     }
 
-    protected virtual IEnumerable<int>? GetIncludingStates(int stateCategory) => null;
+    protected virtual IEnumerable<short>? GetIncludingStates(int stateCategory) => null;
 
-    protected virtual IEnumerable<int>? GetExcludingStates(int stateCategory)
+    protected virtual IEnumerable<short>? GetExcludingStates(int stateCategory)
     {
         return stateCategory switch
         {
-            -1 => new[] { 1001, 1002 },
+            -1 => new[] { State.Canceled, State.Completed },
             _ => null,
         };
     }
 
-    protected override Query? FilterQuery(Query query)
+    protected override Query FilterQuery(Query query)
     {
         var alias = query.GetOneComponent<AbstractFrom>("from").Alias ?? "t0";
 
@@ -247,7 +247,7 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
             return filterQuery;
         }
 
-        return null;
+        return base.FilterQuery(query);
     }
 
     partial void OnSelectedStateChanged(State? value)
