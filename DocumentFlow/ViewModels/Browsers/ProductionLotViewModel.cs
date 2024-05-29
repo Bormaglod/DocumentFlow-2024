@@ -82,4 +82,11 @@ public class ProductionLotViewModel : DocumentViewModel<ProductionLot>, ISelfTra
                 })
             .ToList();
     }
+
+    protected override Query FilterQuery(Query query)
+    {
+        return base
+            .FilterQuery(query)
+            .OrWhere(q => q.WhereFalse("t0.sold"));
+    }
 }
