@@ -135,12 +135,7 @@ public partial class OperationsPerformedWindow : Window
         }
 
         // Если установлен флаг "Материал не использовать", то проверку на количество пропустим...
-        if (SkipMaterial)
-        {
-            return;
-        }
-
-        if (Operation.Material != null) 
+        if (!SkipMaterial && Operation.Material != null)
         {
             decimal materialCount;
             var matRepo = ServiceLocator.Context.GetService<IMaterialRepository>();
