@@ -14,7 +14,6 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Messages;
 using DocumentFlow.Models.Settings;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -99,7 +98,7 @@ public partial class MainWindowViewModel :
 
         Title = $"DocumentFlow {Assembly.GetExecutingAssembly().GetName().Version} - <{database.ConnectionName}>";
 
-        Windows = new ObservableCollection<object>();
+        Windows = [];
         Windows.CollectionChanged += Windows_CollectionChanged;
     }
 
