@@ -145,7 +145,6 @@
                                 Operations="{Binding Operations}"
                                 LotQuantity="{Binding Quantity}"
                                 OperationsPerformed="{Binding OperationsPerformed}"
-                                WorkedEmployes="{Binding WorkedEmployes}"
                                 AddOperationCommand="{Binding AddOperationCommand}"/>
         </Grid>
         <syncfusion:SfGridSplitter Name="gridSplitter"

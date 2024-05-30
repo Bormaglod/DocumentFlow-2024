@@ -64,8 +64,7 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
     [ObservableProperty]
     private ObservableCollection<OperationsPerformed>? operationsPerformed;
 
-    [ObservableProperty]
-    private ObservableCollection<Employee>? workedEmployes;
+    public ProductionLotViewModel() { }
 
     public ProductionLotViewModel(
         IProductionOrderRepository orderRepository,
@@ -119,10 +118,10 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
 
                     transaction.Commit();
 
-                    if (WorkedEmployes != null && operationsPerformed.Employee != null && WorkedEmployes.FirstOrDefault(x => x.Id == operationsPerformed.Employee.Id) == null)
+                    /*if (WorkedEmployes != null && operationsPerformed.Employee != null && WorkedEmployes.FirstOrDefault(x => x.Id == operationsPerformed.Employee.Id) == null)
                     {
                         WorkedEmployes.Add(operationsPerformed.Employee);
-                    }
+                    }*/
 
                     OperationsPerformed?.Add(operationsPerformed);
 
@@ -167,7 +166,7 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
         entity.Quantity = Quantity;
     }
 
-    protected override IEnumerable<short> DisabledStates() => new[] { State.Canceled, State.Completed };
+    protected override IEnumerable<short> DisabledStates() => [State.Canceled, State.Completed];
 
     protected override Query SelectQuery(Query query)
     {
@@ -211,7 +210,6 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
             }
 
             OperationsPerformed = new ObservableCollection<OperationsPerformed>(operationsPerformedRepository.GetOperations(entity));
-            WorkedEmployes = new ObservableCollection<Employee>(operationsPerformedRepository.GetWorkedEmployes(entity));
         }
     }
 

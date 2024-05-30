@@ -104,6 +104,19 @@ public partial class ComboBox : UserControl
 
     partial void OnDocumentItemChanged(DocumentInfo? value)
     {
-        SelectedItem = value!;
+        if (value != SelectedItem) 
+        {
+            if (value == null)
+            {
+                SelectedItem = null!;
+            }
+            else
+            {
+                if (SelectedItem != null && value.Id != SelectedItem.Id)
+                {
+                    SelectedItem = value!;
+                }
+            }
+        }
     }
 }

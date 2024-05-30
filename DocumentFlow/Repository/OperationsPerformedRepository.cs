@@ -4,14 +4,10 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Common.Data;
-using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
-
-using SqlKata.Execution;
 
 using System.Data;
 
@@ -41,30 +37,6 @@ public class OperationsPerformedRepository : DocumentRepository<OperationsPerfor
                 performed.Employee = emp;
                 return performed;
             })
-            .ToList();
-    }
-
-    public IReadOnlyList<Employee> GetWorkedEmployes(ProductionLot lot)
-    {
-        using var conn = GetConnection();
-        return GetWorkedEmployes(conn, lot);
-    }
-
-    public IReadOnlyList<Employee> GetWorkedEmployes(IDbConnection connection, ProductionLot lot)
-    {
-        QueryParameters parameters = new()
-        {
-            Quantity = QuantityInformation.None
-        };
-
-        return connection.GetQuery<OperationsPerformed>(parameters)
-            .Distinct()
-            .Select("e.{id, item_name}")
-            .Join("our_employee as e", "e.id", "t0.employee_id")
-            .Where("t0.owner_id", lot.Id)
-            .WhereFalse("t0.deleted")
-            .WhereTrue("t0.carried_out")
-            .Get<OurEmployee>()
             .ToList();
     }
 }

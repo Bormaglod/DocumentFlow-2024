@@ -31,9 +31,8 @@ public partial class LotEditor : UserControl
     private static partial Regex EmpPropertiesRegex();
 
     private readonly GridRowSizingOptions gridRowResizingOptions = new();
-    private readonly ObservableCollection<OperationInfo> operations = new();
-
-    private bool isLoaded;
+    private readonly ObservableCollection<OperationInfo> operations = [];
+    private ObservableCollection<Employee>? WorkedEmployees;
 
     public LotEditor()
     {
@@ -60,12 +59,6 @@ public partial class LotEditor : UserControl
         set => SetValue(OperationsPerformedProperty, value);
     }
 
-    public IList<Employee> WorkedEmployes
-    {
-        get => (IList<Employee>)GetValue(WorkedEmployesProperty);
-        set => SetValue(WorkedEmployesProperty, value);
-    }
-
     public ICommand AddOperationCommand
     {
         get { return (ICommand)GetValue(AddOperationCommandProperty); }
@@ -81,19 +74,14 @@ public partial class LotEditor : UserControl
     public static readonly DependencyProperty OperationsProperty = DependencyProperty.Register(
         nameof(Operations),
         typeof(IEnumerable<CalculationOperation>),
-        typeof(LotEditor));
+        typeof(LotEditor),
+        new FrameworkPropertyMetadata(OnOperationsChanged));
 
     public static readonly DependencyProperty OperationsPerformedProperty = DependencyProperty.Register(
         nameof(OperationsPerformed),
         typeof(IEnumerable<OperationsPerformed>),
         typeof(LotEditor),
         new FrameworkPropertyMetadata(OnOperationsPerformedChanged));
-
-    public static readonly DependencyProperty WorkedEmployesProperty = DependencyProperty.Register(
-        nameof(WorkedEmployes),
-        typeof(IList<Employee>),
-        typeof(LotEditor),
-        new FrameworkPropertyMetadata(OnWorkedEmployesChanged));
 
     public static readonly DependencyProperty AddOperationCommandProperty = DependencyProperty.Register(
         nameof(AddOperationCommand),
@@ -102,17 +90,24 @@ public partial class LotEditor : UserControl
 
     private void AddOperationsPerformed(OperationsPerformed operation)
     {
+        ArgumentNullException.ThrowIfNull(WorkedEmployees);
         ArgumentNullException.ThrowIfNull(operation.Operation);
         ArgumentNullException.ThrowIfNull(operation.Employee);
+
+        if (WorkedEmployees.FirstOrDefault(x => x.Id == operation.Employee.Id) == null) 
+        { 
+            WorkedEmployees.Add(operation.Employee);
+            AddColumnEmployee(WorkedEmployees.Count - 1);
+        }
 
         var info = OperationInfos.FirstOrDefault(x => x.Operation.Id == operation.Operation.Id);
         if (info == null)
         {
             info = new OperationInfo() { Operation = operation.Operation, LotQuantity = LotQuantity };
 
-            for (int i = 0; i < WorkedEmployes.Count; i++)
+            for (int i = 0; i < WorkedEmployees.Count; i++)
             {
-                info.Employees.Add(new EmpInfo(WorkedEmployes[i]));
+                info.Employees.Add(new EmpInfo(WorkedEmployees[i]));
             }
 
             OperationInfos.Add(info);
@@ -121,16 +116,6 @@ public partial class LotEditor : UserControl
         info.Source.Add(operation);
 
         gridContent.View.Refresh();
-    }
-
-    private void AddEmployee(Employee employee)
-    {
-        foreach (var item in OperationInfos)
-        {
-            item.Employees.Add(new EmpInfo(employee));
-        }
-
-        AddColumnEmployee(WorkedEmployes.Count - 1);
     }
 
     private Style CreateStyle(string column)
@@ -165,6 +150,11 @@ public partial class LotEditor : UserControl
 
     private void AddColumnEmployee(int empIndex)
     {
+        if (WorkedEmployees == null)
+        {
+            return;
+        }
+
         var qColName = $"Employees[{empIndex}].Quantity";
         var sColName = $"Employees[{empIndex}].Salary";
 
@@ -188,7 +178,7 @@ public partial class LotEditor : UserControl
         stackedHeaderRow.StackedColumns.Add(new StackedColumn()
         {
             ChildColumns = $"{qColName},{sColName}",
-            HeaderText = WorkedEmployes[empIndex].ToString()
+            HeaderText = WorkedEmployees[empIndex].ToString()
         });
 
         gridContent.Columns.Insert((empIndex + 1) * 2, columnQuantity);
@@ -206,68 +196,75 @@ public partial class LotEditor : UserControl
         summaryRow.SummaryColumns.Add(empSummaryColumn);
     }
 
-    private void LotEditor_Loaded(object sender, RoutedEventArgs e)
+    private void ClearEmployeeColumns()
     {
-        if (isLoaded)
+        var columns = gridContent.Columns.Where(x => x.MappingName.StartsWith("Employees")).ToArray();
+        foreach (var column in columns)
+        {
+            gridContent.Columns.Remove(column);
+        }
+    }
+
+    private void UpdateOperations()
+    {
+        // Список всех операций необходимых для изготовления изделия из партии
+        operations.Clear();
+
+        if (Operations == null)
+        {
+            return;
+        }
+        
+        foreach (var item in Operations.OrderBy(x => x.Code))
+        {
+            operations.Add(new OperationInfo() { Operation = item, LotQuantity = LotQuantity });
+        }
+
+        if (OperationsPerformed == null)
         {
             return;
         }
 
-        // Список всех операций необходимых для изготовления изделия из партии
-        operations.Clear();
+        UpdateOperationsPerformed();
+    }
 
-        if (Operations != null)
+    private void UpdateOperationsPerformed()
+    {
+        // Список занятых в изготовлении партии
+        WorkedEmployees = new ObservableCollection<Employee>(OperationsPerformed.DistinctBy(x => x.Employee!.Id).Select(x => x.Employee!));
+
+        gridContent.Columns.Suspend();
+
+        ClearEmployeeColumns();
+        for (int i = 0; i < WorkedEmployees.Count; i++)
         {
-            foreach (var item in Operations.OrderBy(x => x.Code))
+            foreach (var op in operations)
             {
-                operations.Add(new OperationInfo() { Operation = item, LotQuantity = LotQuantity });
-            }
-        }
-
-        if (WorkedEmployes != null)
-        {
-            // Список занятых в изготовлении партии
-            gridContent.Columns.Suspend();
-            for (int i = 0; i < WorkedEmployes.Count; i++)
-            {
-                foreach (var op in operations)
-                {
-                    op.Employees.Add(new EmpInfo(WorkedEmployes[i]));
-                }
-
-                AddColumnEmployee(i);
+                op.Employees.Add(new EmpInfo(WorkedEmployees[i]));
             }
 
-            gridContent.Columns.Resume();
-            gridContent.RefreshColumns();
+            AddColumnEmployee(i);
         }
 
-        if (OperationsPerformed != null)
+        gridContent.Columns.Resume();
+        gridContent.RefreshColumns();
+
+        // Список произведенных работ
+        foreach (var item in OperationsPerformed)
         {
-            // Список произведенных работ
-            foreach (var item in OperationsPerformed)
+            if (item.Operation == null)
             {
-                if (item.Operation == null)
-                {
-                    continue;
-                }
-
-                var op = operations.FirstOrDefault(x => x.Operation.Id == item.Operation.Id);
-                if (op == null)
-                {
-                    continue;
-                }
-
-                op.Source.Add(item);
+                continue;
             }
 
-            gridContent.GridColumnSizer.ResetAutoCalculationforAllColumns();
-            gridContent.GridColumnSizer.Refresh();
+            var op = operations.FirstOrDefault(x => x.Operation.Id == item.Operation.Id);
+            if (op == null)
+            {
+                continue;
+            }
+
+            op.Source.Add(item);
         }
-
-        gridContent.View.Refresh();
-
-        isLoaded = true;
     }
 
     private static void OnLotQuantityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -281,53 +278,16 @@ public partial class LotEditor : UserControl
         }
     }
 
-    private static void OnWorkedEmployesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var action = new NotifyCollectionChangedEventHandler((o, args) =>
-        {
-            if (d is not LotEditor editor || args.NewItems == null || args.NewItems.Count == 0 || args.NewItems[0] is not Employee employee)
-            {
-                return;
-            }
-
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    editor.AddEmployee(employee);
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    break;
-                case NotifyCollectionChangedAction.Move:
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        if (e.OldValue != null)
-        {
-            var collection = (INotifyCollectionChanged)e.OldValue;
-            // Unsubscribe from CollectionChanged on the old collection
-            collection.CollectionChanged -= action;
-        }
-
-        if (e.NewValue != null)
-        {
-            var collection = (INotifyCollectionChanged)e.NewValue;
-            // Subscribe to CollectionChanged on the new collection
-            collection.CollectionChanged += action;
-        }
-    }
-
     private static void OnOperationsPerformedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        if (d is not LotEditor editor)
+        {
+            return;
+        }
+
         var action = new NotifyCollectionChangedEventHandler((o, args) =>
         {
-            if (d is not LotEditor editor || args.NewItems == null || args.NewItems.Count == 0 || args.NewItems[0] is not OperationsPerformed operation)
+            if (args.NewItems == null || args.NewItems.Count == 0 || args.NewItems[0] is not OperationsPerformed operation)
             {
                 return;
             }
@@ -363,6 +323,16 @@ public partial class LotEditor : UserControl
             // Subscribe to CollectionChanged on the new collection
             collection.CollectionChanged += action;
         }
+    }
+
+    private static void OnOperationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not LotEditor editor)
+        {
+            return;
+        }
+
+        editor.UpdateOperations();
     }
 
     private void GridContent_CellDoubleTapped(object sender, GridCellDoubleTappedEventArgs e)

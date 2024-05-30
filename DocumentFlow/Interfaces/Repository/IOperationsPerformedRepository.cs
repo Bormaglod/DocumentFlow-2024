@@ -14,6 +14,4 @@ public interface IOperationsPerformedRepository : IDocumentRepository<Operations
 {
     IReadOnlyList<OperationsPerformed> GetOperations(ProductionLot lot);
     IReadOnlyList<OperationsPerformed> GetOperations(IDbConnection connection, ProductionLot lot);
-    IReadOnlyList<Employee> GetWorkedEmployes(ProductionLot lot);
-    IReadOnlyList<Employee> GetWorkedEmployes(IDbConnection connection, ProductionLot lot);
 }
