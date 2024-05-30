@@ -9,7 +9,7 @@
 		<Company>Автоком</Company>
 		<Copyright>Copyright © ООО Автоком (Autokom Company), 2023</Copyright>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<Version>5.0.0.40527</Version>
+		<Version>5.0.0.40530</Version>
 		<SatelliteResourceLanguages>none</SatelliteResourceLanguages>
 		<ApplicationIcon>document-flow.ico</ApplicationIcon>
 		<Title></Title>
