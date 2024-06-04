@@ -356,7 +356,7 @@
         <Setter Property="AllowSorting"
                 Value="True"/>
         <Setter Property="AllowGrouping"
-                Value="{Binding Path=DataContext.AvailableNavigation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
+                Value="{Binding Path=DataContext.AvailableGrouping, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
         <Setter Property="AllowResizingColumns"
                 Value="True"/>
         <Setter Property="AllowTriStateSorting"
@@ -368,7 +368,7 @@
         <Setter Property="NavigationMode"
                 Value="Cell"/>
         <Setter Property="ShowGroupDropArea"
-                Value="{Binding Path=DataContext.AvailableNavigation, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
+                Value="{Binding Path=DataContext.AvailableGrouping, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"/>
         <Setter Property="GridLinesVisibility"
                 Value="Both"/>
         <Setter Property="ColumnSizer"
