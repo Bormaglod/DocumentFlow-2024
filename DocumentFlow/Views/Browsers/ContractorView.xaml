@@ -85,6 +85,7 @@
                 <syncfusion:GridTextColumn MappingName="FullName"
                                            HeaderText="Полное наименование"
                                            Width="400"
+                                           IsHidden="True"
                                            AllowGrouping="False"/>
                 <syncfusion:GridNumericColumn MappingName="Inn"
                                               HeaderText="ИНН"
