@@ -257,6 +257,9 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
             filterSection["State"] = (value?.Id ?? 0).ToString();
         }
 
-        RefreshDataSource();
+        if (IsLoaded)
+        {
+            RefreshDataSource();
+        }
     }
 }

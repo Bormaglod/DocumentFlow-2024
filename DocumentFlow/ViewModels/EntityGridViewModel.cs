@@ -143,6 +143,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     protected IEnumerable<MenuItemModel> Reports => reports;
 
+    protected bool IsLoaded => isLoaded;
+
     #region Commands
 
     #region PopulateListDocuments
