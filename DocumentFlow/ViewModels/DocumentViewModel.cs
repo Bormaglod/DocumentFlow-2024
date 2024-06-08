@@ -102,25 +102,28 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
 
     protected override void LoadFilter(IConfigurationSection section)
     {
-        filterSection = section.GetSection("Filter");
-        if (filterSection.Exists())
+        if (AllowFiltering)
         {
-            DateFrom = filterSection.GetValue<DateTime?>("DateFrom");
-            DateTo = filterSection.GetValue<DateTime?>("DateTo");
+            filterSection = section.GetSection("Filter");
+            if (filterSection.Exists())
+            {
+                DateFrom = filterSection.GetValue<DateTime?>("DateFrom");
+                DateTo = filterSection.GetValue<DateTime?>("DateTo");
 
-            var state = filterSection.GetValue<int>("State");
-            SelectedState = States.FirstOrDefault(x => x.Id == state);
-        }
-        else
-        {
-            DateFrom = DateTime.Now.BeginningOfYear();
-            DateTo = DateTime.Now.EndOfYear();
+                var state = filterSection.GetValue<int>("State");
+                SelectedState = States.FirstOrDefault(x => x.Id == state);
+            }
+            else
+            {
+                DateFrom = DateTime.Now.BeginningOfYear();
+                DateTo = DateTime.Now.EndOfYear();
+            }
         }
     }
 
     protected override object? GetFilter()
     {
-        if (filterSection != null)
+        if (filterSection != null && AllowFiltering)
         {
             var state = filterSection.GetValue<int>("State");
             return new DocumentBrowserSettings
