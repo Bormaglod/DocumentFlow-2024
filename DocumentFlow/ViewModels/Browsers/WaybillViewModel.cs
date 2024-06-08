@@ -13,8 +13,6 @@ using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
-using System.Data;
-
 namespace DocumentFlow.ViewModels.Browsers;
 
 public class WaybillViewModel<T> : DocumentViewModel<T>
