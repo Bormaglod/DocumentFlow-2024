@@ -10,8 +10,7 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public abstract class CompanyRepository<T> : DirectoryRepository<T>, ICompanyRepository<T>
+public abstract class CompanyRepository<T>(IDatabase database) : DirectoryRepository<T>(database), ICompanyRepository<T>
     where T : Company
 {
-    public CompanyRepository(IDatabase database) : base(database) { }
 }

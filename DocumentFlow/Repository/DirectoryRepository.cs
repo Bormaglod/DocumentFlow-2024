@@ -18,11 +18,9 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public abstract class DirectoryRepository<T> : ReadOnlyRepository<T>, IDirectoryRepository<T>
+public abstract class DirectoryRepository<T>(IDatabase database) : ReadOnlyRepository<T>(database), IDirectoryRepository<T>
     where T : Directory
 {
-    public DirectoryRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<T> GetSlim(DocumentInfo owner)
     {
         using var conn = GetConnection();

@@ -10,8 +10,7 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class DocumentRepository<T> : ReadOnlyRepository<T>, IDocumentRepository<T>
+public class DocumentRepository<T>(IDatabase database) : ReadOnlyRepository<T>(database), IDocumentRepository<T>
     where T : BaseDocument
 {
-    public DocumentRepository(IDatabase database) : base(database) { }
 }

@@ -5,22 +5,23 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Common.Data;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
-using DocumentFlow.Data.Models;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
-using DocumentFlow.Common.Enums;
+
 using SqlKata.Execution;
 
 using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class ContractRepository : DirectoryRepository<Contract>, IContractRepository, ITransientLifetime
+public class ContractRepository(IDatabase database) : 
+    DirectoryRepository<Contract>(database), 
+    IContractRepository, 
+    ITransientLifetime
 {
-    public ContractRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<ContractApplication> GetCurrentAnnexes(Contract contract, DateTime? actualDate = null)
     {
         using var conn = GetConnection();

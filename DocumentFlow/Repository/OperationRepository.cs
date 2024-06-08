@@ -17,10 +17,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class OperationRepository : DirectoryRepository<Operation>, IOperationRepository, ITransientLifetime
+public class OperationRepository(IDatabase database) : 
+    DirectoryRepository<Operation>(database), 
+    IOperationRepository, 
+    ITransientLifetime
 {
-    public OperationRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<Operation> GetOperations()
     {
         using var conn = GetConnection();

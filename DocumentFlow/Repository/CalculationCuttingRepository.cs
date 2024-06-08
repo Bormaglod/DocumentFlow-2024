@@ -10,7 +10,9 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class CalculationCuttingRepository : CalculationItemRepository<CalculationCutting>, ICalculationCuttingRepository, ITransientLifetime
+public class CalculationCuttingRepository(IDatabase database) : 
+    CalculationItemRepository<CalculationCutting>(database), 
+    ICalculationCuttingRepository, 
+    ITransientLifetime
 {
-    public CalculationCuttingRepository(IDatabase database) : base(database) { }
 }

@@ -13,10 +13,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class OperationsPerformedRepository : DocumentRepository<OperationsPerformed>, IOperationsPerformedRepository, ITransientLifetime 
+public class OperationsPerformedRepository(IDatabase database) : 
+    DocumentRepository<OperationsPerformed>(database), 
+    IOperationsPerformedRepository, 
+    ITransientLifetime 
 {
-    public OperationsPerformedRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<OperationsPerformed> GetOperations(ProductionLot lot)
     {
         using var conn = GetConnection();

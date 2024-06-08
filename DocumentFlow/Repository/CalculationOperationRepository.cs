@@ -16,10 +16,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class CalculationOperationRepository : CalculationItemRepository<CalculationOperation>, ICalculationOperationRepository, ITransientLifetime
+public class CalculationOperationRepository(IDatabase database) : 
+    CalculationItemRepository<CalculationOperation>(database), 
+    ICalculationOperationRepository, 
+    ITransientLifetime
 {
-    public CalculationOperationRepository(IDatabase database) : base(database) { }
-
     public IList<CalculationOperationProperty> GetProperties(CalculationOperation operation)
     {
         using var conn = GetConnection();

@@ -10,7 +10,9 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class MeasurementRepository : DirectoryRepository<Measurement>, IMeasurementRepository, ITransientLifetime
+public class MeasurementRepository(IDatabase database) : 
+    DirectoryRepository<Measurement>(database), 
+    IMeasurementRepository, 
+    ITransientLifetime
 {
-    public MeasurementRepository(IDatabase database) : base(database) { }
 }

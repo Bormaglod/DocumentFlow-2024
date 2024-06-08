@@ -14,10 +14,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class ProductionLotRepository : DocumentRepository<ProductionLot>, IProductionLotRepository, ITransientLifetime
+public class ProductionLotRepository(IDatabase database) : 
+    DocumentRepository<ProductionLot>(database), 
+    IProductionLotRepository, 
+    ITransientLifetime
 {
-    public ProductionLotRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<ProductionLot> GetActive(ProductionLot? lot)
     {
         using var conn = GetConnection();

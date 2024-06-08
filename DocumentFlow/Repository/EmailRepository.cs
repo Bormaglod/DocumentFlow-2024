@@ -15,13 +15,9 @@ using SqlKata.Execution;
 
 namespace DocumentFlow.Repository;
 
-public class EmailRepository : IEmailRepository, ITransientLifetime
+public class EmailRepository(IDatabase database) : IEmailRepository, ITransientLifetime
 {
-    private readonly IDatabase database;
-    public EmailRepository(IDatabase database)
-    {
-        this.database = database;
-    }
+    private readonly IDatabase database = database;
 
     public Email? Get(string email)
     {

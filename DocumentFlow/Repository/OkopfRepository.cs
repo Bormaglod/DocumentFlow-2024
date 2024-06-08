@@ -10,7 +10,9 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class OkopfRepository : DirectoryRepository<Okopf>, IOkopfRepository, ITransientLifetime
+public class OkopfRepository(IDatabase database) : 
+    DirectoryRepository<Okopf>(database), 
+    IOkopfRepository, 
+    ITransientLifetime
 {
-    public OkopfRepository(IDatabase database) : base(database) { }
 }

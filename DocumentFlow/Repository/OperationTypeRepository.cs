@@ -10,7 +10,9 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class OperationTypeRepository : DirectoryRepository<OperationType>, IOperationTypeRepository, ITransientLifetime
+public class OperationTypeRepository(IDatabase database) : 
+    DirectoryRepository<OperationType>(database), 
+    IOperationTypeRepository, 
+    ITransientLifetime
 {
-    public OperationTypeRepository(IDatabase database) : base(database) { }
 }

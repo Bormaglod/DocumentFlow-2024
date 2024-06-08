@@ -28,16 +28,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace DocumentFlow.Repository;
 
-public class StatesRepository : IStatesRepository, ITransientLifetime
+public class StatesRepository(IDatabase database) : IStatesRepository, ITransientLifetime
 {
     private static readonly ConcurrentDictionary<RuntimeTypeHandle, IDictionary<short, IEnumerable<State>>> documentStates = new();
 
-    private readonly IDatabase database;
-
-    public StatesRepository(IDatabase database)
-    {
-        this.database = database;
-    }
+    private readonly IDatabase database = database;
 
     public State Get(short id)
     {
@@ -68,7 +63,7 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
             return GetStateTargets(document.GetType(), document.State);
         }
 
-        return Array.Empty<State>();
+        return [];
     }
 
     public IReadOnlyList<State> GetStateTargets(IDbConnection connection, BaseDocument document)
@@ -78,7 +73,7 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
             return GetStateTargets(connection, document.GetType(), document.State);
         }
 
-        return Array.Empty<State>();
+        return [];
     }
 
     public IReadOnlyList<State> GetStateTargets(Type documentType, State fromState)
@@ -109,7 +104,7 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
             return await GetStateTargetsAsync(document.GetType(), document.State);
         }
 
-        return Array.Empty<State>();
+        return [];
     }
 
     public async Task<IReadOnlyList<State>> GetStateTargetsAsync(IDbConnection connection, BaseDocument document)
@@ -119,7 +114,7 @@ public class StatesRepository : IStatesRepository, ITransientLifetime
             return await GetStateTargetsAsync(connection, document.GetType(), document.State);
         }
 
-        return Array.Empty<State>();
+        return [];
     }
 
     public async Task<IReadOnlyList<State>> GetStateTargetsAsync(Type documentType, State fromState)

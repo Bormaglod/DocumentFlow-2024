@@ -18,11 +18,9 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public abstract class CalculationItemRepository<T> : DirectoryRepository<T>, ICalculationItemRepository<T>
+public abstract class CalculationItemRepository<T>(IDatabase database) : DirectoryRepository<T>(database), ICalculationItemRepository<T>
     where T : CalculationItem
 {
-    public CalculationItemRepository(IDatabase database) : base(database) { }
-
     public decimal GetSumItemCost(Calculation calculation)
     {
         using var conn = GetConnection();

@@ -23,10 +23,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class ProductionOrderRepository : DocumentRepository<ProductionOrder>, IProductionOrderRepository, ITransientLifetime
+public class ProductionOrderRepository(IDatabase database) : 
+    DocumentRepository<ProductionOrder>(database), 
+    IProductionOrderRepository, 
+    ITransientLifetime
 {
-    public ProductionOrderRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<ProductionOrder> GetActive(ProductionOrder? includingOrder)
     {
         using var conn = GetConnection();

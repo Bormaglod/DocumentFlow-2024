@@ -9,16 +9,15 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
-using SqlKata.Execution;
-
 using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class EmployeeRepository : DirectoryRepository<Employee>, IEmployeeRepository, ITransientLifetime
+public class EmployeeRepository(IDatabase database) : 
+    DirectoryRepository<Employee>(database), 
+    IEmployeeRepository, 
+    ITransientLifetime
 {
-    public EmployeeRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<EmailAddress> GetEmails()
     {
         using var conn = GetConnection();

@@ -17,10 +17,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class WaybillReceiptRepository : DocumentRepository<WaybillReceipt>, IWaybillReceiptRepository, ITransientLifetime
+public class WaybillReceiptRepository(IDatabase database) : 
+    DocumentRepository<WaybillReceipt>(database), 
+    IWaybillReceiptRepository, 
+    ITransientLifetime
 {
-    public WaybillReceiptRepository(IDatabase database) : base(database) { }
-
     public void CopyContent(WaybillReceipt waybillFrom, WaybillReceipt waybillTo)
     {
         using var conn = GetConnection();

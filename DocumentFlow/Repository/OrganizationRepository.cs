@@ -15,10 +15,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class OrganizationRepository : CompanyRepository<Organization>, IOrganizationRepository, ITransientLifetime
+public class OrganizationRepository(IDatabase database) : 
+    CompanyRepository<Organization>(database), 
+    IOrganizationRepository, 
+    ITransientLifetime
 {
-    public OrganizationRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<Organization> GetOrganizations()
     {
         using var conn = GetConnection();

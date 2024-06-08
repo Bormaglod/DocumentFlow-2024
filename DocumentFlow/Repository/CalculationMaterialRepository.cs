@@ -14,10 +14,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class CalculationMaterialRepository : CalculationItemRepository<CalculationMaterial>, ICalculationMaterialRepository, ITransientLifetime
+public class CalculationMaterialRepository(IDatabase database) : 
+    CalculationItemRepository<CalculationMaterial>(database), 
+    ICalculationMaterialRepository, 
+    ITransientLifetime
 {
-    public CalculationMaterialRepository(IDatabase database) : base(database) { }
-
     public void RecalculateCount(Calculation calculation)
     {
         using var conn = GetConnection();

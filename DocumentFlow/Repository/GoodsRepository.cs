@@ -19,10 +19,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class GoodsRepository : ProductRepository<Goods>, IGoodsRepository, ITransientLifetime
+public class GoodsRepository(IDatabase database) : 
+    ProductRepository<Goods>(database), 
+    IGoodsRepository, 
+    ITransientLifetime
 {
-    public GoodsRepository(IDatabase database) : base(database) { }
-
     public void CopyCalculation(Goods fromProduct, Goods toProduct)
     {
         using var conn = GetConnection();

@@ -10,7 +10,9 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class BankRepository : DirectoryRepository<Bank>, IBankRepository, ITransientLifetime
+public class BankRepository(IDatabase database) : 
+    DirectoryRepository<Bank>(database), 
+    IBankRepository, 
+    ITransientLifetime
 {
-    public BankRepository(IDatabase database) : base(database) { }
 }

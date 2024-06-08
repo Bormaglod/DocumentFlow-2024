@@ -14,10 +14,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class EquipmentRepository : DirectoryRepository<Equipment>, IEquipmentRepository, ITransientLifetime
+public class EquipmentRepository(IDatabase database) : 
+    DirectoryRepository<Equipment>(database), 
+    IEquipmentRepository, 
+    ITransientLifetime
 {
-    public EquipmentRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<Equipment> GetEquipments()
     {
         using var conn = GetConnection();

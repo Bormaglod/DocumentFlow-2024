@@ -19,10 +19,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class CuttingRepository : DirectoryRepository<Cutting>, ICuttingRepository, ITransientLifetime
+public class CuttingRepository(IDatabase database) : 
+    DirectoryRepository<Cutting>(database), 
+    ICuttingRepository, 
+    ITransientLifetime
 {
-    public CuttingRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<Cutting> GetOperations()
     {
         using var conn = GetConnection();

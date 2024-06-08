@@ -16,10 +16,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class OurEmployeeRepository : DirectoryRepository<OurEmployee>, IOurEmployeeRepository, ITransientLifetime
+public class OurEmployeeRepository(IDatabase database) : 
+    DirectoryRepository<OurEmployee>(database), 
+    IOurEmployeeRepository, 
+    ITransientLifetime
 {
-    public OurEmployeeRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<EmailAddress> GetEmails()
     {
         using var conn = GetConnection();

@@ -17,15 +17,10 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public abstract class ReadOnlyRepository<T> : IReadOnlyRepository<T>
+public abstract class ReadOnlyRepository<T>(IDatabase database) : IReadOnlyRepository<T>
     where T : Identifier
 {
-    public ReadOnlyRepository(IDatabase database)
-    {
-        CurrentDatabase = database;
-    }
-
-    protected IDatabase CurrentDatabase { get; private set; }
+    protected IDatabase CurrentDatabase { get; private set; } = database;
 
     public IReadOnlyList<T> GetSlim()
     {

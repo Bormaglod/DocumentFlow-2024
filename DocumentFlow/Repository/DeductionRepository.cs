@@ -12,10 +12,11 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class DeductionRepository : DirectoryRepository<Deduction>, IDeductionRepository, ITransientLifetime
+public class DeductionRepository(IDatabase database) : 
+    DirectoryRepository<Deduction>(database), 
+    IDeductionRepository, 
+    ITransientLifetime
 {
-    public DeductionRepository(IDatabase database) : base(database) { }
-
     protected override QueryParameters GetDefaultSlimQueryParameters()
     {
         return new QueryParameters()

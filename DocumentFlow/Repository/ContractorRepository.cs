@@ -18,10 +18,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class ContractorRepository : CompanyRepository<Contractor>, IContractorRepository, ITransientLifetime
+public class ContractorRepository(IDatabase database) : 
+    CompanyRepository<Contractor>(database), 
+    IContractorRepository, 
+    ITransientLifetime
 {
-    public ContractorRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<Account> GetAccounts(Contractor contractor)
     {
         using var conn = GetConnection();
@@ -70,7 +71,7 @@ public class ContractorRepository : CompanyRepository<Contractor>, IContractorRe
 
     public IReadOnlyList<Contractor> GetCustomers(IDbConnection connection) => GetContractorByType(connection, ContractorType.Buyer);
 
-    private static IReadOnlyList<Contractor> GetContractorByType(IDbConnection connection, ContractorType type)
+    private static List<Contractor> GetContractorByType(IDbConnection connection, ContractorType type)
     {
         return connection.GetQuery<Contractor>()
             .Distinct()

@@ -18,10 +18,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class PurchaseRequestRepository : DocumentRepository<PurchaseRequest>, IPurchaseRequestRepository, ITransientLifetime
+public class PurchaseRequestRepository(IDatabase database) : 
+    DocumentRepository<PurchaseRequest>(database), 
+    IPurchaseRequestRepository, 
+    ITransientLifetime
 {
-    public PurchaseRequestRepository(IDatabase database) : base(database) { }
-
     public void CopyContent(PurchaseRequest requestFrom, PurchaseRequest requestTo)
     {
         using var conn = GetConnection();

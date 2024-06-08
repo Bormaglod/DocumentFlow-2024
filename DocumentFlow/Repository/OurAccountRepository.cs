@@ -14,10 +14,10 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class OurAccountRepository : DirectoryRepository<OurAccount>, IOurAccountRepository, ITransientLifetime
+public class OurAccountRepository(IDatabase database) : 
+    DirectoryRepository<OurAccount>(database), 
+    IOurAccountRepository, ITransientLifetime
 {
-    public OurAccountRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<OurAccount> GetAccounts()
     {
         using var conn = GetConnection();

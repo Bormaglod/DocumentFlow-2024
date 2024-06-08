@@ -10,7 +10,9 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Repository;
 
-public class PropertyRepository : ReadOnlyRepository<Property>, IPropertyRepository, ITransientLifetime
+public class PropertyRepository(IDatabase database) : 
+    ReadOnlyRepository<Property>(database), 
+    IPropertyRepository, 
+    ITransientLifetime
 {
-    public PropertyRepository(IDatabase database) : base(database) { }
 }

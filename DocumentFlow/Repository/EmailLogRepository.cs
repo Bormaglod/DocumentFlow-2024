@@ -14,14 +14,9 @@ using DocumentFlow.Models.Entities;
 
 namespace DocumentFlow.Data.Repository;
 
-public class EmailLogRepository : IEmailLogRepository, ITransientLifetime
+public class EmailLogRepository(IDatabase database) : IEmailLogRepository, ITransientLifetime
 {
-    private readonly IDatabase database;
-
-    public EmailLogRepository(IDatabase database)
-    { 
-        this.database = database;
-    }
+    private readonly IDatabase database = database;
 
     /*public IReadOnlyList<EmailLog> GetEmails(Guid? group_id, Guid? contractorId)
     {

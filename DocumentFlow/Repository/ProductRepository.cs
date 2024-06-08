@@ -20,11 +20,9 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public abstract class ProductRepository<T> : DirectoryRepository<T>, IProductRepository<T>
+public abstract class ProductRepository<T>(IDatabase database) : DirectoryRepository<T>(database), IProductRepository<T>
     where T : Product
 {
-    public ProductRepository(IDatabase database) : base(database) { }
-
     public decimal GetAveragePrice(T product, DateTime? relevanceDate = null)
     {
         using var conn = GetConnection();

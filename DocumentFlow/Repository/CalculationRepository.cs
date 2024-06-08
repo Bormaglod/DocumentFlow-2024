@@ -19,10 +19,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class CalculationRepository : DirectoryRepository<Calculation>, ICalculationRepository, ITransientLifetime
+public class CalculationRepository(IDatabase database) : 
+    DirectoryRepository<Calculation>(database), 
+    ICalculationRepository, 
+    ITransientLifetime
 {
-    public CalculationRepository(IDatabase database) : base(database) { }
-
     public void CopyItems(Calculation fromCalculation, Calculation toCalculation)
     {
         using var conn = GetConnection();

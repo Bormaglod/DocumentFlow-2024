@@ -16,10 +16,11 @@ using System.Data;
 
 namespace DocumentFlow.Repository;
 
-public class MaterialRepository : ProductRepository<Material>, IMaterialRepository, ITransientLifetime
+public class MaterialRepository(IDatabase database) : 
+    ProductRepository<Material>(database), 
+    IMaterialRepository, 
+    ITransientLifetime
 {
-    public MaterialRepository(IDatabase database) : base(database) { }
-
     public IReadOnlyList<Material> GetMaterials()
     {
         using var conn = GetConnection();
