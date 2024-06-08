@@ -112,7 +112,7 @@
                                     Style="{StaticResource SelectBoxStyle}"
                                     EditorType="{x:Type editors:PurchaseRequestView}"
                                     TypeContent="Document"
-                                    ItemSelected="{Binding PurchaseRequestSelected}"
+                                    ItemSelected="{Binding PurchaseRequest}"
                                     Width="600">
                     <controls:SelectBox.Columns>
                         <common:DateTimeGridComboColumn MappingName="DocumentDate"
