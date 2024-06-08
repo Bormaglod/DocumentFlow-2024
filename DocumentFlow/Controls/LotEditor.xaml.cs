@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+﻿ //-----------------------------------------------------------------------
 // Copyright © 2010-2024 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
@@ -94,10 +94,15 @@ public partial class LotEditor : UserControl
         ArgumentNullException.ThrowIfNull(operation.Operation);
         ArgumentNullException.ThrowIfNull(operation.Employee);
 
-        if (WorkedEmployees.FirstOrDefault(x => x.Id == operation.Employee.Id) == null) 
+        if (WorkedEmployees.FirstOrDefault(x => x.Id == operation.Employee.Id) == null)
         { 
             WorkedEmployees.Add(operation.Employee);
             AddColumnEmployee(WorkedEmployees.Count - 1);
+
+            foreach (var op in OperationInfos)
+            {
+                op.Employees.Add(new EmpInfo(operation.Employee));
+            }
         }
 
         var info = OperationInfos.FirstOrDefault(x => x.Operation.Id == operation.Operation.Id);
@@ -116,6 +121,38 @@ public partial class LotEditor : UserControl
         info.Source.Add(operation);
 
         gridContent.View.Refresh();
+    }
+
+    private void RemoveOperationsPerformed(OperationsPerformed operation)
+    {
+        ArgumentNullException.ThrowIfNull(operation.Operation);
+
+        var info = OperationInfos.FirstOrDefault(x => x.Operation.Id == operation.Operation.Id);
+        if (info != null)
+        {
+            info.Source.Remove(operation);
+
+            gridContent.View.Refresh();
+        }
+    }
+
+    private void ReplaceOperationsPerformed(OperationsPerformed operation)
+    {
+        ArgumentNullException.ThrowIfNull(operation.Operation);
+
+        var info = OperationInfos.FirstOrDefault(x => x.Operation.Id == operation.Operation.Id);
+        if (info != null)
+        {
+            var op = info.Source.FirstOrDefault(x => x.Id == operation.Id);
+            if (op != null)
+            {
+                info.Source.Remove(op);
+            }
+            
+            info.Source.Add(operation);
+
+            gridContent.View.Refresh();
+        }
     }
 
     private Style CreateStyle(string column)
@@ -226,6 +263,8 @@ public partial class LotEditor : UserControl
         }
 
         UpdateOperationsPerformed();
+
+        gridContent.View?.Refresh();
     }
 
     private void UpdateOperationsPerformed()
@@ -287,19 +326,31 @@ public partial class LotEditor : UserControl
 
         var action = new NotifyCollectionChangedEventHandler((o, args) =>
         {
-            if (args.NewItems == null || args.NewItems.Count == 0 || args.NewItems[0] is not OperationsPerformed operation)
-            {
-                return;
-            }
-
             switch (args.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    editor.AddOperationsPerformed(operation);
+                    if (args.NewItems == null || args.NewItems.Count == 0 || args.NewItems[0] is not OperationsPerformed addOperation)
+                    {
+                        return;
+                    }
+
+                    editor.AddOperationsPerformed(addOperation);
                     break;
                 case NotifyCollectionChangedAction.Remove:
+                    if (args.OldItems == null || args.OldItems.Count == 0 || args.OldItems[0] is not OperationsPerformed removeOperation)
+                    {
+                        return;
+                    }
+
+                    editor.RemoveOperationsPerformed(removeOperation);
                     break;
                 case NotifyCollectionChangedAction.Replace:
+                    if (args.NewItems == null || args.NewItems.Count == 0 || args.NewItems[0] is not OperationsPerformed replaceOperation)
+                    {
+                        return;
+                    }
+
+                    editor.ReplaceOperationsPerformed(replaceOperation);
                     break;
                 case NotifyCollectionChangedAction.Move:
                     break;

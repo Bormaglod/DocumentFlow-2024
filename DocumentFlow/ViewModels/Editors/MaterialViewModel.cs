@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
@@ -17,11 +18,8 @@ using DocumentFlow.Models.Entities;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -65,20 +63,8 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
 
     #region Commands
 
-    #region AddCompatiblePart
-
-    private ICommand? addCompatiblePart;
-
-    public ICommand AddCompatiblePart
-    {
-        get
-        {
-            addCompatiblePart ??= new DelegateCommand(OnAddCompatiblePart);
-            return addCompatiblePart;
-        }
-    }
-
-    private void OnAddCompatiblePart(object parameter)
+    [RelayCommand]
+    private void AddCompatiblePart()
     {
         if (CompatibleParts == null)
         {
@@ -94,22 +80,8 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         }
     }
 
-    #endregion
-
-    #region EditCompatiblePart
-
-    private ICommand? editCompatiblePart;
-
-    public ICommand EditCompatiblePart
-    {
-        get
-        {
-            editCompatiblePart ??= new DelegateCommand(OnEditCompatiblePart);
-            return editCompatiblePart;
-        }
-    }
-
-    private void OnEditCompatiblePart(object parameter)
+    [RelayCommand]
+    private void EditCompatiblePart()
     {
         if (CompatibleParts == null || CompatibleSelected == null || CompatibleSelected.Compatible == null)
         {
@@ -125,22 +97,8 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         }
     }
 
-    #endregion
-
-    #region DeleteCompatiblePart
-
-    private ICommand? deleteCompatiblePart;
-
-    public ICommand DeleteCompatiblePart
-    {
-        get
-        {
-            deleteCompatiblePart ??= new DelegateCommand(OnDeleteCompatiblePart);
-            return deleteCompatiblePart;
-        }
-    }
-
-    private void OnDeleteCompatiblePart(object parameter)
+    [RelayCommand]
+    private void DeleteCompatiblePart()
     {
         if (CompatibleParts != null && CompatibleSelected != null)
         {
@@ -153,22 +111,8 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         }
     }
 
-    #endregion
-
-    #region CopyCompatiblePart
-
-    private ICommand? copyCompatiblePart;
-
-    public ICommand CopyCompatiblePart
-    {
-        get
-        {
-            copyCompatiblePart ??= new DelegateCommand(OnCopyCompatiblePart);
-            return copyCompatiblePart;
-        }
-    }
-
-    private void OnCopyCompatiblePart(object parameter)
+    [RelayCommand]
+    private void CopyCompatiblePart()
     {
         if (CompatibleParts == null || CompatibleSelected == null || CompatibleSelected.Compatible == null)
         {
@@ -183,8 +127,6 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
             CompatibleParts.Add(new CompatiblePart() { Compatible = material });
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -241,7 +183,7 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
         }
         else
         {
-            CompatibleParts ??= new DependentCollection<CompatiblePart>();
+            CompatibleParts ??= [];
         }
     }
 

@@ -40,7 +40,7 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <triggers:EventCommandAction Command="{Binding WindowClosing}"/>
+            <triggers:EventCommandAction Command="{Binding WindowClosingCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>

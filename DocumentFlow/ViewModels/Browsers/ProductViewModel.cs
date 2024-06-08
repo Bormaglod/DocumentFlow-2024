@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
+
 using Dapper;
 
 using DocumentFlow.Common;
@@ -11,37 +13,23 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using Syncfusion.UI.Xaml.Grid;
-using Syncfusion.Windows.Shared;
-
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public class ProductViewModel<T> : DirectoryViewModel<T>
+public partial class ProductViewModel<T> : DirectoryViewModel<T>
     where T: Product
 {
     public ProductViewModel() { }
 
-    public ProductViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public ProductViewModel(IDatabase database, IConfiguration configuration, ILogger<ProductViewModel<T>> logger) : base(database, configuration, logger) { }
 
     #region Commands
 
-    #region PopulateThumbnails
-
-    private ICommand? populateThumbnails;
-
-    public ICommand PopulateThumbnails
-    {
-        get
-        {
-            populateThumbnails ??= new DelegateCommand<GridDetailsViewExpandingEventArgs>(OnPopulateThumbnailsGroup);
-            return populateThumbnails;
-        }
-    }
-
-    private void OnPopulateThumbnailsGroup(GridDetailsViewExpandingEventArgs e)
+    [RelayCommand]
+    private void PopulateThumbnailsGroup(GridDetailsViewExpandingEventArgs e)
     {
         if (e.Record is Product product && product.HasThumbnails)
         {
@@ -54,8 +42,6 @@ public class ProductViewModel<T> : DirectoryViewModel<T>
             e.Cancel = true;
         }
     }
-
-    #endregion
 
     #endregion
 

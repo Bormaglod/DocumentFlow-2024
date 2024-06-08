@@ -11,6 +11,7 @@ using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -24,8 +25,8 @@ public sealed class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLife
 
     public GoodsViewModel() { }
 
-    public GoodsViewModel(IDatabase database, IGoodsRepository goodsRepository, IConfiguration configuration) 
-        : base(database, configuration) 
+    public GoodsViewModel(IDatabase database, IGoodsRepository goodsRepository, IConfiguration configuration, ILogger<GoodsViewModel> logger) 
+        : base(database, configuration, logger) 
     { 
         this.goodsRepository = goodsRepository;
     }

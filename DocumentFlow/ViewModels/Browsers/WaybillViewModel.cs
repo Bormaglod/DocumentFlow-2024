@@ -9,6 +9,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -21,7 +22,7 @@ public class WaybillViewModel<T> : DocumentViewModel<T>
 {
     public WaybillViewModel() { }
 
-    public WaybillViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public WaybillViewModel(IDatabase database, IConfiguration configuration, ILogger<WaybillViewModel<T>> logger) : base(database, configuration, logger) { }
 
     protected override Query MappingsQuery(Query query)
     {

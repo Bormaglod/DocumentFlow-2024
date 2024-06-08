@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Dialogs;
@@ -14,10 +15,7 @@ using DocumentFlow.Models.Entities;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -55,20 +53,8 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
 
     #region Commands
 
-    #region CreateGroup
-
-    private ICommand? changeGoodsCode;
-
-    public ICommand ChangeGoodsCode
-    {
-        get
-        {
-            changeGoodsCode ??= new DelegateCommand(OnСhangeGoodsCode);
-            return changeGoodsCode;
-        }
-    }
-
-    private void OnСhangeGoodsCode(object parameter)
+    [RelayCommand]
+    private void ChangeGoodsCode()
     {
         var dialog = new CodeGeneratorWindow();
         if (dialog.Get(Code, out var code)) 
@@ -78,9 +64,6 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
     }
 
     #endregion
-
-    #endregion
-
 
     public override DocumentInfo? GetReportingDocument(Report report) => Entity?.Calculation;
 

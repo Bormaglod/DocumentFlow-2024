@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common;
@@ -15,18 +16,17 @@ using DocumentFlow.Messages;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Models.Settings;
+
 using MailKit.Net.Smtp;
 using MailKit.Security;
 
-using MimeKit;
 using Microsoft.Extensions.Options;
 
-using Syncfusion.Windows.Shared;
+using MimeKit;
 
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
-using System.Windows.Input;
 
 using Pdf = Syncfusion.Windows.PdfViewer;
 
@@ -55,20 +55,8 @@ public partial class PreviewReportViewModel : WindowViewModel, IRecipient<OpenPd
 
     #region Commands
 
-    #region FitPageCommand
-
-    private ICommand? fitPageCommand;
-
-    public ICommand FitPageCommand
-    {
-        get
-        {
-            fitPageCommand ??= new DelegateCommand(OnFitPageCommand);
-            return fitPageCommand;
-        }
-    }
-
-    private void OnFitPageCommand(object parameter)
+    [RelayCommand]
+    private void FitPage()
     {
         if (pdfViewer != null)
         {
@@ -76,22 +64,8 @@ public partial class PreviewReportViewModel : WindowViewModel, IRecipient<OpenPd
         }
     }
 
-    #endregion
-
-    #region FitWidthCommand
-
-    private ICommand? fitWidthCommand;
-
-    public ICommand FitWidthCommand
-    {
-        get
-        {
-            fitWidthCommand ??= new DelegateCommand(OnFitWidthCommand);
-            return fitWidthCommand;
-        }
-    }
-
-    private void OnFitWidthCommand(object parameter)
+    [RelayCommand]
+    private void FitWidth()
     {
         if (pdfViewer != null)
         {
@@ -99,42 +73,11 @@ public partial class PreviewReportViewModel : WindowViewModel, IRecipient<OpenPd
         }
     }
 
-    #endregion
+    [RelayCommand]
+    private void Print() => pdfViewer?.Print(true);
 
-    #region PrintCommand
-
-    private ICommand? printCommand;
-
-    public ICommand PrintCommand
-    {
-        get
-        {
-            printCommand ??= new DelegateCommand(OnPrintCommand);
-            return printCommand;
-        }
-    }
-
-    private void OnPrintCommand(object parameter)
-    {
-        pdfViewer?.Print(true);
-    }
-
-    #endregion
-
-    #region SaveCommand
-
-    private ICommand? saveCommand;
-
-    public ICommand SaveCommand
-    {
-        get
-        {
-            saveCommand ??= new DelegateCommand(OnSaveCommand);
-            return saveCommand;
-        }
-    }
-
-    private void OnSaveCommand(object parameter)
+    [RelayCommand]
+    private void Save()
     {
         if (pdfViewer == null)
         {
@@ -152,22 +95,8 @@ public partial class PreviewReportViewModel : WindowViewModel, IRecipient<OpenPd
         }
     }
 
-    #endregion
-
-    #region SendCommand
-
-    private ICommand? sendCommand;
-
-    public ICommand SendCommand
-    {
-        get
-        {
-            sendCommand ??= new DelegateCommand(OnSendCommand);
-            return sendCommand;
-        }
-    }
-
-    private void OnSendCommand(object parameter)
+    [RelayCommand]
+    private void Send()
     {
         if (File.Exists(pdfFile) && document != null)
         {
@@ -187,22 +116,8 @@ public partial class PreviewReportViewModel : WindowViewModel, IRecipient<OpenPd
         }
     }
 
-    #endregion
-
-    #region WindowClosing
-
-    private ICommand? windowClosing;
-
-    public ICommand WindowClosing
-    {
-        get
-        {
-            windowClosing ??= new DelegateCommand<CancelEventArgs>(OnWindowClosing);
-            return windowClosing;
-        }
-    }
-
-    public void OnWindowClosing(CancelEventArgs e)
+    [RelayCommand]
+    public void WindowClosing(CancelEventArgs e)
     {
         if (settings != null)
         {
@@ -211,8 +126,6 @@ public partial class PreviewReportViewModel : WindowViewModel, IRecipient<OpenPd
             settings.Save();
         }
     }
-
-    #endregion
 
     #endregion
 

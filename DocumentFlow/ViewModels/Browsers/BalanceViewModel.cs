@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Interfaces;
@@ -14,37 +15,21 @@ using DocumentFlow.Models.Entities;
 using Humanizer;
 
 using Microsoft.Extensions.Configuration;
-
-using Syncfusion.Windows.Shared;
+using Microsoft.Extensions.Logging;
 
 using System.Reflection;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public abstract class BalanceViewModel<T> : DocumentViewModel<T>
+public abstract partial class BalanceViewModel<T> : DocumentViewModel<T>
     where T : Balance
 {
     public BalanceViewModel() { }
 
-    public BalanceViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public BalanceViewModel(IDatabase database, IConfiguration configuration, ILogger<BalanceViewModel<T>> logger) : base(database, configuration, logger) { }
 
-    #region Commands
-
-    #region OpenDocument
-
-    private ICommand? openDocument;
-
-    public ICommand OpenDocument
-    {
-        get
-        {
-            openDocument ??= new DelegateCommand(OnOpenDocument);
-            return openDocument;
-        }
-    }
-
-    private void OnOpenDocument(object parameter)
+    [RelayCommand]
+    private void OpenDocument(object parameter)
     {
         if (parameter is T balance && balance.DocumentCode != null)
         {
@@ -61,14 +46,10 @@ public abstract class BalanceViewModel<T> : DocumentViewModel<T>
         }
     }
 
-    #endregion
-
-    #endregion
-
     protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
-            new ToolBarButtonModel("Открыть документ", "open-document") { Command = OpenDocument },
+            new ToolBarButtonModel("Открыть документ", "open-document") { Command = OpenDocumentCommand },
             new ToolBarSeparatorModel(),
             new ToolBarButtonComboModel("Печать", "print"),
             new ToolBarButtonModel("Настройки", "settings"));

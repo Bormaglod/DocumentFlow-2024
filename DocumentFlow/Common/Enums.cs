@@ -94,6 +94,12 @@ public enum SQLCommand
     Wipe
 }
 
+public enum MessageActionSource
+{
+    Inner,
+    Outer
+}
+
 public enum MessageDestination
 {
     Object,

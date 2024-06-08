@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using Dapper;
@@ -28,45 +29,39 @@ using DocumentFlow.Settings;
 using Humanizer;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 using SqlKata.Execution;
 
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
-using Syncfusion.UI.Xaml.Utility;
-using Syncfusion.Windows.Shared;
 using Syncfusion.Windows.Tools.Controls;
 
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
-public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IRecipient<PageClosedMessage>, IEntityGridViewModel, IReport
-    where T : DocumentInfo
+public abstract partial class EntityGridViewModel<T> : 
+    ObservableObject, 
+    IRecipient<EntityActionMessage>, 
+    IRecipient<PageClosedMessage>, 
+    IEntityGridViewModel, 
+    IReport where T : DocumentInfo
 {
-    private class ColumnInfo : IColumnInfo
+    private class ColumnInfo(GridColumn gridColumn) : IColumnInfo
     {
-        public ColumnInfo(GridColumn gridColumn)
-        {
-            Width = gridColumn.Width;
-            IsHidden = gridColumn.IsHidden;
-            ColumnSizer = gridColumn.ColumnSizer;
-            State = ColumnVisibleState.Default;
-            MappingName = gridColumn.MappingName;
-        }
-
-        public string MappingName { get; }
-        public GridLengthUnitType ColumnSizer { get; set; }
-        public double Width { get; set; }
-        public bool IsHidden { get; set; }
-        public ColumnVisibleState State { get; set; }
+        public string MappingName { get; } = gridColumn.MappingName;
+        public GridLengthUnitType ColumnSizer { get; set; } = gridColumn.ColumnSizer;
+        public double Width { get; set; } = gridColumn.Width;
+        public bool IsHidden { get; set; } = gridColumn.IsHidden;
+        public ColumnVisibleState State { get; set; } = ColumnVisibleState.Default;
     }
 
     private readonly IConfiguration configuration;
+    private readonly ILogger<EntityGridViewModel<T>> logger;
     private SfDataGrid? grid;
     private readonly List<GridColumn> alwaysVisibleColumns = [];
     private readonly BrowserSettings settings = new();
@@ -110,7 +105,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
     }
 #pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
 
-    public EntityGridViewModel(IDatabase database, IConfiguration configuration)
+    public EntityGridViewModel(IDatabase database, IConfiguration configuration, ILogger<EntityGridViewModel<T>> logger)
     {
         CurrentDatabase = database;
 
@@ -127,6 +122,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
 
         this.configuration = configuration;
+        this.logger = logger;
 
         WeakReferenceMessenger.Default.RegisterAll(this);
 
@@ -147,20 +143,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     #region Commands
 
-    #region PopulateListDocuments
-
-    private ICommand? populateListDocuments;
-
-    public ICommand PopulateListDocuments
-    {
-        get
-        {
-            populateListDocuments ??= new BaseCommand(OnPopulateListDocuments);
-            return populateListDocuments;
-        }
-    }
-
-    private void OnPopulateListDocuments(object parameter)
+    [RelayCommand]
+    private void PopulateListDocuments()
     {
         DocumentMenuItems.Clear();
         if (SelectedItem is T info)
@@ -189,39 +173,11 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
-    #endregion
+    [RelayCommand]
+    private void OnRefresh() => RefreshDataSource();
 
-    #region Refresh
-
-    private ICommand? refresh;
-
-    public ICommand Refresh
-    {
-        get
-        {
-            refresh ??= new DelegateCommand(OnRefreshDataSource);
-            return refresh;
-        }
-    }
-
-    private void OnRefreshDataSource(object parameter) => RefreshDataSource();
-
-    #endregion
-
-    #region CreateRow
-
-    private ICommand? createRow;
-
-    public ICommand CreateRow
-    {
-        get
-        {
-            createRow ??= new DelegateCommand(OnCreateRow, CanCreateRow);
-            return createRow;
-        }
-    }
-
-    private void OnCreateRow(object parameter)
+    [RelayCommand(CanExecute = nameof(CanCreateRow))]
+    private void CreateRow()
     {
         var type = GetEditorViewType();
         if (type != null)
@@ -230,24 +186,10 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
-    private bool CanCreateRow(object parameter) => GetEditorViewType() != null;
+    private bool CanCreateRow() => GetEditorViewType() != null;
 
-    #endregion
-
-    #region EditCurrentRow
-
-    private ICommand? editCurrentRow;
-
-    public ICommand EditCurrentRow
-    {
-        get
-        {
-            editCurrentRow ??= new DelegateCommand(OnEditCurrentRow, CanEditCurrentRow);
-            return editCurrentRow;
-        }
-    }
-
-    protected virtual void OnEditCurrentRow(object parameter)
+    [RelayCommand(CanExecute = nameof(CanEditCurrentRow))]
+    protected virtual void EditCurrentRow()
     {
         var type = GetEditorViewType();
         if (SelectedItem is DocumentInfo document && type != null)
@@ -256,41 +198,13 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
-    private bool CanEditCurrentRow(object parameter) => GetEditorViewType() != null;
+    private bool CanEditCurrentRow() => GetEditorViewType() != null;
 
-    #endregion
+    [RelayCommand]
+    protected virtual void SelectCurrentRow() => EditCurrentRow();
 
-    #region SelectCurrentRow
-
-    private ICommand? selectCurrentRow;
-
-    public ICommand SelectCurrentRow
-    {
-        get
-        {
-            selectCurrentRow ??= new DelegateCommand(OnSelectCurrentRow);
-            return selectCurrentRow;
-        }
-    }
-
-    protected virtual void OnSelectCurrentRow(object parameter) => OnEditCurrentRow(parameter);
-
-    #endregion
-
-    #region SwapMarkedRow
-
-    private ICommand? swapMarkedRow;
-
-    public ICommand SwapMarkedRow
-    {
-        get
-        {
-            swapMarkedRow ??= new DelegateCommand(OnSwapMarkedRow, CanSwapMarkedRow);
-            return swapMarkedRow;
-        }
-    }
-
-    private void OnSwapMarkedRow(object parameter)
+    [RelayCommand(CanExecute = nameof(CanSwapMarkedRow))]
+    private void SwapMarkedRow()
     {
         if (SelectedItem is T row)
         {
@@ -298,24 +212,10 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
-    private bool CanSwapMarkedRow(object parameter) => GetEditorViewType() != null;
+    private bool CanSwapMarkedRow() => GetEditorViewType() != null;
 
-    #endregion
-
-    #region WipeRows
-
-    private ICommand? wipeRows;
-
-    public ICommand WipeRows
-    {
-        get
-        {
-            wipeRows ??= new DelegateCommand(OnWipeRows, CanWipeRows);
-            return wipeRows;
-        }
-    }
-
-    private void OnWipeRows(object parameter)
+    [RelayCommand(CanExecute = nameof(CanWipeRows))]
+    private void WipeRows()
     {
         var dialog = new WipeConfirmationWindow();
         if (dialog.ShowDialog() == true)
@@ -332,29 +232,17 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
-    private bool CanWipeRows(object parameter) => GetEditorViewType() != null;
+    private bool CanWipeRows() => GetEditorViewType() != null;
 
-    #endregion
-
-    #region ControlLoadedCommand
-
-    private ICommand? controlLoadedCommand;
-
-    public ICommand ControlLoadedCommand
-    {
-        get
-        {
-            controlLoadedCommand ??= new DelegateCommand<RoutedEventArgs>(OnControlLoadedCommand);
-            return controlLoadedCommand;
-        }
-    }
-
-    private void OnControlLoadedCommand(RoutedEventArgs e)
+    [RelayCommand]
+    private void ControlLoaded(RoutedEventArgs e)
     {
         if (isLoaded)
         {
             return;
         }
+
+        logger.LogInformation("The {Name} control has loading", typeof(T).Name);
 
         if (e.Source is not IGridPageView view)
         {
@@ -458,22 +346,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         isLoaded = true;
     }
 
-    #endregion
-
-    #region CopyRow
-
-    private ICommand? copyRow;
-
-    public ICommand CopyRow
-    {
-        get
-        {
-            copyRow ??= new DelegateCommand(OnCopyRow, CanCopyRow);
-            return copyRow;
-        }
-    }
-
-    private void OnCopyRow(object parameter)
+    [RelayCommand(CanExecute = nameof(CanCopyRow))]
+    private void CopyRow()
     {
         if (SelectedItem is not T row)
         {
@@ -522,24 +396,10 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
         }
     }
 
-    private bool CanCopyRow(object parameter) => GetEditorViewType() != null;
+    private bool CanCopyRow() => GetEditorViewType() != null;
 
-    #endregion
-
-    #region CreateBasedDocument
-
-    private ICommand? createBasedDocument;
-
-    public ICommand CreateBasedDocument
-    {
-        get
-        {
-            createBasedDocument ??= new DelegateCommand<MenuItemModel>(OnCreateBasedDocument);
-            return createBasedDocument;
-        }
-    }
-
-    private void OnCreateBasedDocument(MenuItemModel parameter)
+    [RelayCommand]
+    private void CreateBasedDocument(MenuItemModel parameter)
     {
         if (parameter.Tag is CreatingBasedContext context && SelectedItem is DocumentInfo document)
         {
@@ -549,12 +409,21 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     #endregion
 
-    #endregion
-
     #region Receives
 
     public void Receive(EntityActionMessage message)
     {
+        if (message.Action == MessageAction.Refresh && message.Destination == MessageDestination.List && message.ObjectId != Guid.Empty)
+        {
+            if (Owner != null && Owner.GetType().Name.Underscore() == message.EntityName && Owner.Id == message.ObjectId)
+            {
+                logger.LogInformation("A message was received about the need to update all tables that are dependent on {Name} with Id = {Id}", message.EntityName, message.ObjectId);
+                RefreshDataSource();
+            }
+
+            return;
+        }
+
         if (message.EntityName == typeof(T).Name.Underscore())
         {
             switch (message.Action)
@@ -569,6 +438,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
                             RemoveRow(message.ObjectId);
                             break;
                         case MessageDestination.List:
+                            logger.LogInformation("A message was received about the need to update the {Name} table after deleting a record", message.EntityName);
                             RefreshDataSource();
                             break;
                     }
@@ -581,6 +451,7 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
                             RefreshRow(message.ObjectId);
                             break;
                         case MessageDestination.List:
+                            logger.LogInformation("A message was received about the need to update the {Name} table", message.EntityName);
                             RefreshDataSource();
                             break;
                     }
@@ -631,6 +502,8 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
     public void RefreshDataSource()
     {
+        logger.LogInformation("The {Name} table refresh has started", typeof(T).Name);
+
         if (Owner == null && IsDependent)
         {
             return;
@@ -642,9 +515,12 @@ public abstract partial class EntityGridViewModel<T> : ObservableObject, IRecipi
 
             DataSource = new ObservableCollection<T>(GetData(conn));
             OnAfterRefreshDataSource(conn);
+
+            logger.LogInformation("The refresh of the {Name} table has been stopped", typeof(T).Name);
         }
         catch (Exception e)
         {
+            logger.LogInformation(e, "Refresh the {Name} table caused an exception", typeof(T).Name);
             MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }

@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common.Extensions;
@@ -15,44 +16,30 @@ using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public sealed class CalculationMaterialViewModel : DirectoryViewModel<CalculationMaterial>, ISelfTransientLifetime
+public sealed partial class CalculationMaterialViewModel : DirectoryViewModel<CalculationMaterial>, ISelfTransientLifetime
 {
     private readonly ICalculationMaterialRepository repoMaterials = null!;
 
     public CalculationMaterialViewModel() { }
 
-    public CalculationMaterialViewModel(IDatabase database, ICalculationMaterialRepository repoMaterials, IConfiguration configuration) 
-        : base(database, configuration) 
+    public CalculationMaterialViewModel(IDatabase database, ICalculationMaterialRepository repoMaterials, IConfiguration configuration, ILogger<CalculationMaterialViewModel> logger) 
+        : base(database, configuration, logger) 
     { 
         this.repoMaterials = repoMaterials;
     }
 
     #region Commands
 
-    #region ShowMaterial
-
-    private ICommand? showMaterial;
-
-    public ICommand ShowMaterial
-    {
-        get
-        {
-            showMaterial ??= new DelegateCommand(OnShowMaterial);
-            return showMaterial;
-        }
-    }
-
-    private void OnShowMaterial(object parameter)
+    [RelayCommand]
+    private void ShowMaterial()
     {
         if (SelectedItem is CalculationMaterial op && op.Material != null)
         {
@@ -60,22 +47,8 @@ public sealed class CalculationMaterialViewModel : DirectoryViewModel<Calculatio
         }
     }
 
-    #endregion
-
-    #region RecalculateCount
-
-    private ICommand? recalculateCount;
-
-    public ICommand RecalculateCount
-    {
-        get
-        {
-            recalculateCount ??= new DelegateCommand(OnRecalculateCount);
-            return recalculateCount;
-        }
-    }
-
-    private void OnRecalculateCount(object parameter)
+    [RelayCommand]
+    private void RecalculateCount()
     {
         if (Owner is Calculation calculation)
         {
@@ -84,22 +57,8 @@ public sealed class CalculationMaterialViewModel : DirectoryViewModel<Calculatio
         }
     }
 
-    #endregion
-
-    #region RecalculatePrices
-
-    private ICommand? recalculatePrices;
-
-    public ICommand RecalculatePrices
-    {
-        get
-        {
-            recalculatePrices ??= new DelegateCommand(OnRecalculatePrices);
-            return recalculatePrices;
-        }
-    }
-
-    private void OnRecalculatePrices(object parameter)
+    [RelayCommand]
+    private void RecalculatePrices()
     {
         if (Owner is Calculation calculation)
         {
@@ -107,8 +66,6 @@ public sealed class CalculationMaterialViewModel : DirectoryViewModel<Calculatio
             RefreshDataSource();
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -126,10 +83,10 @@ public sealed class CalculationMaterialViewModel : DirectoryViewModel<Calculatio
 
         ToolBarItems.AddButtons(this,
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Материал", "goods") { Command = ShowMaterial },
+            new ToolBarButtonModel("Материал", "goods") { Command = ShowMaterialCommand },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Пересчитать количество", "sigma") { Command = RecalculateCount },
-            new ToolBarButtonModel("Пересчитать стоимость", "calculate") { Command = RecalculatePrices });
+            new ToolBarButtonModel("Пересчитать количество", "sigma") { Command = RecalculateCountCommand },
+            new ToolBarButtonModel("Пересчитать стоимость", "calculate") { Command = RecalculatePricesCommand });
     }
 
     protected override IReadOnlyList<CalculationMaterial> GetData(IDbConnection connection, Guid? id = null)

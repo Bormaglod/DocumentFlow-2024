@@ -10,6 +10,7 @@ using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -23,8 +24,8 @@ public class ProductionOrderViewModel : DocumentViewModel<ProductionOrder>, ISel
 
     public ProductionOrderViewModel() { }
 
-    public ProductionOrderViewModel(IDatabase database, IProductionOrderRepository orderRepository, IConfiguration configuration)
-        : base(database, configuration)
+    public ProductionOrderViewModel(IDatabase database, IProductionOrderRepository orderRepository, IConfiguration configuration, ILogger<ProductionOrderViewModel> logger)
+        : base(database, configuration, logger)
     {
         this.orderRepository = orderRepository;
     }

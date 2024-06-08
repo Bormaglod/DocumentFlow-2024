@@ -9,6 +9,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata.Execution;
 
@@ -21,7 +22,7 @@ public abstract class BalanceProductViewModel<T> : BalanceViewModel<T>
 {
     public BalanceProductViewModel() { }
 
-    public BalanceProductViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public BalanceProductViewModel(IDatabase database, IConfiguration configuration, ILogger<BalanceProductViewModel<T>> logger) : base(database, configuration, logger) { }
 
     protected override IReadOnlyList<T> GetData(IDbConnection connection, Guid? id = null)
     {

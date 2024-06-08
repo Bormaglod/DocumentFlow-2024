@@ -30,10 +30,10 @@ public abstract partial class DirectoryEditorViewModel<T> : EntityEditorViewMode
     public DirectoryEditorViewModel() 
     {
         ToolBarItems.AddButtons(this,
-            new ToolBarButtonModel("Обновить", "sync") { Command = Refresh },
+            new ToolBarButtonModel("Обновить", "sync") { Command = RefreshCommand },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Сохранить", "save") { Command = Save },
-            new ToolBarButtonModel("Сохранить и закрыть", "save-close") { Command = SaveAndClose },
+            new ToolBarButtonModel("Сохранить", "save") { Command = SaveCommand },
+            new ToolBarButtonModel("Сохранить и закрыть", "save-close") { Command = SaveAndCloseCommand },
             new ToolBarSeparatorModel(),
             new ToolBarButtonComboModel("Печать", "print", Reports));
 

@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common.Data;
@@ -17,36 +18,22 @@ using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
 using Microsoft.Extensions.Configuration;
-
-using Syncfusion.Windows.Shared;
+using Microsoft.Extensions.Logging;
 
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage>, ISelfTransientLifetime
+public sealed partial class OperationUsageViewModel : EntityGridViewModel<OperationUsage>, ISelfTransientLifetime
 {
     public OperationUsageViewModel() { }
 
-    public OperationUsageViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public OperationUsageViewModel(IDatabase database, IConfiguration configuration, ILogger<OperationUsageViewModel> logger) : base(database, configuration, logger) { }
 
     #region Commands
 
-    #region OpenGoods
-
-    private ICommand? openGoods;
-
-    public ICommand OpenGoods
-    {
-        get
-        {
-            openGoods ??= new DelegateCommand(OnOpenGoods);
-            return openGoods;
-        }
-    }
-
-    private void OnOpenGoods(object parameter)
+    [RelayCommand]
+    private void OpenGoods()
     {
         if (SelectedItem is OperationUsage usage && usage.Goods != null)
         {
@@ -54,22 +41,8 @@ public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage
         }
     }
 
-    #endregion
-
-    #region OpenCalculation
-
-    private ICommand? openCalculation;
-
-    public ICommand OpenCalculation
-    {
-        get
-        {
-            openCalculation ??= new DelegateCommand(OnOpenCalculation);
-            return openCalculation;
-        }
-    }
-
-    private void OnOpenCalculation(object parameter)
+    [RelayCommand]
+    private void OpenCalculation()
     {
         if (SelectedItem is OperationUsage usage && usage.Calculation != null && usage.Goods != null)
         {
@@ -82,8 +55,6 @@ public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage
                 });
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -130,7 +101,7 @@ public sealed class OperationUsageViewModel : EntityGridViewModel<OperationUsage
     protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
-            new ToolBarButtonModel("Изделие", "goods") { Command = OpenGoods },
-            new ToolBarButtonModel("Калькуляция", "calculation") { Command = OpenCalculation });
+            new ToolBarButtonModel("Изделие", "goods") { Command = OpenGoodsCommand },
+            new ToolBarButtonModel("Калькуляция", "calculation") { Command = OpenCalculationCommand });
     }
 }

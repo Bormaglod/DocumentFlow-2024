@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common;
@@ -19,7 +20,6 @@ using Microsoft.Extensions.Options;
 
 using Npgsql;
 
-using Syncfusion.Windows.Shared;
 using Syncfusion.Windows.Tools.Controls;
 
 using System.Collections.Concurrent;
@@ -31,7 +31,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace DocumentFlow.ViewModels;
@@ -106,40 +105,14 @@ public partial class MainWindowViewModel :
 
     #region Commands
 
-    #region DocumentClosing
-
-    private ICommand? documentClosing;
-
-    public ICommand DocumentClosing
-    {
-        get
-        {
-            documentClosing ??= new DelegateCommand<CancelingRoutedEventArgs>(OnDocumentClosing);
-            return documentClosing;
-        }
-    }
-
-    private void OnDocumentClosing(CancelingRoutedEventArgs e)
+    [RelayCommand]
+    private void DocumentClosing(CancelingRoutedEventArgs e)
     {
         Windows.Remove(e.OriginalSource);
     }
 
-    #endregion
-
-    #region AppClosing
-
-    private ICommand? appClosing;
-
-    public ICommand AppClosing
-    {
-        get
-        {
-            appClosing ??= new DelegateCommand<CancelEventArgs>(OnAppClosing);
-            return appClosing;
-        }
-    }
-
-    private void OnAppClosing(CancelEventArgs e)
+    [RelayCommand]
+    private void AppClosing(CancelEventArgs e)
     {
         SaveSettings(localSettings.MainWindow.Settings);
         localSettings.MainWindow.NavigatorWidth = NavigatorWidth;
@@ -151,8 +124,6 @@ public partial class MainWindowViewModel :
             WeakReferenceMessenger.Default.Send(new PageClosedMessage(item.DataContext));
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -320,6 +291,7 @@ public partial class MainWindowViewModel :
 
             if (message != null)
             {
+                message.Source = MessageActionSource.Outer;
                 WeakReferenceMessenger.Default.Send(message);
             }
         }

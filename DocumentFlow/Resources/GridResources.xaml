@@ -101,20 +101,20 @@
         </MenuItem>
         <Separator/>
         <MenuItem Header="Создать"
-                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CreateRow}"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CreateRowCommand}"
                   InputGestureText="Alt+INSERT">
             <MenuItem.Icon>
                 <Image Source="/Images/icons8-file-add-16.png"/>
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Header="Изменить"
-                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.EditCurrentRow}">
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.EditCurrentRowCommand}">
             <MenuItem.Icon>
                 <Image Source="/Images/icons8-file-edit-16.png"/>
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Header="Пометить на удаление / снять отметку"
-                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.SwapMarkedRow}"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.SwapMarkedRowCommand}"
                   InputGestureText="Alt+DELETE">
             <MenuItem.Icon>
                 <Image Source="/Images/icons8-file-delete-16.png"/>
@@ -130,14 +130,14 @@
         </MenuItem>
         <MenuItem Header="Отменить проведение"
                   Visibility="{Binding Path=DataGrid.Parent.Parent.DataContext.SupportAccepting, Converter={StaticResource BooleanToVisibilityConverter}}"
-                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CancelAccepanceCommand}">
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CancelAcceptanceCommand}">
             <MenuItem.Icon>
                 <Image Source="/Images/icons8-cancel-16.png"/>
             </MenuItem.Icon>
         </MenuItem>
         <Separator Visibility="{Binding Path=DataGrid.Parent.Parent.DataContext.SupportAccepting, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <MenuItem Header="Создать копию"
-                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CopyRow}"
+                  Command="{Binding Path=DataGrid.Parent.Parent.DataContext.CopyRowCommand}"
                   InputGestureText="Ctrl+Alt+INSERT">
             <MenuItem.Icon>
                 <Image Source="/Images/icons8-copy-edit-16.png"/>
@@ -149,7 +149,7 @@
                 <Style TargetType="{x:Type MenuItem}"
                        BasedOn="{StaticResource WPFMenuItemStyle}">
                     <Setter Property="Header" Value="{Binding Header}"/>
-                    <Setter Property="Command" Value="{Binding PlacementTarget.CreateBasedDocument}"/>
+                    <Setter Property="Command" Value="{Binding PlacementTarget.CreateBasedDocumentCommand}"/>
                     <Setter Property="CommandParameter" Value="{Binding}"/>
                 </Style>
             </MenuItem.ItemContainerStyle>
@@ -163,7 +163,7 @@
                 <Style TargetType="{x:Type MenuItem}"
                        BasedOn="{StaticResource WPFMenuItemStyle}">
                     <Setter Property="Header" Value="{Binding Header}"/>
-                    <Setter Property="Command" Value="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}"/>
+                    <Setter Property="Command" Value="{Binding Source={x:Static Member=commands:FileCommands.OpenFileCommand}}"/>
                     <Setter Property="CommandParameter" Value="{Binding Tag}"/>
                 </Style>
             </MenuItem.ItemContainerStyle>
@@ -404,7 +404,7 @@
                                    HorizontalAlignment="Center"/>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDown">
-                                <i:InvokeCommandAction Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}">
+                                <i:InvokeCommandAction Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFileCommand}}">
                                     <i:InvokeCommandAction.CommandParameter>
                                         <MultiBinding Converter="{StaticResource MultiParameterConverter}">
                                             <Binding Path="DataContext"  RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}"/>

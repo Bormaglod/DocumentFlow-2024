@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common.Extensions;
@@ -13,46 +14,30 @@ using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public sealed class CalculationDeductionViewModel : DirectoryViewModel<CalculationDeduction>, ISelfTransientLifetime
+public sealed partial class CalculationDeductionViewModel : DirectoryViewModel<CalculationDeduction>, ISelfTransientLifetime
 {
     public CalculationDeductionViewModel() { }
 
-    public CalculationDeductionViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public CalculationDeductionViewModel(IDatabase database, IConfiguration configuration, ILogger<CalculationDeductionViewModel> logger) : base(database, configuration, logger) { }
 
     #region Commands
 
-    #region ShowDeduction
-
-    private ICommand? showDeduction;
-
-    public ICommand ShowDeduction
-    {
-        get
-        {
-            showDeduction ??= new DelegateCommand(OnShowDeduction);
-            return showDeduction;
-        }
-    }
-
-    private void OnShowDeduction(object parameter)
+    [RelayCommand]
+    private void ShowDeduction()
     {
         if (SelectedItem is CalculationDeduction op && op.Deduction != null)
         {
             WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(Views.Editors.DeductionView), op.Deduction));
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -72,7 +57,7 @@ public sealed class CalculationDeductionViewModel : DirectoryViewModel<Calculati
 
         ToolBarItems.AddButtons(this,
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Удержание", "discount") { Command = ShowDeduction });
+            new ToolBarButtonModel("Удержание", "discount") { Command = ShowDeductionCommand });
     }
 
     protected override IReadOnlyList<CalculationDeduction> GetData(IDbConnection connection, Guid? id = null)

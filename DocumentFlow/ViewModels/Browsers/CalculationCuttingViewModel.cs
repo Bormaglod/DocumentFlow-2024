@@ -9,6 +9,7 @@ using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
@@ -16,8 +17,8 @@ public sealed class CalculationCuttingViewModel : BaseCalculationOperationViewMo
 {
     public CalculationCuttingViewModel() { }
 
-    public CalculationCuttingViewModel(IDatabase database, ICalculationCuttingRepository repoOperations, IConfiguration configuration) 
-        : base(database, repoOperations, configuration) 
+    public CalculationCuttingViewModel(IDatabase database, ICalculationCuttingRepository repoOperations, IConfiguration configuration, ILogger<CalculationCuttingViewModel> logger) 
+        : base(database, repoOperations, configuration, logger) 
     { 
     }
 

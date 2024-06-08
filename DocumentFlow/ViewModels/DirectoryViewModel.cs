@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using Dapper;
 
@@ -17,16 +18,14 @@ using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
-
-using Syncfusion.Windows.Shared;
 
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
@@ -46,7 +45,7 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
         InitializeHierarchy();
     }
 
-    public DirectoryViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration)
+    public DirectoryViewModel(IDatabase database, IConfiguration configuration, ILogger<DirectoryViewModel<T>> logger) : base(database, configuration, logger)
     {
         InitializeHierarchy(database);
     }
@@ -55,20 +54,8 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
 
     #region Commands
 
-    #region CreateGroup
-
-    private ICommand? createGroup;
-
-    public ICommand CreateGroup
-    {
-        get
-        {
-            createGroup ??= new DelegateCommand(OnСreateGroup);
-            return createGroup;
-        }
-    }
-
-    private void OnСreateGroup(object parameter)
+    [RelayCommand]
+    private void СreateGroup()
     {
         var window = new FolderWindow((code, name) =>
         {
@@ -90,11 +77,7 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
         window.ShowDialog();
     }
 
-    #endregion
-
-    #region EditCurrentRow
-
-    protected override void OnEditCurrentRow(object parameter)
+    protected override void EditCurrentRow()
     {
         if (SelectedItem is Directory directory && directory.IsFolder)
         {
@@ -121,15 +104,11 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
         }
         else
         {
-            base.OnEditCurrentRow(parameter);
+            base.EditCurrentRow();
         }
     }
 
-    #endregion
-
-    #region SelectCurrentRow
-
-    protected override void OnSelectCurrentRow(object parameter)
+    protected override void SelectCurrentRow()
     {
         if (SelectedItem is Directory directory && directory.IsFolder)
         {
@@ -137,11 +116,9 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
         }
         else
         {
-            base.OnSelectCurrentRow(parameter);
+            base.SelectCurrentRow();
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -251,14 +228,14 @@ public abstract partial class DirectoryViewModel<T> : EntityGridViewModel<T>
     protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
-            new ToolBarButtonModel("Создать", "file-add") { Command = CreateRow },
-            new ToolBarButtonModel("Изменить", "file-edit") { Command = EditCurrentRow },
-            new ToolBarButtonModel("Пометить", "file-delete") { Command = SwapMarkedRow },
+            new ToolBarButtonModel("Создать", "file-add") { Command = CreateRowCommand },
+            new ToolBarButtonModel("Изменить", "file-edit") { Command = EditCurrentRowCommand },
+            new ToolBarButtonModel("Пометить", "file-delete") { Command = SwapMarkedRowCommand },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Удалить", "trash") { Command = WipeRows },
+            new ToolBarButtonModel("Удалить", "trash") { Command = WipeRowsCommand },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Копия", "copy-edit") { Command = CopyRow },
-            new ToolBarNavigationButtonModel("Группа", "folder-add") { Command = CreateGroup },
+            new ToolBarButtonModel("Копия", "copy-edit") { Command = CopyRowCommand },
+            new ToolBarNavigationButtonModel("Группа", "folder-add") { Command = СreateGroupCommand },
             new ToolBarSeparatorModel(),
             new ToolBarButtonComboModel("Печать", "print", Reports),
             new ToolBarButtonModel("Настройки", "settings"));

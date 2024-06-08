@@ -11,6 +11,7 @@ using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -24,8 +25,8 @@ public sealed class PurchaseRequestViewModel : DocumentViewModel<PurchaseRequest
 
     public PurchaseRequestViewModel() { }
 
-    public PurchaseRequestViewModel(IDatabase database, IPurchaseRequestRepository requestRepository, IConfiguration configuration) 
-        : base(database, configuration) 
+    public PurchaseRequestViewModel(IDatabase database, IPurchaseRequestRepository requestRepository, IConfiguration configuration, ILogger<PurchaseRequestViewModel> logger) 
+        : base(database, configuration, logger) 
     { 
         this.requestRepository = requestRepository;
     }

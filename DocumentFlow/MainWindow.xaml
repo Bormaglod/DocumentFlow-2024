@@ -30,7 +30,7 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <triggers:EventCommandAction Command="{Binding AppClosing}"/>
+            <triggers:EventCommandAction Command="{Binding AppClosingCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid x:Name="gridBase">
@@ -56,7 +56,7 @@
                                       TDICloseButtonType="Individual">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="DocumentClosing">
-                    <triggers:EventCommandAction Command="{Binding DocumentClosing}"/>
+                    <triggers:EventCommandAction Command="{Binding DocumentClosingCommand}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </syncfusion:DocumentContainer>

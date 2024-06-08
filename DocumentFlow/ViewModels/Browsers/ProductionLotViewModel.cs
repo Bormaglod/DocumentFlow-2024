@@ -10,6 +10,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -21,8 +22,8 @@ public class ProductionLotViewModel : DocumentViewModel<ProductionLot>, ISelfTra
 {
     public ProductionLotViewModel() { }
 
-    public ProductionLotViewModel(IDatabase database, IConfiguration configuration)
-        : base(database, configuration)
+    public ProductionLotViewModel(IDatabase database, IConfiguration configuration, ILogger<ProductionLotViewModel> logger)
+        : base(database, configuration, logger)
     {
     }
 

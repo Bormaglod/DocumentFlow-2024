@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Interfaces;
@@ -13,40 +14,26 @@ using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTransientLifetime
+public sealed partial class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTransientLifetime
 {
     public CustomerViewModel() { }
 
-    public CustomerViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public CustomerViewModel(IDatabase database, IConfiguration configuration, ILogger<CustomerViewModel> logger) : base(database, configuration, logger) { }
 
     #region Commands
 
-    #region OpenContractor
-
-    private ICommand? openContractor;
-
-    public ICommand OpenContractor
-    {
-        get
-        {
-            openContractor ??= new DelegateCommand(OnOpenContractor);
-            return openContractor;
-        }
-    }
-
-    private void OnOpenContractor(object parameter)
+    [RelayCommand]
+    private void OpenContractor()
     {
         if (SelectedItem is Customer customer)
         {
@@ -54,22 +41,8 @@ public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTran
         }
     }
 
-    #endregion
-
-    #region OpenContract
-
-    private ICommand? openContract;
-
-    public ICommand OpenContract
-    {
-        get
-        {
-            openContract ??= new DelegateCommand(OnOpenContract);
-            return openContract;
-        }
-    }
-
-    private void OnOpenContract(object parameter)
+    [RelayCommand]
+    private void OpenContract()
     {
         if (SelectedItem is Customer customer && customer.ContractId.HasValue)
         {
@@ -77,30 +50,14 @@ public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTran
         }
     }
 
-    #endregion
-
-    #region OpenAppContract
-
-    private ICommand? openAppContract;
-
-    public ICommand OpenAppContract
-    {
-        get
-        {
-            openAppContract ??= new DelegateCommand(OnOpenAppContract);
-            return openAppContract;
-        }
-    }
-
-    private void OnOpenAppContract(object parameter)
+    [RelayCommand]
+    private void OpenAppContract()
     {
         if (SelectedItem is Customer customer && customer.ApplicationId.HasValue)
         {
             WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(ContractApplicationView), customer.ApplicationId.Value));
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -139,8 +96,8 @@ public sealed class CustomerViewModel : EntityGridViewModel<Customer>, ISelfTran
     protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
-            new ToolBarButtonModel("Контрагент", "contractor") { Command = OpenContractor },
-            new ToolBarButtonModel("Договор", "contract") { Command = OpenContract },
-            new ToolBarButtonModel("Приложение", "contract-app") { Command = OpenAppContract });
+            new ToolBarButtonModel("Контрагент", "contractor") { Command = OpenContractorCommand },
+            new ToolBarButtonModel("Договор", "contract") { Command = OpenContractCommand },
+            new ToolBarButtonModel("Приложение", "contract-app") { Command = OpenAppContractCommand });
     }
 }

@@ -106,20 +106,20 @@
                     <syncfusion:ButtonAdv Label="Добавить" 
                                           SmallIcon="/Images/icons8-file-add-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding AddProduct}"/>
+                                          Command="{Binding AddProductCommand}"/>
                     <syncfusion:ButtonAdv Label="Изменить" 
                                           SmallIcon="/Images/icons8-file-edit-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding EditProduct}"/>
+                                          Command="{Binding EditProductCommand}"/>
                     <syncfusion:ButtonAdv Label="Удалить" 
                                           SmallIcon="/Images/icons8-file-delete-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding DeleteProduct}"/>
+                                          Command="{Binding DeleteProductCommand}"/>
                     <Separator/>
                     <syncfusion:ButtonAdv Label="Копия" 
                                           SmallIcon="/Images/icons8-copy-edit-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding CopyProduct}"/>
+                                          Command="{Binding CopyProductCommand}"/>
                 </ToolBar>
                 <syncfusion:SfDataGrid Grid.Row="1"
                                        ItemsSource="{Binding Products}"
@@ -174,26 +174,26 @@
                     <syncfusion:SfDataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Добавить"
-                                      Command="{Binding AddProduct}">
+                                      Command="{Binding AddProductCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-file-add-16.png" Stretch="None"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="Изменить"
-                                      Command="{Binding EditProduct}">
+                                      Command="{Binding EditProductCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-file-edit-16.png" Stretch="None"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="Удалить"
-                                      Command="{Binding DeleteProduct}">
+                                      Command="{Binding DeleteProductCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-delete-16.png" Stretch="None"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <Separator/>
                             <MenuItem Header="Копия"
-                                      Command="{Binding CopyProduct}">
+                                      Command="{Binding CopyProductCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-copy-edit-16.png" Stretch="None"/>
                                 </MenuItem.Icon>
@@ -202,7 +202,7 @@
                     </syncfusion:SfDataGrid.ContextMenu>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
-                            <i:InvokeCommandAction Command="{Binding EditProduct}"/>
+                            <i:InvokeCommandAction Command="{Binding EditProductCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <syncfusion:SfDataGrid.TableSummaryRows>

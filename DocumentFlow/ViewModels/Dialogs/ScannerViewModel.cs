@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
@@ -16,13 +17,9 @@ using DocumentFlow.Scanner.Enums;
 
 using Microsoft.Extensions.Options;
 
-using Syncfusion.UI.Xaml.Utility;
-using Syncfusion.Windows.Shared;
-
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -73,7 +70,7 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
     public ObservableCollection<int> resolutions;
 
     [ObservableProperty]
-    public ObservableCollection<BitmapSource> images = new();
+    public ObservableCollection<BitmapSource> images = [];
 
     public ScannerViewModel()
     {
@@ -82,16 +79,16 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         Devices = new(scanner.GetDevices());
         SelectedDevice = Devices.FirstOrDefault();
 
-        ImageStoreList = new ObservableCollection<ImageStoreModel>()
-        {
+        ImageStoreList =
+        [
             new(FileExtension.Jpg, "image"),
             new(FileExtension.Png, "image"),
             new(FileExtension.Pdf, "pdf"),
             new(FileExtension.Tif, "image"),
             new(FileExtension.Bmp, "image"),
-        };
+        ];
 
-        Resolutions = new ObservableCollection<int> { 75, 100, 200, 300, 600, 1200 };
+        Resolutions = [75, 100, 200, 300, 600, 1200];
 
         imageStore = ImageStoreList[0];
         dpi = 300;
@@ -112,23 +109,11 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         brightness = ScannerSettings.Brightness;
         contrast = ScannerSettings.Contrast;
     }
-    
+
     #region Commands
 
-    #region Scan
-
-    private ICommand? scan;
-
-    public ICommand Scan
-    {
-        get
-        {
-            scan ??= new BaseCommand(OnScan);
-            return scan;
-        }
-    }
-
-    private void OnScan(object parameter)
+    [RelayCommand]
+    private void Scan()
     {
         var images = scanner.Scan(1, new ScanSettings()
         {
@@ -146,22 +131,8 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         PageIndex = Images.Count - 1;
     }
 
-    #endregion
-
-    #region ResetScanParameter
-
-    private ICommand? resetScanParameter;
-
-    public ICommand ResetScanParameter
-    {
-        get
-        {
-            resetScanParameter ??= new BaseCommand(OnResetScanParameter);
-            return resetScanParameter;
-        }
-    }
-
-    private void OnResetScanParameter(object parameter)
+    [RelayCommand]
+    private void ResetScanParameter(object parameter)
     {
         switch (parameter?.ToString()?.ToUpper())
         {
@@ -174,22 +145,8 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         }
     }
 
-    #endregion
-
-    #region RotateImage
-
-    private ICommand? rotateImage;
-
-    public ICommand RotateImage
-    {
-        get
-        {
-            rotateImage ??= new BaseCommand(OnRotateImage);
-            return rotateImage;
-        }
-    }
-
-    private void OnRotateImage(object parameter)
+    [RelayCommand]
+    private void RotateImage(object parameter)
     {
         if (CurrentImage != null && int.TryParse(parameter?.ToString(), out var degree))
         {
@@ -200,22 +157,8 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         }
     }
 
-    #endregion
-
-    #region RotateImage
-
-    private ICommand? flipImage;
-
-    public ICommand FlipImage
-    {
-        get
-        {
-            flipImage ??= new BaseCommand(OnFlipImage);
-            return flipImage;
-        }
-    }
-
-    private void OnFlipImage(object parameter)
+    [RelayCommand]
+    private void FlipImage(object parameter)
     {
         if (CurrentImage != null)
         {
@@ -237,22 +180,8 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         }
     }
 
-    #endregion
-
-    #region OpenImage
-
-    private ICommand? openImage;
-
-    public ICommand OpenImage
-    {
-        get
-        {
-            openImage ??= new BaseCommand(OnOpenImage);
-            return openImage;
-        }
-    }
-
-    private void OnOpenImage(object parameter)
+    [RelayCommand]
+    private void OpenImage()
     {
         Microsoft.Win32.OpenFileDialog dlg = new()
         {
@@ -268,22 +197,8 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         }
     }
 
-    #endregion
-
-    #region SaveImage
-
-    private ICommand? saveImage;
-
-    public ICommand SaveImage
-    {
-        get
-        {
-            saveImage ??= new BaseCommand(OnSaveImage);
-            return saveImage;
-        }
-    }
-
-    private void OnSaveImage(object parameter)
+    [RelayCommand]
+    private void SaveImage()
     {
         if (CurrentImage == null)
         {
@@ -301,22 +216,8 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
         }
     }
 
-    #endregion
-
-    #region WindowClosing
-
-    private ICommand? windowClosing;
-
-    public ICommand WindowClosing
-    {
-        get
-        {
-            windowClosing ??= new DelegateCommand<CancelEventArgs>(OnWindowClosing);
-            return windowClosing;
-        }
-    }
-
-    public void OnWindowClosing(CancelEventArgs e)
+    [RelayCommand]
+    public void WindowClosing(CancelEventArgs e)
     {
         if (settings != null)
         {
@@ -332,8 +233,6 @@ public partial class ScannerViewModel : WindowViewModel, ISelfTransientLifetime
             settings.Save();
         }
     }
-
-    #endregion
 
     #endregion
 

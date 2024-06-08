@@ -26,7 +26,7 @@
             <ToolBar ToolBarTray.IsLocked="True">
                 <syncfusion:ButtonAdv Label="Сохранить" 
                                       SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-save-16.png"
-                                      Command="{Binding Source={x:Static Member=commands:FileCommands.SaveFile}}">
+                                      Command="{Binding Source={x:Static Member=commands:FileCommands.SaveFileCommand}}">
                     <syncfusion:ButtonAdv.CommandParameter>
                         <MultiBinding Converter="{StaticResource MultiParameterConverter}">
                             <Binding ElementName="gridContent" Path="SelectedItem"/>
@@ -36,7 +36,7 @@
                 </syncfusion:ButtonAdv>
                 <syncfusion:ButtonAdv Label="Открыть" 
                                       SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-open-document-16.png"
-                                      Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}">
+                                      Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFileCommand}}">
                     <syncfusion:ButtonAdv.CommandParameter>
                         <MultiBinding Converter="{StaticResource MultiParameterConverter}">
                             <Binding ElementName="gridContent" Path="SelectedItem"/>
@@ -86,7 +86,7 @@
             <syncfusion:SfDataGrid.RecordContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Сохранить на диск"
-                              Command="{Binding Source={x:Static Member=commands:FileCommands.SaveFile}}"
+                              Command="{Binding Source={x:Static Member=commands:FileCommands.SaveFileCommand}}"
                               CommandParameter="{Binding}">
                         <MenuItem.Icon>
                             <Image Source="/Images/icons8-save-16.png" 
@@ -94,7 +94,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Открыть файл"
-                              Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFile}}"
+                              Command="{Binding Source={x:Static Member=commands:FileCommands.OpenFileCommand}}"
                               CommandParameter="{Binding}">
                         <MenuItem.Icon>
                             <Image Source="/Images/icons8-open-document-16.png" 

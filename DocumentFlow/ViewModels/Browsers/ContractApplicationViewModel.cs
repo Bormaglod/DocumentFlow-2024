@@ -8,6 +8,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
@@ -15,7 +16,7 @@ public sealed class ContractApplicationViewModel : DirectoryViewModel<ContractAp
 {
     public ContractApplicationViewModel() { }
 
-    public ContractApplicationViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public ContractApplicationViewModel(IDatabase database, IConfiguration configuration, ILogger<ContractApplicationViewModel> logger) : base(database, configuration, logger) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.ContractApplicationView);
 }

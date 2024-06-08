@@ -5,26 +5,25 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common.Converters;
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Messages;
 using DocumentFlow.Models;
 using DocumentFlow.Models.Entities;
 using DocumentFlow.Models.Settings;
 
 using FluentDateTime;
 
-using Humanizer;
-
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
-using Syncfusion.UI.Xaml.Utility;
-
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
@@ -41,24 +40,12 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
 
     public DocumentViewModel() { }
 
-    public DocumentViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public DocumentViewModel(IDatabase database, IConfiguration configuration, ILogger<DocumentViewModel<T>> logger) : base(database, configuration, logger) { }
 
     #region Commands
 
-    #region ApplyCommand
-
-    private ICommand? applyCommand;
-
-    public ICommand ApplyCommand
-    {
-        get
-        {
-            applyCommand ??= new BaseCommand(OnApplyCommand);
-            return applyCommand;
-        }
-    }
-
-    private void OnApplyCommand(object parameter)
+    [RelayCommand]
+    private void ApplyFilter()
     {
         if (filterSection != null)
         {
@@ -69,22 +56,8 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
         }
     }
 
-    #endregion
-
-    #region AcceptCommand
-
-    private ICommand? acceptCommand;
-
-    public ICommand AcceptCommand
-    {
-        get
-        {
-            acceptCommand ??= new BaseCommand(OnAcceptCommand);
-            return acceptCommand;
-        }
-    }
-
-    private void OnAcceptCommand(object parameter)
+    [RelayCommand]
+    private void Accept()
     {
         if (SelectedItem is not T row)
         {
@@ -92,24 +65,11 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
         }
 
         ExecuteSystemOperation(row, SystemOperation.Accept, true);
+        WeakReferenceMessenger.Default.Send(new DocumentActionMessage<T>((T)SelectedItem));
     }
 
-    #endregion
-
-    #region CancelAccepanceCommand
-
-    private ICommand? cancelAccepanceCommand;
-
-    public ICommand CancelAccepanceCommand
-    {
-        get
-        {
-            cancelAccepanceCommand ??= new BaseCommand(OnCancelAccepanceCommand);
-            return cancelAccepanceCommand;
-        }
-    }
-
-    private void OnCancelAccepanceCommand(object parameter)
+    [RelayCommand]
+    private void CancelAcceptance()
     {
         if (SelectedItem is not T row)
         {
@@ -117,9 +77,8 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
         }
 
         ExecuteSystemOperation(row, SystemOperation.Accept, false);
+        WeakReferenceMessenger.Default.Send(new DocumentActionMessage<T>((T)SelectedItem));
     }
-
-    #endregion
 
     #endregion
 
@@ -178,13 +137,13 @@ public abstract partial class DocumentViewModel<T> : EntityGridViewModel<T>, ICu
     protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
-            new ToolBarButtonModel("Создать", "file-add") { Command = CreateRow },
-            new ToolBarButtonModel("Изменить", "file-edit") { Command = EditCurrentRow },
-            new ToolBarButtonModel("Пометить", "file-delete") { Command = SwapMarkedRow },
+            new ToolBarButtonModel("Создать", "file-add") { Command = CreateRowCommand },
+            new ToolBarButtonModel("Изменить", "file-edit") { Command = EditCurrentRowCommand },
+            new ToolBarButtonModel("Пометить", "file-delete") { Command = SwapMarkedRowCommand },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Удалить", "trash") { Command = WipeRows },
+            new ToolBarButtonModel("Удалить", "trash") { Command = WipeRowsCommand },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Копия", "copy-edit") { Command = CopyRow },
+            new ToolBarButtonModel("Копия", "copy-edit") { Command = CopyRowCommand },
             new ToolBarSeparatorModel(),
             new ToolBarButtonComboModel("Печать", "print", Reports),
             new ToolBarButtonModel("Настройки", "settings"));

@@ -5,16 +5,14 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common;
-
-using Syncfusion.Windows.Shared;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.Dialogs;
 
@@ -45,44 +43,11 @@ public partial class CustomGroupWindow : Window
         }
     }
 
-    #region SelectColumnCommand
-
-    private ICommand? selectColumnCommand;
-
-    public ICommand SelectColumnCommand
-    {
-        get
-        {
-            selectColumnCommand ??= new DelegateCommand(OnSelectColumnCommand);
-            return selectColumnCommand;
-        }
-    }
-
-    private void OnSelectColumnCommand(object parameter) => SelectColumn();
-
-    #endregion
-
-    #region DeselectColumnCommand
-
-    private ICommand? deselectColumnCommand;
-
-    public ICommand DeselectColumnCommand
-    {
-        get
-        {
-            deselectColumnCommand ??= new DelegateCommand(OnDeselectColumnCommand);
-            return deselectColumnCommand;
-        }
-    }
-
-    private void OnDeselectColumnCommand(object parameter) => DeselectColumn();
-
-    #endregion
-
     public ObservableCollection<CustomGroupColumn> Availables { get; } = new();
 
     public ObservableCollection<CustomGroupColumn> Selected { get; } = new();
 
+    [RelayCommand]
     private void SelectColumn()
     {
         if (AvailableColumn != null)
@@ -99,6 +64,7 @@ public partial class CustomGroupWindow : Window
         }
     }
 
+    [RelayCommand]
     private void DeselectColumn()
     {
         if (SelectedColumn != null)

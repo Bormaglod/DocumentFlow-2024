@@ -159,7 +159,7 @@
                                 <syncfusion:ButtonAdv SmallIcon="/Images/icons8-delete-16.png" 
                                                       SizeMode="Small"
                                                       Margin="5,0,0,5"
-                                                      Command="{Binding ClearProgramNumber}"/>
+                                                      Command="{Binding ClearProgramNumberCommand}"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal"
                                         Grid.Row="1" Grid.Column="1">

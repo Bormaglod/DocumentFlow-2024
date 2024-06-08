@@ -44,7 +44,7 @@
                      ItemsSource="{Binding Items}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <triggers:EventCommandAction Command="{Binding Source={x:Static commands:CommonCommands.OpenReport}}"/>
+                        <triggers:EventCommandAction Command="{Binding Source={x:Static commands:CommonCommands.OpenReportCommand}}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListBox>

@@ -10,6 +10,7 @@ using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -23,7 +24,8 @@ public class WaybillReceiptViewModel : WaybillViewModel<WaybillReceipt>, ISelfTr
 
     public WaybillReceiptViewModel() { }
 
-    public WaybillReceiptViewModel(IDatabase database, IWaybillReceiptRepository requestRepository, IConfiguration configuration) : base(database, configuration) 
+    public WaybillReceiptViewModel(IDatabase database, IWaybillReceiptRepository requestRepository, IConfiguration configuration, ILogger<WaybillReceiptViewModel> logger) 
+        : base(database, configuration, logger) 
     {
         this.requestRepository = requestRepository;
     }

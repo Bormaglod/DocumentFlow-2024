@@ -8,6 +8,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
@@ -15,7 +16,7 @@ public sealed class BankViewModel : DirectoryViewModel<Bank>, ISelfTransientLife
 {
     public BankViewModel() { }
 
-    public BankViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public BankViewModel(IDatabase database, IConfiguration configuration, ILogger<BankViewModel> logger) : base(database, configuration, logger) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.BankView);
 

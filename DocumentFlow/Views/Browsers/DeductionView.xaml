@@ -28,10 +28,10 @@
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="C" Modifiers="Ctrl" Command="{Binding Source={x:Static Member=commands:ContextMenuCommands.Copy}}"/>
-        <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRow}"/>
-        <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRow}"/>
-        <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding SwapMarkedRow}"/>
-        <KeyBinding Key="F5" Command="{Binding Refresh}"/>
+        <KeyBinding Key="Insert" Modifiers="Alt" Command="{Binding CreateRowCommand}"/>
+        <KeyBinding Key="Delete" Modifiers="Alt" Command="{Binding SwapMarkedRowCommand}"/>
+        <KeyBinding Key="Insert" Modifiers="Ctrl+Alt" Command="{Binding CopyRowCommand}"/>
+        <KeyBinding Key="F5" Command="{Binding RefreshCommand}"/>
     </UserControl.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -55,7 +55,7 @@
                                        SelectedItem="{Binding SelectedFolder, Mode=TwoWay}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="HierarchyNavigatorRefreshButtonClick">
-                    <i:InvokeCommandAction Command="{Binding Refresh}"
+                    <i:InvokeCommandAction Command="{Binding RefreshCommand}"
                                            CommandParameter="{Binding}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
@@ -103,10 +103,10 @@
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding SelectCurrentRow}"/>
+                    <i:InvokeCommandAction Command="{Binding SelectCurrentRowCommand}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="GridContextMenuOpening">
-                    <i:InvokeCommandAction Command="{Binding PopulateListDocuments}"
+                    <i:InvokeCommandAction Command="{Binding PopulateListDocumentsCommand}"
                                            CommandParameter="{Binding}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>

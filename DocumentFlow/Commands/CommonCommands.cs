@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common;
@@ -21,27 +22,24 @@ using Microsoft.Extensions.Options;
 using Syncfusion.Windows.Shared;
 
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace DocumentFlow.Commands;
 
 public static class CommonCommands
 {
-    #region OpenReport
+    #region OpenReportCommand
 
-    static ICommand? openReport;
+    static RelayCommand<SelectionChangedEventArgs>? openReportCommand;
 
-    public static ICommand OpenReport
+    public static IRelayCommand<SelectionChangedEventArgs> OpenReportCommand => openReportCommand ??= new RelayCommand<SelectionChangedEventArgs>(OpenReport);
+
+    private static void OpenReport(SelectionChangedEventArgs? e)
     {
-        get
+        if (e == null)
         {
-            openReport ??= new DelegateCommand<SelectionChangedEventArgs>(OnOpenReport);
-            return openReport;
+            return;
         }
-    }
 
-    private static void OnOpenReport(SelectionChangedEventArgs e)
-    {
         if (e.Source is ListBox list)
         {
             list.SelectedIndex = -1;
@@ -90,17 +88,11 @@ public static class CommonCommands
 
     #region ClearTextValue
 
-    static ICommand? clearTextValue;
+    static RelayCommand<object>? clearTextValueCommand;
 
-    public static ICommand ClearTextValue
-    {
-        get
-        {
-            clearTextValue ??= new DelegateCommand(OnClearTextValue);
-            return clearTextValue;
-        }
-    }
-    private static void OnClearTextValue(object parameter)
+    public static IRelayCommand<object> ClearTextValueCommand => clearTextValueCommand ??= new RelayCommand<object>(ClearTextValue);
+
+    private static void ClearTextValue(object? parameter)
     {
         switch (parameter)
         {

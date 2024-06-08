@@ -83,7 +83,7 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
         return folder;
     }
 
-    private void OpenPage(NavigatorModel model)
+    private static void OpenPage(NavigatorModel model)
     {
         if (model.ViewType != null)
         {

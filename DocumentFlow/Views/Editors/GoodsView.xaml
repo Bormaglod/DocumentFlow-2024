@@ -97,7 +97,7 @@
                              MaxLength="30"/>
                     <Button Content="Изменить"
                             Margin="10,0,0,5"
-                            Command="{Binding ChangeGoodsCode}"/>
+                            Command="{Binding ChangeGoodsCodeCommand}"/>
                 </StackPanel>
                 <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static sys:String.Empty}}"
                          Width="500"

@@ -10,6 +10,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -21,8 +22,8 @@ public class FinishedGoodsViewModel : DocumentViewModel<FinishedGoods>, ISelfTra
 {
     public FinishedGoodsViewModel() { }
 
-    public FinishedGoodsViewModel(IDatabase database, IConfiguration configuration)
-        : base(database, configuration)
+    public FinishedGoodsViewModel(IDatabase database, IConfiguration configuration, ILogger<FinishedGoodsViewModel> logger)
+        : base(database, configuration, logger)
     {
     }
 

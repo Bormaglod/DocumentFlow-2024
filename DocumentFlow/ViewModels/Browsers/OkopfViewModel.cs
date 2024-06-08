@@ -8,6 +8,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
@@ -15,7 +16,7 @@ public sealed class OkopfViewModel : DirectoryViewModel<Okopf>, ISelfTransientLi
 {
     public OkopfViewModel() { }
 
-    public OkopfViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public OkopfViewModel(IDatabase database, IConfiguration configuration, ILogger<OkopfViewModel> logger) : base(database, configuration, logger) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.OkopfView);
 

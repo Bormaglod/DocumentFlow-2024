@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using Dapper;
@@ -24,20 +25,21 @@ using Humanizer;
 using SqlKata;
 using SqlKata.Execution;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels;
 
-public abstract partial class EntityEditorViewModel<T> : ObservableObject, IRecipient<EntityActionMessage>, IEntityEditorViewModel, IReport
-    where T : DocumentInfo, new()
+public abstract partial class EntityEditorViewModel<T> : 
+    ObservableObject, 
+    IRecipient<EntityActionMessage>,
+    IRecipient<PageClosedMessage>,
+    IEntityEditorViewModel, 
+    IReport where T : DocumentInfo, new()
 {
     private string? headerDetails;
     private EntityEditStatus entityEditStatus = EntityEditStatus.Created;
-    private readonly List<MenuItemModel> reports = new();
+    private readonly List<MenuItemModel> reports = [];
     private bool isRefreshing = false;
 
     [ObservableProperty]
@@ -63,7 +65,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         UpdateHeader();
         InitializeEditor();
 
-        WeakReferenceMessenger.Default.Register(this);
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
     public ToolBarViewModel ToolBarItems { get; } = new();
@@ -76,20 +78,8 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
 
     #region Commands
 
-    #region Refresh
-
-    private ICommand? refresh;
-
-    public ICommand Refresh
-    {
-        get
-        {
-            refresh ??= new DelegateCommand(OnRefresh);
-            return refresh;
-        }
-    }
-
-    private void OnRefresh(object parameter)
+    [RelayCommand]
+    private void OnRefresh()
     {
         isRefreshing = true;
         try
@@ -110,48 +100,19 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         }
     }
 
-    #endregion
+    [RelayCommand]
+    private void Save() => SaveEntity();
 
-    #region Save
 
-    private ICommand? save;
-
-    public ICommand Save
+    [RelayCommand]
+    private void SaveAndClose()
     {
-        get
-        {
-            save ??= new DelegateCommand(OnSave);
-            return save;
-        }
-    }
-
-    private void OnSave(object parameter) => OnSave();
-
-    #endregion
-
-    #region SaveAndClose
-
-    private ICommand? saveAndClose;
-
-    public ICommand SaveAndClose
-    {
-        get
-        {
-            saveAndClose ??= new DelegateCommand(OnSaveAndClose);
-            return saveAndClose;
-        }
-    }
-
-    private void OnSaveAndClose(object parameter)
-    {
-        OnSave();
+        SaveEntity();
         if (View != null)
         {
             WeakReferenceMessenger.Default.Send(new RequestClosePageMessage(View));
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -162,6 +123,14 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         if (message.EntityName == typeof(T).Name.Underscore() && message.Action == MessageAction.Refresh && message.Destination == MessageDestination.Object)
         {
             LoadDocument(message.ObjectId);
+        }
+    }
+
+    public void Receive(PageClosedMessage message)
+    {
+        if (message.Value.Equals(this))
+        {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
     }
 
@@ -371,7 +340,7 @@ public abstract partial class EntityEditorViewModel<T> : ObservableObject, IReci
         }
     }
 
-    protected bool OnSave(bool sendNotify = true)
+    protected bool SaveEntity(bool sendNotify = true)
     {
         MessageAction action = MessageAction.None;
 

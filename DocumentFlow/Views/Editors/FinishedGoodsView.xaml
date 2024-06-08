@@ -149,7 +149,7 @@
                                               SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-broom-16.png"
                                               Margin="5,0,0,5"
                                               Width="25"
-                                              Command="{Binding Source={x:Static commands:CommonCommands.ClearTextValue}}"
+                                              Command="{Binding Source={x:Static commands:CommonCommands.ClearTextValueCommand}}"
                                               CommandParameter="{Binding ElementName=textPrice}"/>
                     </StackPanel>
                     
@@ -166,7 +166,7 @@
                                               SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-broom-16.png"
                                               Margin="5,0,0,5"
                                               Width="25"
-                                              Command="{Binding Source={x:Static commands:CommonCommands.ClearTextValue}}"
+                                              Command="{Binding Source={x:Static commands:CommonCommands.ClearTextValueCommand}}"
                                               CommandParameter="{Binding ElementName=textCost}"/>
                     </StackPanel>
                 </Grid>

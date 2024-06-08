@@ -5,16 +5,14 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
-using Syncfusion.Windows.Shared;
-
 using System.ComponentModel;
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -52,25 +50,11 @@ public partial class CuttingViewModel : BaseOperationViewModel<Cutting>, ISelfTr
 
     #region Commands
 
-    #region ClearProgramNumber
-
-    private ICommand? clearProgramNumber;
-
-    public ICommand ClearProgramNumber
-    {
-        get
-        {
-            clearProgramNumber ??= new DelegateCommand(OnClearProgramNumber);
-            return clearProgramNumber;
-        }
-    }
-
-    private void OnClearProgramNumber(object parameter)
+    [RelayCommand]
+    private void ClearProgramNumber()
     {
         ProgramNumber = null;
     }
-
-    #endregion
 
     #endregion
 

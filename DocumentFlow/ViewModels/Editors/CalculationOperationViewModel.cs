@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common.Collections;
 using DocumentFlow.Common.Extensions;
@@ -12,14 +13,12 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
-using Syncfusion.Windows.Shared;
 using Syncfusion.Windows.Tools.Controls;
 
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -65,58 +64,18 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
 
     #region Commands
 
-    #region AddProperty
-
-    private ICommand? addProperty;
-
-    public ICommand AddProperty
-    {
-        get
-        {
-            addProperty ??= new DelegateCommand(OnAddProperty);
-            return addProperty;
-        }
-    }
-
-    private void OnAddProperty(object parameter)
+    [RelayCommand]
+    private void AddProperty()
     {
     }
 
-    #endregion
-
-    #region AddProperty
-
-    private ICommand? editProperty;
-
-    public ICommand EditProperty
-    {
-        get
-        {
-            editProperty ??= new DelegateCommand(OnEditProperty);
-            return editProperty;
-        }
-    }
-
-    private void OnEditProperty(object parameter)
+    [RelayCommand]
+    private void EditProperty()
     {
     }
 
-    #endregion
-
-    #region DeleteProperty
-
-    private ICommand? deleteProperty;
-
-    public ICommand DeleteProperty
-    {
-        get
-        {
-            deleteProperty ??= new DelegateCommand(OnDeleteProperty);
-            return deleteProperty;
-        }
-    }
-
-    private void OnDeleteProperty(object parameter)
+    [RelayCommand]
+    private void DeleteProperty()
     {
         if (PropertySelected != null && Properties != null)
         {
@@ -124,21 +83,7 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
         }
     }
 
-    #endregion
-
-    #region AddSpecifiedProperty
-
-    private ICommand? addSpecifiedProperty;
-
-    public ICommand AddSpecifiedProperty
-    {
-        get
-        {
-            addSpecifiedProperty ??= new DelegateCommand(OnAddSpecifiedProperty);
-            return addSpecifiedProperty;
-        }
-    }
-
+    [RelayCommand]
     private void OnAddSpecifiedProperty(object parameter)
     {
         if (Properties != null && parameter is Property prop)
@@ -156,8 +101,6 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
             Properties.Add(calculationOperation);
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -190,7 +133,7 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
                     }
                     else
                     {
-                        PreviousOperation = PreviousOperation.Concat(newItems).ToArray();
+                        PreviousOperation = [.. PreviousOperation, .. newItems];
                     }
                 }
                 break;
@@ -232,13 +175,13 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
         }
         else
         {
-            Properties ??= new DependentCollection<CalculationOperationProperty>();
+            Properties ??= [];
         }    
 
-        ExistingProperties = new();
+        ExistingProperties = [];
         foreach (var item in repoProperty.GetSlim(connection))
         {
-            ExistingProperties.Add(new DropDownMenuItem() { Header = item, Command = AddSpecifiedProperty, CommandParameter = item });
+            ExistingProperties.Add(new DropDownMenuItem() { Header = item, Command = addSpecifiedPropertyCommand, CommandParameter = item });
         }
     }
 

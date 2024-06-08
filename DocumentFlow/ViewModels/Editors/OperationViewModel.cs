@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
@@ -16,11 +17,8 @@ using DocumentFlow.Models.Entities;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -53,20 +51,8 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
 
     #region Commands
 
-    #region AddOperationGoods
-
-    private ICommand? addOperationGoods;
-
-    public ICommand AddOperationGoods
-    {
-        get
-        {
-            addOperationGoods ??= new DelegateCommand(OnAddOperationGoods);
-            return addOperationGoods;
-        }
-    }
-
-    private void OnAddOperationGoods(object parameter)
+    [RelayCommand]
+    private void AddOperationGoods()
     {
         if (OperationGoods == null)
         {
@@ -82,22 +68,8 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         }
     }
 
-    #endregion
-
-    #region EditOperationGoods
-
-    private ICommand? editOperationGoods;
-
-    public ICommand EditOperationGoods
-    {
-        get
-        {
-            editOperationGoods ??= new DelegateCommand(OnEditOperationGoods);
-            return editOperationGoods;
-        }
-    }
-
-    private void OnEditOperationGoods(object parameter)
+    [RelayCommand]
+    private void EditOperationGoods()
     {
         if (OperationGoods == null || OperationGoodsSelected == null || OperationGoodsSelected.Goods == null)
         {
@@ -113,22 +85,8 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         }
     }
 
-    #endregion
-
-    #region DeleteOperationGoods
-
-    private ICommand? deleteOperationGoods;
-
-    public ICommand DeleteOperationGoods
-    {
-        get
-        {
-            deleteOperationGoods ??= new DelegateCommand(OnDeleteOperationGoods);
-            return deleteOperationGoods;
-        }
-    }
-
-    private void OnDeleteOperationGoods(object parameter)
+    [RelayCommand]
+    private void DeleteOperationGoods()
     {
         if (OperationGoods != null && OperationGoodsSelected != null)
         {
@@ -141,22 +99,8 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         }
     }
 
-    #endregion
-
-    #region CopyOperationGoods
-
-    private ICommand? copyOperationGoods;
-
-    public ICommand CopyOperationGoods
-    {
-        get
-        {
-            copyOperationGoods ??= new DelegateCommand(OnCopyOperationGoods);
-            return copyOperationGoods;
-        }
-    }
-
-    private void OnCopyOperationGoods(object parameter)
+    [RelayCommand]
+    private void CopyOperationGoods()
     {
         if (OperationGoods == null || OperationGoodsSelected == null || OperationGoodsSelected.Goods == null)
         {
@@ -171,8 +115,6 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
             OperationGoods.Add(new OperationGoods() { Goods = product });
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -218,7 +160,7 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
         }
         else
         {
-            OperationGoods ??= new DependentCollection<OperationGoods>();
+            OperationGoods ??= [];
         }    
     }
 

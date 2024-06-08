@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using Dapper;
@@ -21,16 +22,16 @@ using DocumentFlow.Models.Entities;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
-public partial class ProductionLotViewModel : DocumentEditorViewModel<ProductionLot>, ISelfTransientLifetime
+public partial class ProductionLotViewModel : 
+    DocumentEditorViewModel<ProductionLot>, 
+    IRecipient<DocumentActionMessage<OperationsPerformed>>, 
+    ISelfTransientLifetime
 {
     private readonly IProductionOrderRepository orderRepository = null!;
     private readonly IGoodsRepository goodsRepository = null!;
@@ -79,20 +80,10 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
         this.operationsPerformedRepository = operationsPerformedRepository;
     }
 
-    #region AddOperationCommand
+    #region Commands
 
-    private ICommand? addOperationCommand;
-
-    public ICommand AddOperationCommand
-    {
-        get
-        {
-            addOperationCommand ??= new DelegateCommand<OperationsPerformedContext>(OnAddOperationCommand);
-            return addOperationCommand;
-        }
-    }
-
-    private void OnAddOperationCommand(OperationsPerformedContext context)
+    [RelayCommand]
+    private void AddOperation(OperationsPerformedContext context)
     {
         if (Calculation == null || Entity == null)
         {
@@ -118,11 +109,6 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
 
                     transaction.Commit();
 
-                    /*if (WorkedEmployes != null && operationsPerformed.Employee != null && WorkedEmployes.FirstOrDefault(x => x.Id == operationsPerformed.Employee.Id) == null)
-                    {
-                        WorkedEmployes.Add(operationsPerformed.Employee);
-                    }*/
-
                     OperationsPerformed?.Add(operationsPerformed);
 
                     var table = EntityProperties.GetTableName(typeof(OperationsPerformed));
@@ -137,6 +123,39 @@ public partial class ProductionLotViewModel : DocumentEditorViewModel<Production
             catch (Exception e)
             {
                 MessageBox.Show(ExceptionHelper.Message(e), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    #endregion
+
+    #region Receives
+
+    public void Receive(DocumentActionMessage<OperationsPerformed> message)
+    {
+        if (OperationsPerformed == null)
+        {
+            return;
+        }
+
+        if (message.Document.CarriedOut)
+        {
+            var doc = OperationsPerformed.FirstOrDefault(x => x.Id == message.Document.Id);
+            if (doc == null)
+            {
+                OperationsPerformed.Add(message.Document);
+            }
+            else
+            {
+                OperationsPerformed[OperationsPerformed.IndexOf(doc)] = message.Document;
+            }
+        }
+        else
+        {
+            var doc = OperationsPerformed.FirstOrDefault(x => x.Id == message.Document.Id);
+            if (doc != null)
+            {
+                OperationsPerformed.Remove(doc);
             }
         }
     }

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
@@ -17,11 +18,8 @@ using DocumentFlow.Models.Entities;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -64,20 +62,8 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
 
     #region Commands
 
-    #region AddMaterial
-
-    private ICommand? addMaterial;
-
-    public ICommand AddMaterial
-    {
-        get
-        {
-            addMaterial ??= new DelegateCommand(OnAddMaterial);
-            return addMaterial;
-        }
-    }
-
-    private void OnAddMaterial(object parameter)
+    [RelayCommand]
+    private void AddMaterial()
     {
         if (Materials == null)
         {
@@ -97,22 +83,8 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
         }
     }
 
-    #endregion
-
-    #region EditMaterial
-
-    private ICommand? editMaterial;
-
-    public ICommand EditMaterial
-    {
-        get
-        {
-            editMaterial ??= new DelegateCommand(OnEditMaterial);
-            return editMaterial;
-        }
-    }
-
-    private void OnEditMaterial(object parameter)
+    [RelayCommand]
+    private void EditMaterial()
     {
         if (MaterialSelected == null)
         {
@@ -129,22 +101,8 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
         dialog.Edit(MaterialSelected);
     }
 
-    #endregion
-
-    #region DeleteMaterial
-
-    private ICommand? deleteMaterial;
-
-    public ICommand DeleteMaterial
-    {
-        get
-        {
-            deleteMaterial ??= new DelegateCommand(OnDeleteMaterial);
-            return deleteMaterial;
-        }
-    }
-
-    private void OnDeleteMaterial(object parameter)
+    [RelayCommand]
+    private void DeleteMaterial()
     {
         if (Materials != null && MaterialSelected != null)
         {
@@ -157,22 +115,8 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
         }
     }
 
-    #endregion
-
-    #region CopyMaterial
-
-    private ICommand? copyMaterial;
-
-    public ICommand CopyMaterial
-    {
-        get
-        {
-            copyMaterial ??= new DelegateCommand(OnCopyMaterial);
-            return copyMaterial;
-        }
-    }
-
-    private void OnCopyMaterial(object parameter)
+    [RelayCommand]
+    private void CopyMaterial()
     {
         if (Materials == null || MaterialSelected == null)
         {
@@ -191,8 +135,6 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
             Materials.Add(product);
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -254,7 +196,7 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
         }
         else
         {
-            Materials ??= new DependentCollection<PurchaseRequestPrice>();
+            Materials ??= [];
         }
 
         if (IsRefreshing && Contractor != null)

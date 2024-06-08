@@ -9,6 +9,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using System.Data;
 
@@ -18,7 +19,7 @@ public sealed class ContractorViewModel : DirectoryViewModel<Contractor>, ISelfT
 {
     public ContractorViewModel() { }
 
-    public ContractorViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public ContractorViewModel(IDatabase database, IConfiguration configuration, ILogger<ContractorViewModel> logger) : base(database, configuration, logger) { }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.ContractorView);
 

@@ -10,6 +10,7 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Models.Entities;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
@@ -21,8 +22,8 @@ public partial class OperationsPerformedViewModel : DocumentViewModel<Operations
 {
     public OperationsPerformedViewModel() { }
 
-    public OperationsPerformedViewModel(IDatabase database, IConfiguration configuration)
-        : base(database, configuration)
+    public OperationsPerformedViewModel(IDatabase database, IConfiguration configuration, ILogger<OperationsPerformedViewModel> logger)
+        : base(database, configuration, logger)
     {
     }
 

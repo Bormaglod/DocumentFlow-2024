@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
@@ -13,17 +14,17 @@ using DocumentFlow.Models.Entities;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
-public partial class FinishedGoodsViewModel : DocumentEditorViewModel<FinishedGoods>, ISelfTransientLifetime
+public partial class FinishedGoodsViewModel(
+    IProductionLotRepository productionLotRepository,
+    IGoodsRepository goodsRepository,
+    IOrganizationRepository organizationRepository) : DocumentEditorViewModel<FinishedGoods>(organizationRepository), ISelfTransientLifetime
 {
-    private readonly IProductionLotRepository productionLotRepository = null!;
-    private readonly IGoodsRepository goodsRepository = null!;
+    private readonly IProductionLotRepository productionLotRepository = productionLotRepository;
+    private readonly IGoodsRepository goodsRepository = goodsRepository;
 
     [ObservableProperty]
     private ProductionLot? lot;
@@ -46,29 +47,10 @@ public partial class FinishedGoodsViewModel : DocumentEditorViewModel<FinishedGo
     [ObservableProperty]
     private decimal? productCost;
 
-    public FinishedGoodsViewModel(
-        IProductionLotRepository productionLotRepository,
-        IGoodsRepository goodsRepository,
-        IOrganizationRepository organizationRepository) : base(organizationRepository)
-    {
-        this.productionLotRepository = productionLotRepository;
-        this.goodsRepository = goodsRepository;
-    }
+    #region Commands
 
-    #region LotSelectedCommand
-
-    private ICommand? lotSelectedCommand;
-
-    public ICommand LotSelectedCommand
-    {
-        get
-        {
-            lotSelectedCommand ??= new DelegateCommand(OnLotSelectedCommand);
-            return lotSelectedCommand;
-        }
-    }
-
-    private void OnLotSelectedCommand(object parameter)
+    [RelayCommand]
+    private void LotSelected()
     {
         if (Lot?.Calculation != null)
         {
@@ -76,22 +58,8 @@ public partial class FinishedGoodsViewModel : DocumentEditorViewModel<FinishedGo
         }
     }
 
-    #endregion
-
-    #region ProductSelectedCommand
-
-    private ICommand? productSelectedCommand;
-
-    public ICommand ProductSelectedCommand
-    {
-        get
-        {
-            productSelectedCommand ??= new DelegateCommand(OnProductSelectedCommand);
-            return productSelectedCommand;
-        }
-    }
-
-    private void OnProductSelectedCommand(object parameter)
+    [RelayCommand]
+    private void ProductSelected()
     {
         if (Product != null)
         {

@@ -18,4 +18,5 @@ public class EntityActionMessage
     public string EntityName { get; }
     public Guid ObjectId { get; } = Guid.Empty;
     public MessageAction Action { get; } = MessageAction.Refresh;
+    public MessageActionSource Source { get; set; } = MessageActionSource.Inner;
 }

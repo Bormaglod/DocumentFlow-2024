@@ -193,20 +193,20 @@
                     <syncfusion:ButtonAdv Label="Добавить" 
                                           SmallIcon="/Images/icons8-file-add-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding AddCompatiblePart}"/>
+                                          Command="{Binding AddCompatiblePartCommand}"/>
                     <syncfusion:ButtonAdv Label="Изменить" 
                                           SmallIcon="/Images/icons8-file-edit-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding EditCompatiblePart}"/>
+                                          Command="{Binding EditCompatiblePartCommand}"/>
                     <syncfusion:ButtonAdv Label="Удалить" 
                                           SmallIcon="/Images/icons8-file-delete-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding DeleteCompatiblePart}"/>
+                                          Command="{Binding DeleteCompatiblePartCommand}"/>
                     <Separator/>
                     <syncfusion:ButtonAdv Label="Копия" 
                                           SmallIcon="/Images/icons8-copy-edit-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding CopyCompatiblePart}"/>
+                                          Command="{Binding CopyCompatiblePartCommand}"/>
                 </ToolBar>
                 <syncfusion:SfDataGrid Grid.Row="3"
                                        ItemsSource="{Binding CompatibleParts}"
@@ -225,21 +225,21 @@
                     <syncfusion:SfDataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Добавить"
-                                      Command="{Binding AddCompatiblePart}">
+                                      Command="{Binding AddCompatiblePartCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-file-add-16.png" 
                                            Stretch="None"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="Изменить"
-                                      Command="{Binding EditCompatiblePart}">
+                                      Command="{Binding EditCompatiblePartCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-file-edit-16.png" 
                                            Stretch="None"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="Удалить"
-                                      Command="{Binding DeleteCompatiblePart}">
+                                      Command="{Binding DeleteCompatiblePartCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-delete-16.png" 
                                            Stretch="None"/>
@@ -247,7 +247,7 @@
                             </MenuItem>
                             <Separator/>
                             <MenuItem Header="Копия"
-                                      Command="{Binding CopyCompatiblePart}">
+                                      Command="{Binding CopyCompatiblePartCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-copy-edit-16.png" 
                                            Stretch="None"/>
@@ -257,7 +257,7 @@
                     </syncfusion:SfDataGrid.ContextMenu>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
-                            <i:InvokeCommandAction Command="{Binding EditCompatiblePart}"/>
+                            <i:InvokeCommandAction Command="{Binding EditCompatiblePartCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </syncfusion:SfDataGrid>

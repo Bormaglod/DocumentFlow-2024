@@ -153,20 +153,20 @@
                     <syncfusion:ButtonAdv Label="Добавить" 
                                           SmallIcon="/Images/icons8-file-add-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding AddOperationGoods}"/>
+                                          Command="{Binding AddOperationGoodsCommand}"/>
                     <syncfusion:ButtonAdv Label="Изменить" 
                                           SmallIcon="/Images/icons8-file-edit-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding EditOperationGoods}"/>
+                                          Command="{Binding EditOperationGoodsCommand}"/>
                     <syncfusion:ButtonAdv Label="Удалить" 
                                           SmallIcon="/Images/icons8-file-delete-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding DeleteOperationGoods}"/>
+                                          Command="{Binding DeleteOperationGoodsCommand}"/>
                     <Separator/>
                     <syncfusion:ButtonAdv Label="Копия" 
                                           SmallIcon="/Images/icons8-copy-edit-16.png" 
                                           IconStretch="None"
-                                          Command="{Binding CopyOperationGoods}"/>
+                                          Command="{Binding CopyOperationGoodsCommand}"/>
                 </ToolBar>
                 <syncfusion:SfDataGrid Grid.Row="3"
                                        ItemsSource="{Binding OperationGoods}"
@@ -185,21 +185,21 @@
                     <syncfusion:SfDataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Добавить"
-                                      Command="{Binding AddOperationGoods}">
+                                      Command="{Binding AddOperationGoodsCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-file-add-16.png" 
                                            Stretch="None"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="Изменить"
-                                      Command="{Binding EditOperationGoods}">
+                                      Command="{Binding EditOperationGoodsCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-file-edit-16.png" 
                                            Stretch="None"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="Удалить"
-                                      Command="{Binding DeleteOperationGoods}">
+                                      Command="{Binding DeleteOperationGoodsCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-delete-16.png" 
                                            Stretch="None"/>
@@ -207,7 +207,7 @@
                             </MenuItem>
                             <Separator/>
                             <MenuItem Header="Копия"
-                                      Command="{Binding CopyOperationGoods}">
+                                      Command="{Binding CopyOperationGoodsCommand}">
                                 <MenuItem.Icon>
                                     <Image Source="/Images/icons8-copy-edit-16.png" 
                                            Stretch="None"/>
@@ -217,7 +217,7 @@
                     </syncfusion:SfDataGrid.ContextMenu>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
-                            <i:InvokeCommandAction Command="{Binding EditOperationGoods}"/>
+                            <i:InvokeCommandAction Command="{Binding EditOperationGoodsCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </syncfusion:SfDataGrid>

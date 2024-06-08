@@ -183,7 +183,7 @@
                     <StackPanel Orientation="Horizontal">
                         <syncfusion:SplitButtonAdv Label="Добавить" 
                                                 Margin="0,0,5,5"
-                                                Command="{Binding AddProperty}">
+                                                Command="{Binding AddPropertyCommand}">
                             <syncfusion:DropDownMenuGroup MoreItems="{Binding ExistingProperties, Mode=TwoWay}"/>
                             <syncfusion:SplitButtonAdv.IconTemplate>
                                 <DataTemplate>
@@ -196,7 +196,7 @@
                         </syncfusion:SplitButtonAdv>
                         <syncfusion:ButtonAdv Label="Изменить" 
                                               Margin="0,0,5,5"
-                                              Command="{Binding EditProperty}">
+                                              Command="{Binding EditPropertyCommand}">
                             <syncfusion:ButtonAdv.IconTemplate>
                                 <DataTemplate>
                                     <Image Source="/Images/pencil-16.png" 
@@ -208,7 +208,7 @@
                         </syncfusion:ButtonAdv>
                         <syncfusion:ButtonAdv Label="Удалить" 
                                               Margin="0,0,5,5"
-                                              Command="{Binding DeleteProperty}">
+                                              Command="{Binding DeletePropertyCommand}">
                             <syncfusion:ButtonAdv.IconTemplate>
                                 <DataTemplate>
                                     <Image Source="/Images/icons8-delete-16.png" 

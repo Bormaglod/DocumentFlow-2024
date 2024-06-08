@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
@@ -15,16 +16,10 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
-using MailKit.Net.Imap;
-
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -94,20 +89,8 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
 
     #region Commands
 
-    #region AddMaterial
-
-    private ICommand? addMaterial;
-
-    public ICommand AddMaterial
-    {
-        get
-        {
-            addMaterial ??= new DelegateCommand(OnAddMaterial);
-            return addMaterial;
-        }
-    }
-
-    private void OnAddMaterial(object parameter)
+    [RelayCommand]
+    private void AddMaterial()
     {
         if (Materials == null)
         {
@@ -127,22 +110,8 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         }
     }
 
-    #endregion
-
-    #region EditMaterial
-
-    private ICommand? editMaterial;
-
-    public ICommand EditMaterial
-    {
-        get
-        {
-            editMaterial ??= new DelegateCommand(OnEditMaterial);
-            return editMaterial;
-        }
-    }
-
-    private void OnEditMaterial(object parameter)
+    [RelayCommand]
+    private void EditMaterial()
     {
         if (MaterialSelected == null)
         {
@@ -159,22 +128,8 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         dialog.Edit(MaterialSelected);
     }
 
-    #endregion
-
-    #region DeleteMaterial
-
-    private ICommand? deleteMaterial;
-
-    public ICommand DeleteMaterial
-    {
-        get
-        {
-            deleteMaterial ??= new DelegateCommand(OnDeleteMaterial);
-            return deleteMaterial;
-        }
-    }
-
-    private void OnDeleteMaterial(object parameter)
+    [RelayCommand]
+    private void DeleteMaterial()
     {
         if (Materials != null && MaterialSelected != null)
         {
@@ -187,22 +142,8 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         }
     }
 
-    #endregion
-
-    #region CopyMaterial
-
-    private ICommand? copyMaterial;
-
-    public ICommand CopyMaterial
-    {
-        get
-        {
-            copyMaterial ??= new DelegateCommand(OnCopyMaterial);
-            return copyMaterial;
-        }
-    }
-
-    private void OnCopyMaterial(object parameter)
+    [RelayCommand]
+    private void CopyMaterial()
     {
         if (Materials == null || MaterialSelected == null)
         {
@@ -222,22 +163,8 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         }
     }
 
-    #endregion
-
-    #region PurchaseRequestSelected
-
-    private ICommand? purchaseRequestSelected;
-
-    public ICommand PurchaseRequestSelected
-    {
-        get
-        {
-            purchaseRequestSelected ??= new DelegateCommand(OnPurchaseRequestSelected);
-            return purchaseRequestSelected;
-        }
-    }
-
-    private void OnPurchaseRequestSelected(object parameter)
+    [RelayCommand]
+    private void PurchaseRequestSelected(object parameter)
     {
         if (parameter is not PurchaseRequest request)
         {
@@ -272,8 +199,6 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         }
 
     }
-
-    #endregion
 
     #endregion
 
@@ -356,7 +281,7 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
         }
         else
         {
-            Materials ??= new DependentCollection<WaybillReceiptPrice>();
+            Materials ??= [];
         }
 
         if (IsRefreshing && Contractor != null)

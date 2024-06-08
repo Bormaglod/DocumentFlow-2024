@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common.Data;
@@ -16,45 +17,31 @@ using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public abstract class BaseCalculationOperationViewModel<T> : DirectoryViewModel<T>
+public abstract partial class BaseCalculationOperationViewModel<T> : DirectoryViewModel<T>
     where T : CalculationOperation
 {
     private readonly ICalculationItemRepository<T> repoOperations = null!;
 
     public BaseCalculationOperationViewModel() { }
 
-    public BaseCalculationOperationViewModel(IDatabase database, ICalculationItemRepository<T> repoOperations, IConfiguration configuration) 
-        : base(database, configuration) 
+    public BaseCalculationOperationViewModel(IDatabase database, ICalculationItemRepository<T> repoOperations, IConfiguration configuration, ILogger<BaseCalculationOperationViewModel<T>> logger) 
+        : base(database, configuration, logger) 
     { 
         this.repoOperations = repoOperations;
     }
 
     #region Commands
 
-    #region ShowOperation
-
-    private ICommand? showOperation;
-
-    public ICommand ShowOperation
-    {
-        get
-        {
-            showOperation ??= new DelegateCommand(OnShowOperation);
-            return showOperation;
-        }
-    }
-
-    private void OnShowOperation(object parameter)
+    [RelayCommand]
+    private void ShowOperation()
     {
         if (SelectedItem is T op && op.Operation != null)
         {
@@ -66,22 +53,8 @@ public abstract class BaseCalculationOperationViewModel<T> : DirectoryViewModel<
         }
     }
 
-    #endregion
-
-    #region ShowMaterial
-
-    private ICommand? showMaterial;
-
-    public ICommand ShowMaterial
-    {
-        get
-        {
-            showMaterial ??= new DelegateCommand(OnShowMaterial);
-            return showMaterial;
-        }
-    }
-
-    private void OnShowMaterial(object parameter)
+    [RelayCommand]
+    private void ShowMaterial()
     {
         if (SelectedItem is T op && op.Material != null)
         {
@@ -89,22 +62,8 @@ public abstract class BaseCalculationOperationViewModel<T> : DirectoryViewModel<
         }
     }
 
-    #endregion
-
-    #region RecalculatePrices
-
-    private ICommand? recalculatePrices;
-
-    public ICommand RecalculatePrices
-    {
-        get
-        {
-            recalculatePrices ??= new DelegateCommand(OnRecalculatePrices);
-            return recalculatePrices;
-        }
-    }
-
-    private void OnRecalculatePrices(object parameter)
+    [RelayCommand]
+    private void RecalculatePrices()
     {
         if (Owner is Calculation calculation)
         {
@@ -112,8 +71,6 @@ public abstract class BaseCalculationOperationViewModel<T> : DirectoryViewModel<
             RefreshDataSource();
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -164,9 +121,9 @@ public abstract class BaseCalculationOperationViewModel<T> : DirectoryViewModel<
 
         ToolBarItems.AddButtons(this,
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Производственная операция", "robot") { Command = ShowOperation },
-            new ToolBarButtonModel("Используемый материал", "goods") { Command = ShowMaterial },
+            new ToolBarButtonModel("Производственная операция", "robot") { Command = ShowOperationCommand },
+            new ToolBarButtonModel("Используемый материал", "goods") { Command = ShowMaterialCommand },
             new ToolBarSeparatorModel(),
-            new ToolBarButtonModel("Пересчитать стоимость", "calculate") { Command = RecalculatePrices });
+            new ToolBarButtonModel("Пересчитать стоимость", "calculate") { Command = RecalculatePricesCommand });
     }
 }

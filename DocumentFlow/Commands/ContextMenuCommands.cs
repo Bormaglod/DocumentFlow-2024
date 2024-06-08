@@ -4,10 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-//using DocumentFlow.Common;
 using DocumentFlow.Common;
-using CommunityToolkit.Mvvm.ComponentModel;
-
 using DocumentFlow.Dialogs;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Models;
@@ -20,9 +17,8 @@ using Syncfusion.Windows.Shared;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Data;
-using DocumentFlow.Common.Converters;
+using System.Windows.Input;
 
 namespace DocumentFlow.Commands;
 

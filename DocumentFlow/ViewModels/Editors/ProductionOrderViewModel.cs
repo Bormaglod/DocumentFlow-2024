@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Collections;
@@ -17,11 +18,8 @@ using DocumentFlow.Models.Entities;
 
 using SqlKata;
 
-using Syncfusion.Windows.Shared;
-
 using System.Data;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Editors;
 
@@ -59,20 +57,8 @@ public partial class ProductionOrderViewModel : DocumentEditorViewModel<Producti
 
     #region Commands
 
-    #region AddProduct
-
-    private ICommand? addProduct;
-
-    public ICommand AddProduct
-    {
-        get
-        {
-            addProduct ??= new DelegateCommand(OnAddProduct);
-            return addProduct;
-        }
-    }
-
-    private void OnAddProduct(object parameter)
+    [RelayCommand]
+    private void AddProduct()
     {
         if (Products == null)
         {
@@ -92,22 +78,8 @@ public partial class ProductionOrderViewModel : DocumentEditorViewModel<Producti
         }
     }
 
-    #endregion
-
-    #region EditProduct
-
-    private ICommand? editProduct;
-
-    public ICommand EditProduct
-    {
-        get
-        {
-            editProduct ??= new DelegateCommand(OnEditProduct);
-            return editProduct;
-        }
-    }
-
-    private void OnEditProduct(object parameter)
+    [RelayCommand]
+    private void EditProduct()
     {
         if (ProductSelected == null)
         {
@@ -124,22 +96,8 @@ public partial class ProductionOrderViewModel : DocumentEditorViewModel<Producti
         dialog.Edit(ProductSelected);
     }
 
-    #endregion
-
-    #region DeleteProduct
-
-    private ICommand? deleteProduct;
-
-    public ICommand DeleteProduct
-    {
-        get
-        {
-            deleteProduct ??= new DelegateCommand(OnDeleteProduct);
-            return deleteProduct;
-        }
-    }
-
-    private void OnDeleteProduct(object parameter)
+    [RelayCommand]
+    private void DeleteProduct()
     {
         if (Products != null && ProductSelected != null)
         {
@@ -152,22 +110,8 @@ public partial class ProductionOrderViewModel : DocumentEditorViewModel<Producti
         }
     }
 
-    #endregion
-
-    #region CopyProduct
-
-    private ICommand? copyProduct;
-
-    public ICommand CopyProduct
-    {
-        get
-        {
-            copyProduct ??= new DelegateCommand(OnCopyProduct);
-            return copyProduct;
-        }
-    }
-
-    private void OnCopyProduct(object parameter)
+    [RelayCommand]
+    private void CopyProduct()
     {
         if (Products == null || ProductSelected == null)
         {
@@ -186,8 +130,6 @@ public partial class ProductionOrderViewModel : DocumentEditorViewModel<Producti
             Products.Add(product);
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -247,7 +189,7 @@ public partial class ProductionOrderViewModel : DocumentEditorViewModel<Producti
         }
         else
         {
-            Products ??= new DependentCollection<ProductionOrderPrice>();
+            Products ??= [];
         }
 
         if (IsRefreshing && Contractor != null)

@@ -90,7 +90,7 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <triggers:EventCommandAction Command="{Binding WindowClosing}"/>
+            <triggers:EventCommandAction Command="{Binding WindowClosingCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
@@ -168,7 +168,7 @@
                                                       Value="{Binding Brightness}"/>
                             <Button x:Name="buttonBrightnessReset"
                                     Grid.Column="1"
-                                    Command="{Binding ResetScanParameter}"
+                                    Command="{Binding ResetScanParameterCommand}"
                                     CommandParameter="BRIGHTNESS"
                                     Padding="2"
                                     VerticalAlignment="Center">
@@ -199,7 +199,7 @@
                                                       Value="{Binding Contrast}"/>
                             <Button x:Name="buttonContrastReset" 
                                     Grid.Column="1"
-                                    Command="{Binding ResetScanParameter}"
+                                    Command="{Binding ResetScanParameterCommand}"
                                     CommandParameter="CONTRAST"
                                     Padding="2"
                                     VerticalAlignment="Center">
@@ -217,7 +217,7 @@
                         Style="{StaticResource DialogBitton}"
                         Content="Сканировать"
                         Grid.Row="2"
-                        Command="{Binding Scan}"/>
+                        Command="{Binding ScanCommand}"/>
             </Border>
         </Grid>
         <Grid Grid.Column="1">
@@ -238,14 +238,14 @@
                             <syncfusion:ButtonAdv x:Name="buttonOpenImage"
                                                   SizeMode="Small"
                                                   SmallIcon="/Images/icons8-folder-open-16.png"
-                                                  Command="{Binding OpenImage}"/>
+                                                  Command="{Binding OpenImageCommand}"/>
                             <Border Style="{StaticResource BorderStyle}"
                                     BorderThickness="0,0,1,0"
                                     Padding="0,0,5,0">
                                 <syncfusion:ButtonAdv x:Name="buttonSaveImage" SizeMode="Small" 
                                                       SmallIcon="/Images/icons8-save-16.png"
                                                       Margin="2,0,0,0"
-                                                      Command="{Binding SaveImage}"/>
+                                                      Command="{Binding SaveImageCommand}"/>
                             </Border>
                             <syncfusion:ButtonAdv x:Name="buttonUndo" 
                                                   SizeMode="Small" 
@@ -271,7 +271,7 @@
                                 <syncfusion:DropDownMenuGroup>
                                     <syncfusion:DropDownMenuItem HorizontalAlignment="Left" 
                                                                  Header="Перевернуть горизонтально"
-                                                                 Command="{Binding FlipImage}"
+                                                                 Command="{Binding FlipImageCommand}"
                                                                  CommandParameter="X">
                                         <syncfusion:DropDownMenuItem.Icon>
                                             <Image Source="/Images/icons8-flip-horizontal-16.png"/>
@@ -279,7 +279,7 @@
                                     </syncfusion:DropDownMenuItem>
                                     <syncfusion:DropDownMenuItem HorizontalAlignment="Left" 
                                                                  Header="Перевернуть вертикально"
-                                                                 Command="{Binding FlipImage}"
+                                                                 Command="{Binding FlipImageCommand}"
                                                                  CommandParameter="Y">
                                         <syncfusion:DropDownMenuItem.Icon>
                                             <Image Source="/Images/icons8-flip-vertical-16.png"/>
@@ -293,7 +293,7 @@
                                 <syncfusion:DropDownMenuGroup>
                                     <syncfusion:DropDownMenuItem HorizontalAlignment="Left" 
                                                                  Header="Повернуть по часовой стрелке на 90°"
-                                                                 Command="{Binding RotateImage}"
+                                                                 Command="{Binding RotateImageCommand}"
                                                                  CommandParameter="90">
                                         <syncfusion:DropDownMenuItem.Icon>
                                             <Image Source="/Images/icons8-rotate90-16.png"/>
@@ -301,7 +301,7 @@
                                     </syncfusion:DropDownMenuItem>
                                     <syncfusion:DropDownMenuItem HorizontalAlignment="Left"
                                                                  Header="Повернуть против часовой стрелке на 90°"
-                                                                 Command="{Binding RotateImage}"
+                                                                 Command="{Binding RotateImageCommand}"
                                                                  CommandParameter="-90">
                                         <syncfusion:DropDownMenuItem.Icon>
                                             <Image Source="/Images/icons8-rotate-back90-16.png"/>
@@ -309,7 +309,7 @@
                                     </syncfusion:DropDownMenuItem>
                                     <syncfusion:DropDownMenuItem HorizontalAlignment="Left"
                                                                  Header="Повернуть на 180°"
-                                                                 Command="{Binding RotateImage}"
+                                                                 Command="{Binding RotateImageCommand}"
                                                                  CommandParameter="180">
                                         <syncfusion:DropDownMenuItem.Icon>
                                             <Image Source="/Images/icons8-rotate-180-16.png"/>

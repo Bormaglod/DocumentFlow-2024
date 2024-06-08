@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
+
 using DocumentFlow.Common;
 using DocumentFlow.Common.Minio;
 using DocumentFlow.Interfaces;
@@ -13,30 +15,20 @@ using Minio;
 
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
-using Syncfusion.UI.Xaml.Utility;
 
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace DocumentFlow.Commands;
 
-public static class FileCommands
+public static partial class FileCommands
 {
-    #region OpenImage
+    #region OpenFileCommand
 
-    static ICommand? openFile;
+    private static RelayCommand<object>? openFileCommand;
 
-    public static ICommand OpenFile
-    {
-        get
-        {
-            openFile ??= new BaseCommand(OnOpenFile);
-            return openFile;
-        }
-    }
+    public static IRelayCommand<object> OpenFileCommand => openFileCommand ??= new RelayCommand<object>(OpenFile);
 
-    private static void OnOpenFile(object parameter)
+    private static void OpenFile(object? parameter)
     {
         if (GetFileParameters(parameter, out var bucket, out var fileName, out var s3object)) 
         {
@@ -46,20 +38,13 @@ public static class FileCommands
 
     #endregion
 
-    #region SaveFile
+    #region SaveFileCommand
 
-    static ICommand? saveFile;
+    private static RelayCommand<object>? saveFileCommand;
 
-    public static ICommand SaveFile
-    {
-        get
-        {
-            saveFile ??= new BaseCommand(OnSaveFile);
-            return saveFile;
-        }
-    }
+    public static IRelayCommand<object> SaveFileCommand => saveFileCommand ??= new RelayCommand<object>(SaveFile);
 
-    private static async void OnSaveFile(object parameter)
+    private static async void SaveFile(object? parameter)
     {
         if (GetFileParameters(parameter, out var bucket, out var fileName, out var s3object))
         {
@@ -85,7 +70,7 @@ public static class FileCommands
 
     #region Common methods
 
-    private static bool GetFileParameters(object parameter, [MaybeNullWhen(false)] out string bucket, [MaybeNullWhen(false)] out string fileName, [MaybeNullWhen(false)] out string s3object)
+    private static bool GetFileParameters(object? parameter, [MaybeNullWhen(false)] out string bucket, [MaybeNullWhen(false)] out string fileName, [MaybeNullWhen(false)] out string s3object)
     {
         bucket = null;
         fileName = null;

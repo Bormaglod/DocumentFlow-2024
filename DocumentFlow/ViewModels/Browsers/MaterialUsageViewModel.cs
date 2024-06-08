@@ -4,6 +4,7 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DocumentFlow.Common.Data;
@@ -16,36 +17,22 @@ using DocumentFlow.Models.Entities;
 using DocumentFlow.Views.Editors;
 
 using Microsoft.Extensions.Configuration;
-
-using Syncfusion.Windows.Shared;
+using Microsoft.Extensions.Logging;
 
 using System.Data;
-using System.Windows.Input;
 
 namespace DocumentFlow.ViewModels.Browsers;
 
-public sealed class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfTransientLifetime
+public sealed partial class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>, ISelfTransientLifetime
 {
     public MaterialUsageViewModel() { }
 
-    public MaterialUsageViewModel(IDatabase database, IConfiguration configuration) : base(database, configuration) { }
+    public MaterialUsageViewModel(IDatabase database, IConfiguration configuration, ILogger<MaterialUsageViewModel> logger) : base(database, configuration, logger) { }
 
     #region Commands
 
-    #region OpenGoods
-
-    private ICommand? openGoods;
-
-    public ICommand OpenGoods
-    {
-        get
-        {
-            openGoods ??= new DelegateCommand(OnOpenGoods);
-            return openGoods;
-        }
-    }
-
-    private void OnOpenGoods(object parameter)
+    [RelayCommand]
+    private void OpenGoods()
     {
         if (SelectedItem is MaterialUsage item && item.Goods != null) 
         {
@@ -53,30 +40,14 @@ public sealed class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>,
         }
     }
 
-    #endregion
-
-    #region OpenCalculation
-
-    private ICommand? openCalculation;
-
-    public ICommand OpenCalculation
-    {
-        get
-        {
-            openCalculation ??= new DelegateCommand(OnOpenCalculation);
-            return openCalculation;
-        }
-    }
-
-    private void OnOpenCalculation(object parameter)
+    [RelayCommand]
+    private void OpenCalculation()
     {
         if (SelectedItem is MaterialUsage item && item.Calculation != null)
         {
             WeakReferenceMessenger.Default.Send(new EntityEditorOpenMessage(typeof(CalculationView), item.Calculation));
         }
     }
-
-    #endregion
 
     #endregion
 
@@ -104,8 +75,8 @@ public sealed class MaterialUsageViewModel : EntityGridViewModel<MaterialUsage>,
     protected override void InitializeToolBar()
     {
         ToolBarItems.AddButtons(this,
-            new ToolBarButtonModel("Изделие", "goods") { Command = OpenGoods },
-            new ToolBarButtonModel("Калькуляция", "calculation") { Command = OpenCalculation },
+            new ToolBarButtonModel("Изделие", "goods") { Command = OpenGoodsCommand },
+            new ToolBarButtonModel("Калькуляция", "calculation") { Command = OpenCalculationCommand },
             new ToolBarSeparatorModel(),
             new ToolBarButtonComboModel("Печать", "print"),
             new ToolBarButtonModel("Настройки", "settings"));

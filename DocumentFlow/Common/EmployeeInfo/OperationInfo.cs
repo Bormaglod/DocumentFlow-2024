@@ -16,8 +16,8 @@ namespace DocumentFlow.Common;
 
 public partial class OperationInfo : BaseEmpInfo
 {
-    private readonly ObservableCollection<OperationsPerformed> source = new();
-    private readonly ObservableCollection<EmpInfo> employees = new();
+    private readonly ObservableCollection<OperationsPerformed> source = [];
+    private readonly ObservableCollection<EmpInfo> employees = [];
 
     /// <summary>
     /// Возвращает или устанавливает количество изделий в партии.
@@ -84,7 +84,7 @@ public partial class OperationInfo : BaseEmpInfo
         var emp = employees.FirstOrDefault(x => x.Employee.Id == operationsPerformed.Employee.Id);
         if (emp == null) 
         {
-            employees.Add(new EmpInfo(operationsPerformed.Employee));
+            employees.Add(new EmpInfo(operationsPerformed.Employee) { Quantity = operationsPerformed.Quantity, Salary = operationsPerformed.Salary });
         }
         else
         {
