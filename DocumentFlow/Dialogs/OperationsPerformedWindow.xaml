@@ -10,7 +10,7 @@
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
-        Title="Выполненные работы" Height="294" Width="510"
+        Title="Выполненные работы" Height="315" Width="570"
         Loaded="OperationWindow_Loaded">
     <Window.Resources>
         <ResourceDictionary>
@@ -46,7 +46,9 @@
                                      Pattern="CustomPattern"
                                      CustomPattern="dd.MM.yyyy HH:mm:ss"
                                      Grid.Column="1"
-                                     Margin="0,0,0,5"/>
+                                     Margin="0,0,0,5"
+                                     Width="160"
+                                     HorizontalAlignment="Left"/>
             <TextBlock Text="Операция" 
                        Grid.Row="1" 
                        Margin="0,0,10,5"/>
@@ -99,8 +101,7 @@
                        Grid.Row="7" 
                        Margin="0,0,10,5"/>
             <CheckBox IsChecked="{Binding ElementName=operationWindow, Path=DoubleRate}"
-                      Grid.Row="7" Grid.Column="1"
-                      Margin="5,5,10,0"/>
+                      Grid.Row="7" Grid.Column="1"/>
         </Grid>
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Right"
