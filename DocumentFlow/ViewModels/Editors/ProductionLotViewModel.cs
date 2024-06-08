@@ -246,7 +246,7 @@ public partial class ProductionLotViewModel :
     {
         if (value != null)
         {
-            Calculations = goodsRepository.GetCalculations(value);
+            Calculations = goodsRepository.GetCalculations(value, Calculation);
         }
         else
         {

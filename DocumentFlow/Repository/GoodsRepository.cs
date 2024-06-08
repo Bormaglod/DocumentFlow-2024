@@ -65,18 +65,19 @@ public class GoodsRepository(IDatabase database) :
         }
     }
 
-    public IReadOnlyList<Calculation> GetCalculations(Goods goods)
+    public IReadOnlyList<Calculation> GetCalculations(Goods goods, Calculation? calculation)
     {
         using var conn = GetConnection();
-        return GetCalculations(conn, goods);
+        return GetCalculations(conn, goods, calculation);
     }
 
-    public IReadOnlyList<Calculation> GetCalculations(IDbConnection connection, Goods goods)
+    public IReadOnlyList<Calculation> GetCalculations(IDbConnection connection, Goods goods, Calculation? calculation)
     {
+        var calc = calculation ?? goods.Calculation;
         return GetCustomSlimQuery<Calculation>(connection, goods)
             .Select("state")
             .WhereRaw("state = 'approved'::calculation_state")
-            .When(goods.Calculation != null, w => w.OrWhere("id", goods.Calculation!.Id))
+            .When(calc != null, w => w.OrWhere("id", calc!.Id))
             .Get<Calculation>()
             .ToList();
     }
