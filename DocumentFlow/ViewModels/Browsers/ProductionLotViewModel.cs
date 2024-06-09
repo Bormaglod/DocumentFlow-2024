@@ -88,6 +88,6 @@ public class ProductionLotViewModel : DocumentViewModel<ProductionLot>, ISelfTra
     {
         return base
             .FilterQuery(query)
-            .OrWhere(q => q.WhereFalse("t0.sold"));
+            .OrWhere(q => q.WhereNull("t0.sold").Or().WhereFalse("t0.sold"));
     }
 }
