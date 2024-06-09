@@ -24,7 +24,7 @@ public class LocalSettings
     public static string GetLocalSettingsPath()
     {
         var version = Assembly.GetExecutingAssembly().GetName().Version;
-        var textVersion = version == null ? "0.0.0" : $"{version.Major}.{version.Minor}.{version.Revision}";
+        var textVersion = version == null ? "0.0.0" : $"{version.Major}.{version.Minor}.{version.Build}";
 
         return Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
