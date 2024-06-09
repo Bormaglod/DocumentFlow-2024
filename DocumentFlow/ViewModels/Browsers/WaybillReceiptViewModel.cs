@@ -32,49 +32,12 @@ public class WaybillReceiptViewModel : WaybillViewModel<WaybillReceipt>, ISelfTr
     }
 
     public override Type? GetEditorViewType() => typeof(Views.Editors.WaybillReceiptView);
-
-    protected override Query SelectQuery(Query query)
-    {
-        var wrp = new Query("waybill_receipt_price")
-            .Select("owner_id")
-            .SelectRaw("sum(product_cost) as product_cost")
-            .SelectRaw("sum(tax_value) as tax_value")
-            .SelectRaw("sum(full_cost) as full_cost")
-            .GroupBy("owner_id");
-
-        var receipt = GetQuery("posting_payments_receipt", "document_id");
-        var purchase = GetQuery("posting_payments_purchase", "document_id");
-        var debt = GetQuery("debt_adjustment", "document_debt_id");
-        var credit = GetQuery("debt_adjustment", "document_credit_id");
-
-        var wbr = new Query("waybill_receipt as wr")
-            .Select("wr.*")
-            .Select("d.{product_cost, tax_value, full_cost}")
-            .SelectRaw("coalesce(ppr.transaction_amount, 0) + coalesce(ppp.transaction_amount, 0) + coalesce(crdt.transaction_amount, 0) - coalesce(dbt.transaction_amount, 0) as paid")
-            .Select("pr.document_number as purchase_request_number")
-            .Select("pr.document_date as purchase_request_date")
-            .LeftJoin("purchase_request as pr", "pr.id", "wr.owner_id")
-            .LeftJoin("wrp as d", "d.owner_id", "wr.id")
-            .LeftJoin("receipt as ppr", "ppr.document_id", "wr.id")
-            .LeftJoin("purchase as ppp", "ppp.document_id", "pr.id")
-            .LeftJoin("debt as dbt", "dbt.document_debt_id", "wr.id")
-            .LeftJoin("credit as crdt", "crdt.document_credit_id", "wr.id");
-
-        return base
-            .SelectQuery(query)
-            .With("wrp", wrp)
-            .With("receipt", receipt)
-            .With("purchase", purchase)
-            .With("debt", debt)
-            .With("credit", credit)
-            .With("wbr", wbr);
-    }
-
+    
     protected override IReadOnlyList<WaybillReceipt> GetData(IDbConnection connection, Guid? id = null)
     {
         QueryParameters parameters = new()
         {
-            Table = "wbr"
+            Table = "waybill_receipt_view"
         };
 
         return DefaultQuery(connection, id, parameters)
@@ -89,15 +52,6 @@ public class WaybillReceiptViewModel : WaybillViewModel<WaybillReceipt>, ISelfTr
             .ToList();
     }
 
-    private static Query GetQuery(string table, string doc)
-    {
-        return new Query(table)
-            .Select(doc)
-            .SelectRaw("sum(transaction_amount) as transaction_amount")
-            .WhereTrue("carried_out")
-            .GroupBy(doc);
-    }
-
     protected override void OnCopyNestedRows(IDbConnection connection, WaybillReceipt from, WaybillReceipt to, IDbTransaction? transaction = null)
     {
         base.OnCopyNestedRows(connection, from, to, transaction);
@@ -109,6 +63,6 @@ public class WaybillReceiptViewModel : WaybillViewModel<WaybillReceipt>, ISelfTr
     {
         return base
             .FilterQuery(query)
-            .OrWhereColumns("paid", "!=", "full_cost");
+            .OrWhereColumns("t0.paid", "!=", "t0.full_cost");
     }
 }
