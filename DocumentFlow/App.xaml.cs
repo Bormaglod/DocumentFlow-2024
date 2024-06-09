@@ -45,18 +45,13 @@ public partial class App : Application
 
         var localSettings = Path.Combine(
 #if !DEBUG
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "Автоком",
-        "5.0.0",
-        "settings",
+            LocalSettings.GetLocalSettingsPath(),
 #endif
-        "appsettings.local.json");
+            "appsettings.local.json"
+        );
 
         var browserSettings = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Автоком",
-            "5.0.0",
-            "settings",
+            LocalSettings.GetLocalSettingsPath(),
             "browsers"
         );
 

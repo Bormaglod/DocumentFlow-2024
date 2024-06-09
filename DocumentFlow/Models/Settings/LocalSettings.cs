@@ -7,6 +7,7 @@
 using DocumentFlow.Common.Json;
 
 using System.IO;
+using System.Reflection;
 using System.Text.Json.Nodes;
 
 namespace DocumentFlow.Models.Settings;
@@ -20,16 +21,28 @@ public class LocalSettings
     public ReportSettings Report { get; set; } = new();
     public PreviewPdfSettings PreviewPdf { get; set; } = new();
 
-    public void Save()
+    public static string GetLocalSettingsPath()
     {
-        var file = Path.Combine(
-#if !DEBUG
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        var textVersion = version == null ? "0.0.0" : $"{version.Major}.{version.Minor}.{version.Revision}";
+
+        return Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Автоком",
-            "settings",
-#endif
+            textVersion,
+            "settings");
+    }
+
+    public void Save()
+    {
+#if DEBUG
+        var file = "appsettings.local.json";
+#else
+        var file = Path.Combine(
+            GetLocalSettingsPath(),
             "appsettings.local.json"
         );
+#endif
 
         string json = JsonHelper.GetJsonText(this);
 
