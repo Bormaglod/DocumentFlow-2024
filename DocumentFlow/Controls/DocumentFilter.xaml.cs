@@ -77,6 +77,12 @@ public partial class DocumentFilter : UserControl, INotifyPropertyChanged
         set { SetValue(ApplyFilterProperty, value); }
     }
 
+    public ICommand RefreshCommand
+    {
+        get { return (ICommand)GetValue(ApplyFilterProperty); }
+        set { SetValue(ApplyFilterProperty, value); }
+    }
+
     public bool IsVisibleStates
     {
         get => (bool)GetValue(IsVisibleStatesProperty);
@@ -118,6 +124,11 @@ public partial class DocumentFilter : UserControl, INotifyPropertyChanged
         typeof(ICommand), 
         typeof(DocumentFilter));
 
+    public static readonly DependencyProperty RefreshCommandProperty = DependencyProperty.Register(
+        nameof(RefreshCommand),
+        typeof(ICommand),
+        typeof(DocumentFilter));
+
     public static readonly DependencyProperty IsVisibleStatesProperty = DependencyProperty.Register(
         nameof(IsVisibleStates),
         typeof(bool),
@@ -138,6 +149,11 @@ public partial class DocumentFilter : UserControl, INotifyPropertyChanged
         ApplyFilter?.Execute(null);
     }
 
+    private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
+    {
+        RefreshCommand?.Execute(null);
+    }
+
     private void ButtonSelectDateRange_Click(object sender, RoutedEventArgs e)
     {
         DateRangeWindow window = new();
@@ -146,5 +162,10 @@ public partial class DocumentFilter : UserControl, INotifyPropertyChanged
             DateRangeFrom = dateFrom;
             DateRangeTo = dateTo;
         }
+    }
+
+    private void buttonRefresh_Click(object sender, RoutedEventArgs e)
+    {
+
     }
 }

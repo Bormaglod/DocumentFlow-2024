@@ -7,11 +7,15 @@
              xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:converter="clr-namespace:DocumentFlow.Common.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="35" d:DesignWidth="900" MaxHeight="35">
+             d:DesignHeight="35" d:DesignWidth="1000" MaxHeight="35">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal"
                     Height="25">
             <TextBlock Text="Организация" VerticalAlignment="Center"/>
@@ -69,5 +73,18 @@
                       Width="150" 
                       Visibility="{Binding ElementName=docFilter, Path=IsVisibleStates, Converter={StaticResource boolToVisibilityConverter}}"/>
         </StackPanel>
+        <Button x:Name="buttonRefresh"
+                Grid.Column="1"
+                Width="25"
+                Height="25"
+                Margin="5,0,0,0" 
+                Click="ButtonRefresh_Click">
+            <ContentControl>
+                <Image Source="/Images/refresh_rotate_sync_update_reload.png" 
+                       Stretch="Uniform"
+                       Width="14"
+                       Height="14"/>
+            </ContentControl>
+        </Button>
     </Grid>
 </UserControl>

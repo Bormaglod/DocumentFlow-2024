@@ -67,6 +67,7 @@
                                  States="{Binding States}"
                                  SelectedState="{Binding SelectedState, Mode=TwoWay}"
                                  ApplyFilter="{Binding ApplyFilterCommand}"
+                                 RefreshCommand="{Binding RefreshCommand}"
                                  Grid.Row="1"
                                  Margin="5"/>
         <syncfusion:SfDataGrid x:Name="gridContent" 

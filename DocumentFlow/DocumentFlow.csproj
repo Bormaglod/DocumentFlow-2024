@@ -125,6 +125,7 @@
 	  <None Remove="Images\left_16.png" />
 	  <None Remove="Images\pencil-16.png" />
 	  <None Remove="Images\perfect.png" />
+	  <None Remove="Images\refresh_rotate_sync_update_reload.png" />
 	  <None Remove="Images\right_16.png" />
 	  <None Remove="Images\sufficient.png" />
 	</ItemGroup>
@@ -527,6 +528,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\perfect.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\refresh_rotate_sync_update_reload.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Images\right_16.png">
