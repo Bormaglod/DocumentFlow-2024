@@ -36,6 +36,7 @@ public partial class NavigatorViewModel : ObservableObject, ISelfSingletonLifeti
                     AddItem<FinishedGoodsView>("Готовая продукция")),
                 AddFolder("Расчёты с контрагентами"),
                 AddItem<WaybillReceiptView>("Поступление"),
+                AddItem<WaybillSaleView>("Реализация"),
                 AddFolder("Зар. плата")));
 
         models.Add(AddFolder("Справочники",

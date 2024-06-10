@@ -28,6 +28,7 @@ public class WaybillSale : Waybill
         }
     }
 
-    /*[WritableCollection]
-    public IList<WaybillSalePrice> Prices { get; protected set; } = null!;*/
+    public bool IsOverduePayment => PaymentDate != null && PaymentDate < DateOnly.FromDateTime(DateTime.Now);
+
+    public bool IsCompletedPayment => PaymentExists == true;
 }
