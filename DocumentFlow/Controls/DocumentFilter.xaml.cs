@@ -71,16 +71,16 @@ public partial class DocumentFilter : UserControl, INotifyPropertyChanged
         set { SetValue(DateRangeToProperty, value); }
     }
 
-    public ICommand ApplyFilter
+    public ICommand ApplyFilterCommand
     {
-        get { return (ICommand)GetValue(ApplyFilterProperty); }
-        set { SetValue(ApplyFilterProperty, value); }
+        get { return (ICommand)GetValue(ApplyFilterCommandProperty); }
+        set { SetValue(ApplyFilterCommandProperty, value); }
     }
 
     public ICommand RefreshCommand
     {
-        get { return (ICommand)GetValue(ApplyFilterProperty); }
-        set { SetValue(ApplyFilterProperty, value); }
+        get { return (ICommand)GetValue(RefreshCommandProperty); }
+        set { SetValue(RefreshCommandProperty, value); }
     }
 
     public bool IsVisibleStates
@@ -119,8 +119,8 @@ public partial class DocumentFilter : UserControl, INotifyPropertyChanged
         typeof(DocumentFilter),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-    public static readonly DependencyProperty ApplyFilterProperty = DependencyProperty.Register(
-        nameof(ApplyFilter), 
+    public static readonly DependencyProperty ApplyFilterCommandProperty = DependencyProperty.Register(
+        nameof(ApplyFilterCommand), 
         typeof(ICommand), 
         typeof(DocumentFilter));
 
@@ -146,7 +146,7 @@ public partial class DocumentFilter : UserControl, INotifyPropertyChanged
 
     private void ButtonApply_Click(object sender, RoutedEventArgs e)
     {
-        ApplyFilter?.Execute(null);
+        ApplyFilterCommand?.Execute(null);
     }
 
     private void ButtonRefresh_Click(object sender, RoutedEventArgs e)

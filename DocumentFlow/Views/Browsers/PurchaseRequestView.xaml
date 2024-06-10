@@ -57,7 +57,7 @@
                                  IsVisibleStates="True"
                                  States="{Binding States}"
                                  SelectedState="{Binding SelectedState, Mode=TwoWay}"
-                                 ApplyFilter="{Binding ApplyFilterCommand}"
+                                 ApplyFilterCommand="{Binding ApplyFilterCommand}"
                                  RefreshCommand="{Binding RefreshCommand}"
                                  Grid.Row="1"
                                  Margin="5"/>
