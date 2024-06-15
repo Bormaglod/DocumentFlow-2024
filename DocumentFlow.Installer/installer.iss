@@ -9,12 +9,11 @@
 ; Имя приложения
 #define   Name       "DocumentFlow 2024"
 ; Версия приложения
-#define   Version    "5.0.0.40611"
+#define   Version    "5.0.0.40615"
 ; Имя исполняемого модуля
 #define   ExeName    "DocumentFlow.exe"
 
 [Setup]
-
 ; Прочая информация, отображаемая при установке
 AppId={{847FB541-464C-4173-A7AA-A72CD050045D}}
 AppName={#Name}
