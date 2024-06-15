@@ -207,16 +207,17 @@ public partial class MainWindowViewModel :
         await using var conn = new NpgsqlConnection(database.ConnectionString);
         await conn.OpenAsync(token);
 
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters =
+            {
+                new JsonStringEnumConverter()
+            }
+        };
+
         conn.Notification += (o, e) =>
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                Converters =
-                    {
-                        new JsonStringEnumConverter()
-                    }
-            };
             NotifyMessage? message = JsonSerializer.Deserialize<NotifyMessage>(e.Payload, options);
             if (message != null)
             {
