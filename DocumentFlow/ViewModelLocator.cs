@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Common;
-using DocumentFlow.Interfaces;
 
 using System.ComponentModel;
 using System.Windows;
