@@ -5,23 +5,25 @@
 //-----------------------------------------------------------------------
 
 using DocumentFlow.Common;
-using DocumentFlow.Common.Extensions;
 using DocumentFlow.Common.Data;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
+using DocumentFlow.Models.Settings;
+using DocumentFlow.Models.Settings.Authentification;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using DocumentFlow.Models.Settings;
+
+using Minio;
+
 using NLog.Extensions.Logging;
 
 using Syncfusion.SfSkinManager;
 
 using System.IO;
 using System.Windows;
-using DocumentFlow.Models.Settings.Authentification;
-using Minio;
 
 namespace DocumentFlow;
 
