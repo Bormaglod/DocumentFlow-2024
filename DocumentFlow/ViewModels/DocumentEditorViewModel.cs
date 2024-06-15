@@ -90,7 +90,7 @@ public abstract partial class DocumentEditorViewModel<T> : EntityEditorViewModel
         Organization = Organizations.FirstOrDefault(x => x.DefaultOrg);
     }
 
-    protected virtual IEnumerable<short> DisabledStates() => Array.Empty<short>();
+    protected virtual IEnumerable<short> DisabledStates() => [];
 
     protected override void UpdateUIControls(T entity)
     {

@@ -18,13 +18,13 @@ using System.Data;
 
 namespace DocumentFlow.ViewModels.Editors;
 
-public partial class OperationsPerformedViewModel : DocumentEditorViewModel<OperationsPerformed>, ISelfTransientLifetime
+public partial class OperationsPerformedViewModel(
+    IProductionLotRepository productionLotRepository,
+    ICalculationRepository calculationRepository,
+    IMaterialRepository materialRepository,
+    IOurEmployeeRepository ourEmployeeRepository,
+    IOrganizationRepository organizationRepository) : DocumentEditorViewModel<OperationsPerformed>(organizationRepository), ISelfTransientLifetime
 {
-    private readonly IProductionLotRepository productionLotRepository = null!;
-    private readonly ICalculationRepository calculationRepository = null!;
-    private readonly IMaterialRepository materialRepository = null!;
-    private readonly IOurEmployeeRepository ourEmployeeRepository = null!;
-
     [ObservableProperty]
     private ProductionLot? lot;
 
@@ -60,19 +60,6 @@ public partial class OperationsPerformedViewModel : DocumentEditorViewModel<Oper
 
     [ObservableProperty]
     private bool? doubleRate;
-
-    public OperationsPerformedViewModel(
-        IProductionLotRepository productionLotRepository,
-        ICalculationRepository calculationRepository,
-        IMaterialRepository materialRepository,
-        IOurEmployeeRepository ourEmployeeRepository,
-        IOrganizationRepository organizationRepository) : base(organizationRepository)
-    {
-        this.productionLotRepository = productionLotRepository;
-        this.calculationRepository = calculationRepository;
-        this.materialRepository = materialRepository;
-        this.ourEmployeeRepository = ourEmployeeRepository;
-    }
 
     protected override string GetStandardHeader() => "Выполнение работы";
 
