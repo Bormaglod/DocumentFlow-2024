@@ -133,7 +133,7 @@ public partial class ProductionLotViewModel :
 
     public void Receive(DocumentActionMessage<OperationsPerformed> message)
     {
-        if (OperationsPerformed == null)
+        if (OperationsPerformed == null || (Entity != null && message.Document.OwnerId != Entity.Id))
         {
             return;
         }

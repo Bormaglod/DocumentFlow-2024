@@ -88,22 +88,29 @@ public partial class LotEditor : UserControl
         typeof(ICommand),
         typeof(LotEditor));
 
+    private void AddWorkedEmployee(Employee employee)
+    {
+        ArgumentNullException.ThrowIfNull(WorkedEmployees);
+
+        if (WorkedEmployees.FirstOrDefault(x => x.Id == employee.Id) == null)
+        {
+            WorkedEmployees.Add(employee);
+            AddColumnEmployee();
+
+            foreach (var info in OperationInfos)
+            {
+                info.Employees.Add(new EmpInfo(employee));
+            }
+        }
+    }
+
     private void AddOperationsPerformed(OperationsPerformed operation)
     {
         ArgumentNullException.ThrowIfNull(WorkedEmployees);
         ArgumentNullException.ThrowIfNull(operation.Operation);
         ArgumentNullException.ThrowIfNull(operation.Employee);
 
-        if (WorkedEmployees.FirstOrDefault(x => x.Id == operation.Employee.Id) == null)
-        { 
-            WorkedEmployees.Add(operation.Employee);
-            AddColumnEmployee(WorkedEmployees.Count - 1);
-
-            foreach (var op in OperationInfos)
-            {
-                op.Employees.Add(new EmpInfo(operation.Employee));
-            }
-        }
+        AddWorkedEmployee(operation.Employee);
 
         var info = OperationInfos.FirstOrDefault(x => x.Operation.Id == operation.Operation.Id);
         if (info == null)
@@ -139,20 +146,27 @@ public partial class LotEditor : UserControl
     private void ReplaceOperationsPerformed(OperationsPerformed operation)
     {
         ArgumentNullException.ThrowIfNull(operation.Operation);
+        ArgumentNullException.ThrowIfNull(operation.Employee);
 
         var info = OperationInfos.FirstOrDefault(x => x.Operation.Id == operation.Operation.Id);
-        if (info != null)
+        if (info == null)
         {
-            var op = info.Source.FirstOrDefault(x => x.Id == operation.Id);
-            if (op != null)
-            {
-                info.Source.Remove(op);
-            }
-            
-            info.Source.Add(operation);
-
-            gridContent.View.Refresh();
+            return;
         }
+
+        var op = info.Source.FirstOrDefault(x => x.Id == operation.Id);
+        if (op != null)
+        {
+            info.Source.Remove(op);
+            if (op.Employee != null && operation.Employee.Id != op.Employee.Id)
+            {
+                AddWorkedEmployee(operation.Employee);
+            }
+        }
+
+        info.Source.Add(operation);
+
+        gridContent.View.Refresh();
     }
 
     private Style CreateStyle(string column)
@@ -184,6 +198,8 @@ public partial class LotEditor : UserControl
             }
         }
     }
+
+    private void AddColumnEmployee() => AddColumnEmployee(WorkedEmployees?.Count - 1 ?? 0);
 
     private void AddColumnEmployee(int empIndex)
     {
