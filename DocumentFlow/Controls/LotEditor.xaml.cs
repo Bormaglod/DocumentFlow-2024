@@ -1,4 +1,4 @@
-﻿ //-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // Copyright © 2010-2024 Тепляшин Сергей Васильевич. 
 // Contacts: <sergio.teplyashin@yandex.ru>
 // License: https://opensource.org/licenses/GPL-3.0
@@ -257,6 +257,9 @@ public partial class LotEditor : UserControl
             operations.Add(new OperationInfo() { Operation = item, LotQuantity = LotQuantity });
         }
 
+        gridContent.GridColumnSizer.ResetAutoCalculationforAllColumns();
+        gridContent.RefreshColumns();
+
         if (OperationsPerformed == null)
         {
             return;
@@ -286,8 +289,7 @@ public partial class LotEditor : UserControl
         }
 
         gridContent.Columns.Resume();
-        gridContent.RefreshColumns();
-
+        
         // Список произведенных работ
         foreach (var item in OperationsPerformed)
         {
