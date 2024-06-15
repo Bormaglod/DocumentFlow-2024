@@ -112,7 +112,7 @@ public partial class ComboBox : UserControl
             }
             else
             {
-                if (SelectedItem != null && value.Id != SelectedItem.Id)
+                if (SelectedItem == null || (SelectedItem != null && value.Id != SelectedItem.Id))
                 {
                     SelectedItem = value!;
                 }
