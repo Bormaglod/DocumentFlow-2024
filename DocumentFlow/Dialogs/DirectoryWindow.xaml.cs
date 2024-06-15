@@ -7,6 +7,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Models.Entities;
 
 using Syncfusion.UI.Xaml.Grid;
@@ -16,6 +17,7 @@ using Syncfusion.UI.Xaml.TreeGrid;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace DocumentFlow.Dialogs;
 
@@ -40,7 +42,7 @@ public partial class DirectoryWindow : Window
 
     public bool CanSelectFolder { get; set; }
 
-    public IEnumerable<Common.GridComboColumn>? Columns
+    public IEnumerable<GridComboColumn>? Columns
     {
         get => columns;
         set
@@ -65,8 +67,20 @@ public partial class DirectoryWindow : Window
                             case DateTimeGridComboColumn dateTimeColumnInfo:
                                 column = new TreeGridDateTimeColumn() { Pattern = dateTimeColumnInfo.Pattern };
                                 break;
-                            case CurrencyGridComboColumn:
-                                column = new TreeGridCurrencyColumn();
+                            case CurrencyGridComboColumn currencyColumnInfo:
+                                column = new TreeGridCurrencyColumn()
+                                {
+                                    CurrencyGroupSizes = new Int32Collection([currencyColumnInfo.Grouping ? 3 : 0])
+                                };
+
+                                break;
+                            case NumericGridComboColumn numericColumnInfo:
+                                column = new TreeGridNumericColumn() 
+                                { 
+                                    NumberDecimalDigits = numericColumnInfo.NumberDecimalDigits,
+                                    NumberGroupSizes = new Int32Collection([numericColumnInfo.Grouping ? 3 : 0])
+                                };
+
                                 break;
                         }
 
@@ -83,7 +97,31 @@ public partial class DirectoryWindow : Window
                         }
                         else
                         {
-                            column.ColumnSizer = TreeColumnSizer.AutoFillColumn;
+                            if (info.ColumnSizer == GridColumnSizerType.None)
+                            {
+                                column.ColumnSizer = TreeColumnSizer.AutoFillColumn;
+                            }
+                            else
+                            {
+                                switch (info.ColumnSizer)
+                                {
+                                    case GridColumnSizerType.Auto:
+                                        column.ColumnSizer = TreeColumnSizer.Auto;
+                                        break;
+                                    case GridColumnSizerType.AutoLastFill:
+                                        column.ColumnSizer = TreeColumnSizer.AutoFillColumn;
+                                        break;
+                                    case GridColumnSizerType.SizeToCells:
+                                        column.ColumnSizer = TreeColumnSizer.SizeToCells;
+                                        break;
+                                    case GridColumnSizerType.SizeToHeader:
+                                        column.ColumnSizer = TreeColumnSizer.SizeToHeader;
+                                        break;
+                                    case GridColumnSizerType.Star:
+                                        column.ColumnSizer = TreeColumnSizer.Star;
+                                        break;
+                                }
+                            }
                         }
 
                         gridContent.Columns.Add(column);

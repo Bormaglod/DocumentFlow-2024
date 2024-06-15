@@ -12,6 +12,8 @@ namespace DocumentFlow.Interfaces.Repository;
 
 public interface IWaybillSaleRepository : IDocumentRepository<WaybillSale>
 {
+    IList<WaybillSalePrice> GetContent(WaybillSale waybill);
+    IList<WaybillSalePrice> GetContent(IDbConnection connection, WaybillSale waybill);
     void CopyContent(WaybillSale waybillFrom, WaybillSale waybillTo);
     void CopyContent(IDbConnection connection, WaybillSale waybillFrom, WaybillSale waybillTo, IDbTransaction? transaction);
 }

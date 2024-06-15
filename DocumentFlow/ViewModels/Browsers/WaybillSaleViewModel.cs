@@ -31,7 +31,7 @@ public class WaybillSaleViewModel : WaybillViewModel<WaybillSale>, ISelfTransien
         this.waybillRepository = waybillRepository;
     }
 
-    //public override Type? GetEditorViewType() => typeof(Views.Editors.WaybillReceiptView);
+    public override Type? GetEditorViewType() => typeof(Views.Editors.WaybillSaleView);
 
     protected override IReadOnlyList<WaybillSale> GetData(IDbConnection connection, Guid? id = null)
     {

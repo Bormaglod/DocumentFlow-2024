@@ -8,4 +8,5 @@ namespace DocumentFlow.Common;
 
 public class CurrencyGridComboColumn : GridComboColumn
 {
+    public bool Grouping { get; set; } = true;
 }

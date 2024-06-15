@@ -7,10 +7,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using DocumentFlow.Common;
+using DocumentFlow.Common.Enums;
 using DocumentFlow.Models.Entities;
 
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.ScrollAxis;
+using Syncfusion.UI.Xaml.TreeGrid;
 
 using System.Windows;
 using System.Windows.Input;
@@ -64,11 +66,23 @@ public partial class DocumentWindow : Window
                                     Pattern = dateTimeColumnInfo.Pattern,
                                     CustomPattern = dateTimeColumnInfo.CustomPattern
                                 };
+
                                 break;
-                            case CurrencyGridComboColumn:
-                                column = new GridCurrencyColumn();
-                                ((GridCurrencyColumn)column).CurrencyGroupSizes = new Int32Collection(new int[] { 3 });
+                            case CurrencyGridComboColumn currencyColumnInfo:
+                                column = new GridCurrencyColumn() { 
+                                    CurrencyGroupSizes = new Int32Collection([currencyColumnInfo.Grouping ? 3 : 0]) 
+                                };
+
                                 break;
+                            case NumericGridComboColumn numericColumnInfo:
+                                column = new GridNumericColumn() 
+                                { 
+                                    NumberDecimalDigits = numericColumnInfo.NumberDecimalDigits,
+                                    NumberGroupSizes = new Int32Collection([numericColumnInfo.Grouping ? 3 : 0])
+                                };
+
+                                break;
+
                         }
 
                         if (column == null)
@@ -84,7 +98,31 @@ public partial class DocumentWindow : Window
                         }
                         else
                         {
-                            column.ColumnSizer = GridLengthUnitType.AutoWithLastColumnFill;
+                            if (info.ColumnSizer == GridColumnSizerType.None)
+                            {
+                                column.ColumnSizer = GridLengthUnitType.AutoLastColumnFill;
+                            }
+                            else
+                            {
+                                switch (info.ColumnSizer)
+                                {
+                                    case GridColumnSizerType.Auto:
+                                        column.ColumnSizer = GridLengthUnitType.Auto;
+                                        break;
+                                    case GridColumnSizerType.AutoLastFill:
+                                        column.ColumnSizer = GridLengthUnitType.AutoLastColumnFill;
+                                        break;
+                                    case GridColumnSizerType.SizeToCells:
+                                        column.ColumnSizer = GridLengthUnitType.SizeToCells;
+                                        break;
+                                    case GridColumnSizerType.SizeToHeader:
+                                        column.ColumnSizer = GridLengthUnitType.SizeToHeader;
+                                        break;
+                                    case GridColumnSizerType.Star:
+                                        column.ColumnSizer = GridLengthUnitType.Star;
+                                        break;
+                                }
+                            }
                         }
 
                         gridContent.Columns.Add(column);

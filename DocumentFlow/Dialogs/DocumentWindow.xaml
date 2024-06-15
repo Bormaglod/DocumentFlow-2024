@@ -9,7 +9,7 @@
         xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
-        Title="Выбор" Height="450" Width="600" 
+        Title="Выбор" Height="450" Width="1000" 
         ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True">
     <Window.Resources>

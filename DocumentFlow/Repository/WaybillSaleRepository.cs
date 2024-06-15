@@ -8,6 +8,7 @@ using Dapper;
 
 using DocumentFlow.Common;
 using DocumentFlow.Common.Exceptions;
+using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
@@ -21,6 +22,30 @@ public class WaybillSaleRepository(IDatabase database) :
     IWaybillSaleRepository,
     ITransientLifetime
 {
+    public IList<WaybillSalePrice> GetContent(WaybillSale waybill)
+    {
+        using var conn = GetConnection();
+        return GetContent(conn, waybill);
+    }
+
+    public IList<WaybillSalePrice> GetContent(IDbConnection connection, WaybillSale waybill)
+    {
+        return connection.GetQuery<WaybillSalePrice>()
+            .SelectRaw("regexp_replace(t0.tableoid::regclass::varchar, '^.*_', '') as discriminator")
+            .Where("t0.owner_id", waybill.Id)
+            .MappingQuery<WaybillSalePrice>(x => x.Product)
+            .MappingQuery<Product>(x => x.Measurement)
+            .MappingQuery<WaybillSalePrice>(x => x.Lot)
+            .Get<WaybillSalePrice, Product, Measurement, ProductionLot>((prp, product, measurement, lot) =>
+            {
+                product.Measurement = measurement;
+                prp.Product = product;
+                prp.Lot = lot;
+                return prp;
+            })
+            .ToList();
+    }
+
     public void CopyContent(WaybillSale waybillFrom, WaybillSale waybillTo)
     {
         using var conn = GetConnection();

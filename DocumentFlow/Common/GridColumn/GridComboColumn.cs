@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using DocumentFlow.Common.Enums;
+
 namespace DocumentFlow.Common;
 
 public abstract class GridComboColumn
@@ -21,4 +23,5 @@ public abstract class GridComboColumn
     public string MappingName { get; set; } = string.Empty;
     public string Header { get; set; } = string.Empty;
     public double Width { get; set; } = double.NaN;
+    public GridColumnSizerType ColumnSizer { get;set; } = GridColumnSizerType.None;
 }

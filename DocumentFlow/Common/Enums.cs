@@ -8,6 +8,15 @@ using System.ComponentModel;
 
 namespace DocumentFlow.Common.Enums;
 
+public enum GridColumnSizerType
+{
+    None,
+    Auto,
+    AutoLastFill,
+    SizeToCells,
+    SizeToHeader,
+    Star
+}
 public enum SystemOperation
 {
     Accept,

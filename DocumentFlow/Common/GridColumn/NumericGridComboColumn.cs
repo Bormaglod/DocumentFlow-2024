@@ -4,11 +4,10 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
-using DocumentFlow.Models.Entities;
+namespace DocumentFlow.Common;
 
-namespace DocumentFlow.Interfaces;
-
-public interface IProductionLotSupport
+public class NumericGridComboColumn : GridComboColumn
 {
-    ProductionLot? Lot { get; set; }
+    public int NumberDecimalDigits { get; set; } = 0;
+    public bool Grouping { get; set; } = true;
 }

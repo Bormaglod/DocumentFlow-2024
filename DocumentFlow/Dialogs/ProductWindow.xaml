@@ -7,10 +7,11 @@
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
         xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
-        xmlns:c="clr-namespace:DocumentFlow.Controls"
+        xmlns:controls="clr-namespace:DocumentFlow.Controls"
+        xmlns:common="clr-namespace:DocumentFlow.Common"
         xmlns:converters="clr-namespace:DocumentFlow.Common.Converters"
         mc:Ignorable="d"
-        Title="Материал / изделие" Height="350" Width="400"
+        Title="Материал / изделие" Height="350" Width="400" MinWidth="400"
         ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height" WindowStartupLocation="CenterScreen"
         ContentRendered="ProductWindow_ContentRendered"
         UseLayoutRounding="True">
@@ -21,6 +22,7 @@
             </ResourceDictionary.MergedDictionaries>
             <converters:BoolToRowVisibilityConverter x:Key="boolToRowVisibilityConverter"/>
             <BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+            <converters:NullToBoolConverter x:Key="nullToBoolConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -48,21 +50,21 @@
             <TextBlock Text="Материал / изделие"
                        Grid.Row="0" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>
-            <c:SelectBox x:Name="selectProduct" 
-                         SelectedItem="{Binding ElementName=productWindow, Path=Product}" 
-                         ItemsSource="{Binding ElementName=productWindow, Path=Products}"
-                         Grid.Row="0" Grid.Column="1"
-                         Style="{StaticResource SelectBoxStyle}" 
-                         ShowClearButton="False"/>
+            <controls:SelectBox x:Name="selectProduct" 
+                                SelectedItem="{Binding ElementName=productWindow, Path=Product}" 
+                                ItemsSource="{Binding ElementName=productWindow, Path=Products}"
+                                Grid.Row="0" Grid.Column="1"
+                                Style="{StaticResource SelectBoxStyle}"
+                                IsEnabled="{Binding ElementName=productWindow, Path=Lot, Converter={StaticResource nullToBoolConverter}}"/>
             <TextBlock Text="Калькуляция"
                        Grid.Row="1" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>
-            <c:SelectBox x:Name="selectCalculation" 
-                         SelectedItem="{Binding ElementName=productWindow, Path=Calculation}" 
-                         ItemsSource="{Binding ElementName=productWindow, Path=Calculations}"
-                         Style="{StaticResource SelectBoxStyle}" 
-                         ShowClearButton="False"
-                         Grid.Row="1" Grid.Column="1" />
+            <controls:SelectBox x:Name="selectCalculation" 
+                                SelectedItem="{Binding ElementName=productWindow, Path=Calculation}" 
+                                ItemsSource="{Binding ElementName=productWindow, Path=Calculations}"
+                                Style="{StaticResource SelectBoxStyle}" 
+                                ShowClearButton="False"
+                                Grid.Row="1" Grid.Column="1" />
             <TextBlock Text="!" 
                        Grid.Row="1"
                        Grid.Column="2" 
@@ -74,9 +76,33 @@
             <TextBlock Text="Партия"
                        Grid.Row="2" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>
-            <c:SelectBox x:Name="selectLot" 
-                         Grid.Row="2" Grid.Column="1"
-                         Style="{StaticResource SelectBoxStyle}"/>
+            <controls:SelectBox x:Name="selectLot" 
+                                SelectedItem="{Binding ElementName=productWindow, Path=Lot}"
+                                ItemsSource="{Binding ElementName=productWindow, Path=Lots}"
+                                Grid.Row="2" Grid.Column="1"
+                                TypeContent="Document"
+                                Style="{StaticResource SelectBoxStyle}">
+                <controls:SelectBox.Columns>
+                    <common:DateTimeGridComboColumn MappingName="DocumentDate"
+                                                    Header="Дата"
+                                                    Width="110"
+                                                    Pattern="CustomPattern"
+                                                    CustomPattern="D"/>
+                    <common:TextGridComboColumn MappingName="DocumentNumber"
+                                                Header="Номер"
+                                                Width="70"/>
+                    <common:TextGridComboColumn MappingName="Calculation.Goods"
+                                                Header="Изделие"/>
+                    <common:NumericGridComboColumn MappingName="Quantity"
+                                                   Header="Количество"
+                                                   NumberDecimalDigits="3"
+                                                   ColumnSizer="Auto"/>
+                    <common:NumericGridComboColumn MappingName="FreeQuantity"
+                                                   Header="В наличии"
+                                                   NumberDecimalDigits="3"
+                                                   ColumnSizer="Auto"/>
+                </controls:SelectBox.Columns>
+            </controls:SelectBox>
             <TextBlock Text="Количество"
                        Grid.Row="3" Grid.Column="0"
                        Style="{StaticResource TextBlockStyle}"/>

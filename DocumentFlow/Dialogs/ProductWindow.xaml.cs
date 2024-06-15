@@ -13,6 +13,8 @@ using DocumentFlow.Interfaces;
 using DocumentFlow.Interfaces.Repository;
 using DocumentFlow.Models.Entities;
 
+using Humanizer;
+
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -36,6 +38,9 @@ public partial class ProductWindow : Window
 
     [ObservableProperty]
     private Calculation? calculation;
+
+    [ObservableProperty]
+    private ProductionLot? lot;
 
     [ObservableProperty]
     private decimal amount;
@@ -62,7 +67,10 @@ public partial class ProductWindow : Window
     private IEnumerable<Calculation>? calculations;
 
     [ObservableProperty]
-    private IEnumerable<int> taxes = new List<int>() { 0, 10, 20 };
+    private IEnumerable<ProductionLot>? lots;
+
+    [ObservableProperty]
+    private IEnumerable<int> taxes = [0, 10, 20];
 
     [ObservableProperty]
     private bool withCalculation;
@@ -84,6 +92,7 @@ public partial class ProductWindow : Window
         InitializeComponent();
     }
 
+    public Contractor? Contractor { get; set; }
     public Contract? Contract { get; set; }
 
     public bool Create<T>([MaybeNullWhen(false)] out T row) where T : ProductPrice, new()
@@ -92,6 +101,11 @@ public partial class ProductWindow : Window
         try
         {
             UpdateControls(typeof(T));
+
+            if (WithLot)
+            {
+                Lots = GetLots();
+            }
 
             if (IsTaxPayer)
             {
@@ -107,6 +121,8 @@ public partial class ProductWindow : Window
 
         if (ShowDialog() == true)
         {
+            ArgumentNullException.ThrowIfNull(Product);
+
             row = new()
             {
                 Product = Product,
@@ -123,10 +139,15 @@ public partial class ProductWindow : Window
                 p.Calculation = Calculation;
             }
 
-            /*if (product is IProductionLotSupport lot && selectLot.SelectedItem != Guid.Empty)
+            if (row is IProductionLotSupport lot && Lot != null)
             {
-                lot.LotId = selectLot.SelectedItem;
-            }*/
+                lot.Lot = Lot;
+            }
+
+            if (row is IDiscriminator discriminator)
+            {
+                discriminator.Discriminator = Product.GetType().Name.Underscore();
+            }
 
             return true;
         }
@@ -166,15 +187,11 @@ public partial class ProductWindow : Window
         {
             UpdateControls(typeof(T));
 
-            /*if (product is IProductionLotSupport lot && lot.LotId != null)
+            if (product is IProductionLotSupport lot && lot.Lot != null)
             {
-                selectLot.DataSource = new ProductionLot[]
-                {
-                    services.GetRequiredService<IProductionLotRepository>().Get(lot.LotId.Value)
-                };
-
-                selectLot.SelectedItem = lot.LotId.Value;
-            }*/
+                Lots = GetLots(Lot);
+                Lot = lot.Lot;
+            }
 
             Product = product.Product;
             Amount = product.Amount;
@@ -194,6 +211,8 @@ public partial class ProductWindow : Window
 
         if (ShowDialog() == true)
         {
+            ArgumentNullException.ThrowIfNull(Product);
+
             product.Product = Product;
             product.Amount = Amount;
             product.Price = Price;
@@ -207,10 +226,15 @@ public partial class ProductWindow : Window
                 prod.Calculation = Calculation;
             }
 
-            /*if (product is IProductionLotSupport _lot)
+            if (product is IProductionLotSupport _lot)
             {
-                _lot.LotId = selectLot.SelectedItem == Guid.Empty ? null : selectLot.SelectedItem;
-            }*/
+                _lot.Lot = Lot;
+            }
+
+            if (product is IDiscriminator discriminator)
+            {
+                discriminator.Discriminator = Product.GetType().Name.Underscore();
+            }
 
             return true;
         }
@@ -277,8 +301,8 @@ public partial class ProductWindow : Window
 
     private IEnumerable<Product> GetProducts()
     {
-        IEnumerable<Material> materials = Array.Empty<Material>();
-        IEnumerable<Goods> goods = Array.Empty<Goods>();
+        IEnumerable<Material> materials = [];
+        IEnumerable<Goods> goods = [];
 
         if (content == ProductContent.Materials || content == ProductContent.All)
         {
@@ -321,6 +345,34 @@ public partial class ProductWindow : Window
         }
     }
 
+    private IEnumerable<ProductionLot> GetLots(ProductionLot? current = null)
+    {
+        var lots = ServiceLocator.Context.GetService<IProductionLotRepository>();
+        if (Contractor == null && Product == null)
+        {
+            return lots.GetActive(current);
+        }
+
+        var goods = Product as Goods;
+
+        if (Contractor != null && goods != null)
+        {
+            return lots.GetActive(Contractor, goods, current);
+        }
+
+        if (goods != null)
+        {
+            return lots.GetActive(goods, current);
+        }
+
+        if (Contractor != null)
+        {
+            return lots.GetActive(Contractor, current);
+        }
+
+        return [];
+    }
+
     partial void OnProductChanged(Product? value)
     {
         UpdateCalculations();
@@ -336,7 +388,23 @@ public partial class ProductWindow : Window
             {
                 textAmount.Focus();
             }
+
+            if (WithLot)
+            {
+                Lots = GetLots(Lot);
+            }
         }
+    }
+
+    partial void OnLotChanged(ProductionLot? value)
+    {
+        if (value == null || Product != null)
+        {
+            Lots = GetLots();
+            return;
+        }
+
+        Product = value.Calculation?.Goods;
     }
 
     partial void OnCalculationChanged(Calculation? value)
