@@ -25,7 +25,7 @@ public class BrowserSettings
 
     //public ReportPageSettings Page { get; set; } = new();*/
 
-    public void Save(string browserName, object? filter = null)
+    async public void SaveAsync(string browserName, object? filter = null)
     {
         var path = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -55,7 +55,7 @@ public class BrowserSettings
                 [browserName] = node
             };
 
-            File.WriteAllText(file, jsonObj.ToJsonString(JsonHelper.StandardOptions()));
+            await File.WriteAllTextAsync(file, jsonObj.ToJsonString(JsonHelper.StandardOptions()));
         }
     }
 }

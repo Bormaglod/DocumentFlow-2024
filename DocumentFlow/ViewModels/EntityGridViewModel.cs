@@ -484,7 +484,7 @@ public abstract partial class EntityGridViewModel<T> :
                 settings.Groups = list.Count == 0 ? null : list;
             }
 
-            settings.Save(GetConfigFileName(), GetFilter());
+            settings.SaveAsync(GetConfigFileName(), GetFilter());
         }
     }
 
