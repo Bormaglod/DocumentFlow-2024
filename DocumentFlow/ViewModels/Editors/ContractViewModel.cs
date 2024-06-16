@@ -74,7 +74,7 @@ public partial class ContractViewModel : DirectoryEditorViewModel<Contract>, ISe
 
     protected override string GetStandardHeader() => "Договор";
 
-    protected override void RaiseAfterLoadDocument(Contract entity)
+    protected override void DoAfterLoadDocument(Contract entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

@@ -28,16 +28,13 @@ using System.Windows;
 
 namespace DocumentFlow.ViewModels.Editors;
 
-public partial class ProductionLotViewModel : 
-    DocumentEditorViewModel<ProductionLot>, 
-    IRecipient<DocumentActionMessage<OperationsPerformed>>, 
-    ISelfTransientLifetime
+public partial class ProductionLotViewModel(
+    IProductionOrderRepository orderRepository,
+    IGoodsRepository goodsRepository,
+    ICalculationRepository calculationRepository,
+    IOperationsPerformedRepository operationsPerformedRepository,
+    IOrganizationRepository organizationRepository) : DocumentEditorViewModel<ProductionLot>(organizationRepository), IRecipient<DocumentActionMessage<OperationsPerformed>>, ISelfTransientLifetime
 {
-    private readonly IProductionOrderRepository orderRepository = null!;
-    private readonly IGoodsRepository goodsRepository = null!;
-    private readonly ICalculationRepository calculationRepository = null!;
-    private readonly IOperationsPerformedRepository operationsPerformedRepository = null!;
-
     [ObservableProperty]
     private ProductionOrder? order;
 
@@ -64,21 +61,6 @@ public partial class ProductionLotViewModel :
 
     [ObservableProperty]
     private ObservableCollection<OperationsPerformed>? operationsPerformed;
-
-    public ProductionLotViewModel() { }
-
-    public ProductionLotViewModel(
-        IProductionOrderRepository orderRepository,
-        IGoodsRepository goodsRepository,
-        ICalculationRepository calculationRepository,
-        IOperationsPerformedRepository operationsPerformedRepository,
-        IOrganizationRepository organizationRepository) : base(organizationRepository)
-    {
-        this.orderRepository = orderRepository;
-        this.goodsRepository = goodsRepository;
-        this.calculationRepository = calculationRepository;
-        this.operationsPerformedRepository = operationsPerformedRepository;
-    }
 
     #region Commands
 
@@ -164,7 +146,7 @@ public partial class ProductionLotViewModel :
 
     protected override string GetStandardHeader() => "Партия";
 
-    protected override void RaiseAfterLoadDocument(ProductionLot entity)
+    protected override void DoAfterLoadDocument(ProductionLot entity)
     {
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;

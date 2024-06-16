@@ -34,7 +34,7 @@ public abstract partial class BaseOperationViewModel<T> : DirectoryEditorViewMod
     [ObservableProperty]
     private decimal salary;
 
-    protected override void RaiseAfterLoadDocument(T entity)
+    protected override void DoAfterLoadDocument(T entity)
     {
         Code = entity.Code;
         ParentId = entity.ParentId;

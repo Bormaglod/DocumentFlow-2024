@@ -132,9 +132,9 @@ public partial class MaterialViewModel : ProductViewModel<Material>, ISelfTransi
 
     protected override string GetStandardHeader() => "Материал";
 
-    protected override void RaiseAfterLoadDocument(Material entity)
+    protected override void DoAfterLoadDocument(Material entity)
     {
-        base.RaiseAfterLoadDocument(entity);
+        base.DoAfterLoadDocument(entity);
         MinOrder = entity.MinOrder;
         ExtArticle = entity.ExtArticle;
         Wire = entity.Wire;

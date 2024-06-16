@@ -72,7 +72,7 @@ public abstract partial class BaseCalculationOperationViewModel<T> : DirectoryEd
         this.repoEquipment = repoEquipment;
     }
 
-    protected override void RaiseAfterLoadDocument(T entity)
+    protected override void DoAfterLoadDocument(T entity)
     {
         Code = entity.Code;
         ItemName = entity.ItemName;

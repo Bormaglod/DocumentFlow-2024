@@ -24,7 +24,7 @@ public partial class MeasurementViewModel : DirectoryEditorViewModel<Measurement
 
     protected override string GetStandardHeader() => "Ед. изм.";
 
-    protected override void RaiseAfterLoadDocument(Measurement entity)
+    protected override void DoAfterLoadDocument(Measurement entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

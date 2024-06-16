@@ -104,7 +104,7 @@ public partial class OrganizationViewModel : DirectoryEditorViewModel<Organizati
         Accounts = ourAccountRepository.GetAccounts(connection);
     }
 
-    protected override void RaiseAfterLoadDocument(Organization entity)
+    protected override void DoAfterLoadDocument(Organization entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

@@ -106,9 +106,9 @@ public partial class CalculationOperationViewModel : BaseCalculationOperationVie
 
     protected override string GetStandardHeader() => "Произв. операция";
 
-    protected override void RaiseAfterLoadDocument(CalculationOperation entity)
+    protected override void DoAfterLoadDocument(CalculationOperation entity)
     {
-        base.RaiseAfterLoadDocument(entity);
+        base.DoAfterLoadDocument(entity);
 
         PreviousOperation = entity.PreviousOperation;
         if (PreviousOperation != null && PreviousOperationList != null)

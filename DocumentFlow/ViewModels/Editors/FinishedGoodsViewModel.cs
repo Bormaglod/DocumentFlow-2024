@@ -75,7 +75,7 @@ public partial class FinishedGoodsViewModel(
 
     protected override string GetStandardHeader() => "Готовая продукция";
 
-    protected override void RaiseAfterLoadDocument(FinishedGoods entity)
+    protected override void DoAfterLoadDocument(FinishedGoods entity)
     {
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;

@@ -27,7 +27,7 @@ public partial class BankViewModel : DirectoryEditorViewModel<Bank>, ISelfTransi
 
     protected override string GetStandardHeader() => "Банк";
 
-    protected override void RaiseAfterLoadDocument(Bank entity)
+    protected override void DoAfterLoadDocument(Bank entity)
     {
         ParentId = entity.ParentId;
         ItemName = entity.ItemName;

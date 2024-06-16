@@ -52,7 +52,7 @@ public partial class DeductionViewModel : DirectoryEditorViewModel<Deduction>, I
 
     protected override string GetStandardHeader() => "Удержание";
 
-    protected override void RaiseAfterLoadDocument(Deduction entity)
+    protected override void DoAfterLoadDocument(Deduction entity)
     {
         Code = entity.Code;
         ParentId = entity.ParentId;

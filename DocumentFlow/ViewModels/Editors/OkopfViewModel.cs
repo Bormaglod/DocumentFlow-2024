@@ -21,7 +21,7 @@ public partial class OkopfViewModel : DirectoryEditorViewModel<Okopf>, ISelfTran
 
     protected override string GetStandardHeader() => "ОКОПФ";
 
-    protected override void RaiseAfterLoadDocument(Okopf entity)
+    protected override void DoAfterLoadDocument(Okopf entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

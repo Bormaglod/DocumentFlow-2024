@@ -69,7 +69,7 @@ public partial class CalculationViewModel : DirectoryEditorViewModel<Calculation
 
     protected override string GetStandardHeader() => "Калькуляция";
 
-    protected override void RaiseAfterLoadDocument(Calculation entity)
+    protected override void DoAfterLoadDocument(Calculation entity)
     {
         Code = entity.Code;
         CostPrice = entity.CostPrice;

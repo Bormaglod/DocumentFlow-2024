@@ -140,7 +140,7 @@ public partial class PurchaseRequestViewModel : DocumentEditorViewModel<Purchase
 
     protected override string GetStandardHeader() => "Заявка";
 
-    protected override void RaiseAfterLoadDocument(PurchaseRequest entity)
+    protected override void DoAfterLoadDocument(PurchaseRequest entity)
     {
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;

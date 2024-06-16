@@ -111,9 +111,9 @@ public partial class CuttingViewModel : BaseOperationViewModel<Cutting>, ISelfTr
 
     protected override string GetStandardHeader() => "Резка";
 
-    protected override void RaiseAfterLoadDocument(Cutting entity)
+    protected override void DoAfterLoadDocument(Cutting entity)
     {
-        base.RaiseAfterLoadDocument(entity);
+        base.DoAfterLoadDocument(entity);
         SegmentLength = entity.SegmentLength;
         LeftCleaning = entity.LeftCleaning;
         LeftSweep = entity.LeftSweep;

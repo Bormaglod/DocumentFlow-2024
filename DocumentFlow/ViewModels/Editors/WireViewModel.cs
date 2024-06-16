@@ -24,7 +24,7 @@ public partial class WireViewModel : DirectoryEditorViewModel<Wire>, ISelfTransi
 
     protected override string GetStandardHeader() => "Тип провода";
 
-    protected override void RaiseAfterLoadDocument(Wire entity)
+    protected override void DoAfterLoadDocument(Wire entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

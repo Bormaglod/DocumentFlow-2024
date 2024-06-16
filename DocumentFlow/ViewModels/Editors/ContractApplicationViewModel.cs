@@ -115,7 +115,7 @@ public partial class ContractApplicationViewModel : DirectoryEditorViewModel<Con
 
     protected override string GetStandardHeader() => "Приложение";
 
-    protected override void RaiseAfterLoadDocument(ContractApplication entity)
+    protected override void DoAfterLoadDocument(ContractApplication entity)
     {
         Code = entity.Code;
         ItemName = entity.ItemName;

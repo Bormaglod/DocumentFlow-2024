@@ -21,7 +21,7 @@ public partial class OperationTypeViewModel : DirectoryEditorViewModel<Operation
 
     protected override string GetStandardHeader() => "Вид операции";
 
-    protected override void RaiseAfterLoadDocument(OperationType entity)
+    protected override void DoAfterLoadDocument(OperationType entity)
     {
         ParentId = entity.ParentId;
         ItemName = entity.ItemName;

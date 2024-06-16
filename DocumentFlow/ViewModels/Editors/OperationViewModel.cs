@@ -120,9 +120,9 @@ public partial class OperationViewModel : BaseOperationViewModel<Operation>, ISe
 
     protected override string GetStandardHeader() => "Операция";
 
-    protected override void RaiseAfterLoadDocument(Operation entity)
+    protected override void DoAfterLoadDocument(Operation entity)
     {
-        base.RaiseAfterLoadDocument(entity);
+        base.DoAfterLoadDocument(entity);
         OperationType = entity.OperationType;
     }
 

@@ -42,7 +42,7 @@ public partial class AccountViewModel : DirectoryEditorViewModel<Account>, ISelf
 
     protected override string GetStandardHeader() => "Расч. счёт";
 
-    protected override void RaiseAfterLoadDocument(Account entity)
+    protected override void DoAfterLoadDocument(Account entity)
     {
         ParentId = entity.ParentId;
         ItemName = entity.ItemName;

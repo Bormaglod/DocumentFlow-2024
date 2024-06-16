@@ -24,7 +24,7 @@ public partial class OkpdtrViewModel : DirectoryEditorViewModel<Okpdtr>, ISelfTr
     
     protected override string GetStandardHeader() => "ОКПДТР";
 
-    protected override void RaiseAfterLoadDocument(Okpdtr entity)
+    protected override void DoAfterLoadDocument(Okpdtr entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

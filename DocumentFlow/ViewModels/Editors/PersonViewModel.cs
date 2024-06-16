@@ -33,7 +33,7 @@ public partial class PersonViewModel : DirectoryEditorViewModel<Person>, ISelfTr
 
     protected override string GetStandardHeader() => "Физ. лица";
 
-    protected override void RaiseAfterLoadDocument(Person entity)
+    protected override void DoAfterLoadDocument(Person entity)
     {
         ParentId = entity.ParentId;
         Name = entity.ItemName;

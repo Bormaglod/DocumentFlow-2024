@@ -174,7 +174,7 @@ public abstract partial class EntityEditorViewModel<T> :
 
     /// <summary>
     /// Метод предназначен для создания и заполнения коллекций используемых в данной модели. Этот методы вызывается
-    /// после загрузки данных документа (до заполнения свойств модели, т.е. перед вызовом метода <see cref="RaiseAfterLoadDocument(T)"/>. 
+    /// после загрузки данных документа (до заполнения свойств модели, т.е. перед вызовом метода <see cref="DoAfterLoadDocument(T)"/>. 
     /// Параметр <paramref name="entity"/> при этом содержит загруженный объект. Либо этот метод вызывается при создании документа - тогда
     /// параметр <paramref name="entity"/> равен null. Кроме того - при вызове команды <see cref="Refresh"/>, если документ создан.
     /// </summary>
@@ -208,13 +208,6 @@ public abstract partial class EntityEditorViewModel<T> :
         InitializeToolBar();
     }
 
-    private void RaiseAfterLoad(IDbConnection connection, T entity)
-    {
-        InitializeEntityCollections(connection, entity);
-        RaiseAfterLoadDocument(entity);
-        UpdateUIControls(entity);
-    }
-
     protected void LoadEntity()
     {
         try
@@ -226,7 +219,9 @@ public abstract partial class EntityEditorViewModel<T> :
 
             if (Entity != null)
             {
-                RaiseAfterLoad(conn, Entity);
+                InitializeEntityCollections(conn, Entity);
+                DoAfterLoadDocument(Entity);
+                UpdateUIControls(Entity);
             }
 
             entityEditStatus = EntityEditStatus.Loaded;
@@ -306,7 +301,7 @@ public abstract partial class EntityEditorViewModel<T> :
 
     protected abstract string GetStandardHeader();
 
-    protected abstract void RaiseAfterLoadDocument(T entity);
+    protected abstract void DoAfterLoadDocument(T entity);
 
     protected abstract void UpdateEntity(T entity);
 

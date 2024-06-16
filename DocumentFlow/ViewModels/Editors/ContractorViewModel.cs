@@ -110,7 +110,7 @@ public partial class ContractorViewModel : DirectoryEditorViewModel<Contractor>,
         Persons = personRepository.GetSlim(connection);
     }
 
-    protected override void RaiseAfterLoadDocument(Contractor entity)
+    protected override void DoAfterLoadDocument(Contractor entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

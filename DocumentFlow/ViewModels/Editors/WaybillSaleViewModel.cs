@@ -161,7 +161,7 @@ public partial class WaybillSaleViewModel : DocumentEditorViewModel<WaybillSale>
 
     protected override string GetStandardHeader() => "Реализация";
 
-    protected override void RaiseAfterLoadDocument(WaybillSale entity)
+    protected override void DoAfterLoadDocument(WaybillSale entity)
     {
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;

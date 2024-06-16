@@ -135,7 +135,7 @@ public partial class ProductionOrderViewModel : DocumentEditorViewModel<Producti
 
     protected override string GetStandardHeader() => "Заказ";
 
-    protected override void RaiseAfterLoadDocument(ProductionOrder entity)
+    protected override void DoAfterLoadDocument(ProductionOrder entity)
     {
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;

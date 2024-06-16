@@ -55,7 +55,7 @@ public partial class CalculationDeductionViewModel : DirectoryEditorViewModel<Ca
 
     protected override string GetStandardHeader() => "Удержание";
 
-    protected override void RaiseAfterLoadDocument(CalculationDeduction entity)
+    protected override void DoAfterLoadDocument(CalculationDeduction entity)
     {
         Deduction = entity.Deduction;
         Price = entity.Price;

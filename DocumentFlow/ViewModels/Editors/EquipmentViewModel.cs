@@ -33,7 +33,7 @@ public partial class EquipmentViewModel : DirectoryEditorViewModel<Equipment>, I
 
     protected override string GetStandardHeader() => "Оборудование";
 
-    protected override void RaiseAfterLoadDocument(Equipment entity)
+    protected override void DoAfterLoadDocument(Equipment entity)
     {
         ParentId = entity.ParentId;
         Code = entity.Code;

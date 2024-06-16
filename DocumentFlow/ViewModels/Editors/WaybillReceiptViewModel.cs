@@ -204,7 +204,7 @@ public partial class WaybillReceiptViewModel : DocumentEditorViewModel<WaybillRe
 
     protected override string GetStandardHeader() => "Поступление";
 
-    protected override void RaiseAfterLoadDocument(WaybillReceipt entity)
+    protected override void DoAfterLoadDocument(WaybillReceipt entity)
     {
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;

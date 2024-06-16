@@ -76,9 +76,9 @@ public partial class GoodsViewModel : ProductViewModel<Goods>, ISelfTransientLif
 
     protected override string GetStandardHeader() => "Изделие";
 
-    protected override void RaiseAfterLoadDocument(Goods entity)
+    protected override void DoAfterLoadDocument(Goods entity)
     {
-        base.RaiseAfterLoadDocument(entity);
+        base.DoAfterLoadDocument(entity);
         IsService = entity.IsService;
         Note = entity.Note;
         Length = entity.Length;

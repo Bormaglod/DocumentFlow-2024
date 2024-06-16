@@ -52,7 +52,7 @@ public abstract partial class ProductViewModel<T> : DirectoryEditorViewModel<T>
         this.measurementRepository = measurementRepository;
     }
 
-    protected override void RaiseAfterLoadDocument(T entity)
+    protected override void DoAfterLoadDocument(T entity)
     {
         Code = entity.Code;
         ParentId = entity.ParentId;

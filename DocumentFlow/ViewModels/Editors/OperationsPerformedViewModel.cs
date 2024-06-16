@@ -63,7 +63,7 @@ public partial class OperationsPerformedViewModel(
 
     protected override string GetStandardHeader() => "Выполнение работы";
 
-    protected override void RaiseAfterLoadDocument(OperationsPerformed entity)
+    protected override void DoAfterLoadDocument(OperationsPerformed entity)
     {
         DocumentNumber = entity.DocumentNumber;
         DocumentDate = entity.DocumentDate;
