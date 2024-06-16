@@ -146,11 +146,6 @@ public partial class OperationsPerformedViewModel(
             Lots = productionLotRepository.GetInProgress(connection, entity?.Lot);
         }
 
-        if (entity?.Lot?.Calculation != null)
-        {
-            Operations = calculationRepository.GetOperations(connection, entity.Lot.Calculation, includeMaterialInfo: true);
-        }
-
         Materials = materialRepository.GetSlim();
         Employees = ourEmployeeRepository.GetEmployees();
     }
@@ -158,5 +153,9 @@ public partial class OperationsPerformedViewModel(
     partial void OnLotChanged(ProductionLot? value)
     {
         Owner = value;
+        if (value != null && value.Calculation != null)
+        {
+            Operations = calculationRepository.GetOperations(value.Calculation, includeMaterialInfo: true);
+        }
     }
 }
