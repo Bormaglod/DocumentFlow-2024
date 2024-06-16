@@ -157,6 +157,14 @@ public partial class ProductionLotViewModel(
         Product = entity.Calculation?.Goods;
     }
 
+    protected override void DoCreatedDocument()
+    {
+        if (Owner is ProductionOrder order)
+        {
+            Order = order;
+        }
+    }
+
     protected override void UpdateEntity(ProductionLot entity)
     {
         entity.DocumentNumber = DocumentNumber;
