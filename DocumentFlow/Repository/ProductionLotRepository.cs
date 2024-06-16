@@ -21,6 +21,17 @@ public class ProductionLotRepository(IDatabase database) :
     IProductionLotRepository, 
     ITransientLifetime
 {
+    public IReadOnlyList<ProductionLot> GetInProgress(ProductionLot? lot)
+    {
+        using var conn = GetConnection();
+        return GetInProgress(conn, lot);
+    }
+
+    public IReadOnlyList<ProductionLot> GetInProgress(IDbConnection connection, ProductionLot? lot)
+    {
+        return GetList(GetInProgressQuery(connection, lot).OrWhere("t0.state_id", State.InActive));
+    }
+
     public IReadOnlyList<ProductionLot> GetActive(ProductionLot? lot)
     {
         using var conn = GetConnection();
@@ -84,6 +95,15 @@ public class ProductionLotRepository(IDatabase database) :
             .ToList();
     }
 
+    private static Query GetInProgressQuery(IDbConnection connection, ProductionLot? lot)
+    {
+        return connection.GetQuery<ProductionLot>()
+            .MappingQuery<ProductionLot>(x => x.Order)
+            .MappingQuery<ProductionLot>(x => x.Calculation, joinType: JoinType.Inner)
+            .MappingQuery<Calculation>(x => x.Goods, joinType: JoinType.Inner, alias: "g")
+            .When(lot != null, q => q.OrWhere("t0.id", lot!.Id));
+    }
+
     private static Query GetActiveQuery(IDbConnection connection, ProductionLot? lot, Func<Query, Query>? whereAction = null)
     {
         var fg = new Query("finished_goods")
@@ -105,18 +125,19 @@ public class ProductionLotRepository(IDatabase database) :
             .WhereRaw("iif(g.is_service, t0.quantity, coalesce(fg.finished_quantity, 0)) != coalesce(s.sale_quantity, 0)");
         whereAction?.Invoke(where);
 
-        return connection.GetQuery<ProductionLot>()
+        return GetInProgressQuery(connection, lot)
+            //connection.GetQuery<ProductionLot>()
             .SelectRaw("iif(g.is_service, t0.quantity, coalesce(fg.finished_quantity, 0)) - coalesce(s.sale_quantity, 0) as free_quantity")
-            .MappingQuery<ProductionLot>(x => x.Order)
-            .MappingQuery<ProductionLot>(x => x.Calculation, joinType: JoinType.Inner)
-            .MappingQuery<Calculation>(x => x.Goods, joinType: JoinType.Inner, alias: "g")
+            //.MappingQuery<ProductionLot>(x => x.Order)
+            //.MappingQuery<ProductionLot>(x => x.Calculation, joinType: JoinType.Inner)
+            //.MappingQuery<Calculation>(x => x.Goods, joinType: JoinType.Inner, alias: "g")
             .LeftJoin(fg.As("fg"), q => q.On("fg.lot_id", "t0.id"))
             .LeftJoin(sales.As("s"), s => s.On("s.lot_id", "t0.id").On("s.reference_id", "g.id"))
             .Where(q => q
                 .Where(GetWhereQuery)
                 .When(whereAction != null, whereAction)
-            )
-            .When(lot != null, q => q.OrWhere("t0.id", lot!.Id));
+            );
+            //.When(lot != null, q => q.OrWhere("t0.id", lot!.Id));
     }
 
     private static Query GetWhereQuery(Query query)

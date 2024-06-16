@@ -134,7 +134,17 @@ public partial class OperationsPerformedViewModel(
     {
         base.InitializeEntityCollections(connection, entity);
 
-        Lots = productionLotRepository.GetActive(connection, entity?.Lot);
+        if (Status == EntityEditStatus.Created)
+        {
+            if (Owner is ProductionLot lot)
+            {
+                Lots = productionLotRepository.GetInProgress(connection, lot);
+            }
+        }
+        else
+        {
+            Lots = productionLotRepository.GetInProgress(connection, entity?.Lot);
+        }
 
         if (entity?.Lot?.Calculation != null)
         {

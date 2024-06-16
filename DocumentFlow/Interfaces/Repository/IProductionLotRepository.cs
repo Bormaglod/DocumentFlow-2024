@@ -13,6 +13,23 @@ namespace DocumentFlow.Interfaces.Repository;
 public interface IProductionLotRepository : IDocumentRepository<ProductionLot>
 {
     /// <summary>
+    /// Функция возвращает список партий находящихся в работе. К списку заказов будет добавлена партия <paramref name="lot"/> 
+    /// (если она не равна null).
+    /// </summary>
+    /// <param name="lot"></param>
+    /// <returns></returns>
+    IReadOnlyList<ProductionLot> GetInProgress(ProductionLot? lot);
+
+    /// <summary>
+    /// Функция возвращает список партий находящихся в работе. К списку заказов будет добавлена партия <paramref name="lot"/> 
+    /// (если она не равна null).
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="lot"></param>
+    /// <returns></returns>
+    IReadOnlyList<ProductionLot> GetInProgress(IDbConnection connection, ProductionLot? lot);
+
+    /// <summary>
     /// Функция возвращает список партий находящихся в работе либо выполненных. Остаток изделий созданных в этой партии
     /// находящийся на складе не должен быть равен 0. К списку заказов будет добавлена партия <paramref name="lot"/> 
     /// (если она не равна null).
