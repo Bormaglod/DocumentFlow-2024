@@ -77,6 +77,14 @@ public partial class OperationsPerformedViewModel(
         DoubleRate = entity.DoubleRate;
     }
 
+    protected override void DoCreatedDocument()
+    {
+        if (Owner is ProductionLot lot)
+        {
+            Lot = lot;
+        }
+    }
+
     protected override void UpdateEntity(OperationsPerformed entity)
     {
         entity.DocumentNumber = DocumentNumber;
