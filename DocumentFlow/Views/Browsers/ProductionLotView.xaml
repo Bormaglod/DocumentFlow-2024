@@ -60,11 +60,13 @@
                                  ApplyFilterCommand="{Binding ApplyFilterCommand}"
                                  RefreshCommand="{Binding RefreshCommand}"
                                  Grid.Row="1"
-                                 Margin="5"/>
+                                 Margin="5"
+                                 Visibility="{Binding AllowFiltering, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <syncfusion:SfDataGrid x:Name="gridContent" 
                                Grid.Row="2"
                                ShowBusyIndicator="True"
                                EditTrigger="OnTap"
+                               IsGroupDropAreaExpanded="{Binding IsGroupDropAreaExpanded}"
                                LiveDataUpdateMode="AllowDataShaping"
                                ItemsSource="{Binding DataSource}"
                                SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
