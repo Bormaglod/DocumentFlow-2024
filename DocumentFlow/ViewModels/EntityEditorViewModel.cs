@@ -157,6 +157,7 @@ public abstract partial class EntityEditorViewModel<T> :
 
         using var conn = ServiceLocator.Context.GetService<IDatabase>().OpenConnection();
         InitializeEntityCollections(conn);
+        DoCreatedDocument();
     }
 
     public virtual DocumentInfo? GetReportingDocument(Report report) => Entity;
@@ -302,6 +303,8 @@ public abstract partial class EntityEditorViewModel<T> :
     protected abstract string GetStandardHeader();
 
     protected abstract void DoAfterLoadDocument(T entity);
+
+    protected virtual void DoCreatedDocument() { }
 
     protected abstract void UpdateEntity(T entity);
 
