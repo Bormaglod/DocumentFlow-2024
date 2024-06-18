@@ -23,9 +23,6 @@ public partial class FinishedGoodsViewModel(
     IGoodsRepository goodsRepository,
     IOrganizationRepository organizationRepository) : DocumentEditorViewModel<FinishedGoods>(organizationRepository), ISelfTransientLifetime
 {
-    private readonly IProductionLotRepository productionLotRepository = productionLotRepository;
-    private readonly IGoodsRepository goodsRepository = goodsRepository;
-
     [ObservableProperty]
     private ProductionLot? lot;
 
@@ -59,17 +56,7 @@ public partial class FinishedGoodsViewModel(
     }
 
     [RelayCommand]
-    private void ProductSelected()
-    {
-        if (Product != null)
-        {
-            var calc = goodsRepository.GetCurrentCalculation(Product);
-            if (calc != null) 
-            {
-                Price = calc.CostPrice;
-            }
-        }
-    }
+    private void ProductSelected() => CalculateProductPrice();
 
     #endregion
 
@@ -85,6 +72,17 @@ public partial class FinishedGoodsViewModel(
         Price = entity.Price;
         ProductCost = entity.ProductCost;
         Product = entity.Goods ?? (Lot?.Calculation?.Goods);
+    }
+
+    protected override void DoCreatedDocument()
+    {
+        base.DoCreatedDocument();
+        if (Owner is ProductionLot lot)
+        {
+            Lot = lot;
+            CalculateProductPrice();
+            Quantity = productionLotRepository.GetNewlyManufacturedProducts(lot);
+        }
     }
 
     protected override void UpdateEntity(FinishedGoods entity)
@@ -131,8 +129,20 @@ public partial class FinishedGoodsViewModel(
     {
         base.InitializeEntityCollections(connection, entity);
         
-        Lots = productionLotRepository.GetActive(connection, entity?.Lot);
+        Lots = productionLotRepository.GetInProgress(connection, entity?.Lot);
         Products = goodsRepository.GetProducts(withMeasurements: true);
+    }
+
+    private void CalculateProductPrice()
+    {
+        if (Product != null)
+        {
+            var calc = goodsRepository.GetCurrentCalculation(Product);
+            if (calc != null)
+            {
+                Price = calc.CostPrice;
+            }
+        }
     }
 
     partial void OnLotChanged(ProductionLot? value)

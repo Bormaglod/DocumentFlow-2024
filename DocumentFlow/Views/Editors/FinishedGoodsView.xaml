@@ -139,7 +139,7 @@
                                 Grid.Row="3" Grid.Column="1">
                         <syncfusion:CurrencyTextBox Value="{Binding Price, UpdateSourceTrigger=PropertyChanged}"
                                                     Style="{StaticResource CurrencyTextBoxStyle}"
-                                                    Width="80" Height="25"
+                                                    Width="100" Height="25"
                                                     x:Name="textPrice"
                                                     NullValue="{x:Null}"
                                                     UseNullOption="True" 
@@ -158,10 +158,14 @@
                                Grid.Row="4"/>
                     <StackPanel Orientation="Horizontal"
                                 Grid.Row="4" Grid.Column="1">
-                        <syncfusion:CurrencyTextBox Value="{Binding ProductCost, UpdateSourceTrigger=PropertyChanged, TargetNullValue=0}"
+                        <syncfusion:CurrencyTextBox Value="{Binding ProductCost, UpdateSourceTrigger=PropertyChanged}"
                                                     Style="{StaticResource CurrencyTextBoxStyle}"
                                                     Width="100" Height="25"
-                                                    x:Name="textCost"/>
+                                                    x:Name="textCost"
+                                                    NullValue="{x:Null}"
+                                                    UseNullOption="True" 
+                                                    WatermarkText="Не установлено"
+                                                    WatermarkTextIsVisible="True"/>
                         <syncfusion:ButtonAdv SizeMode="Small"
                                               SmallIcon="pack://application:,,,/DocumentFlow;component/Images/icons8-broom-16.png"
                                               Margin="5,0,0,5"

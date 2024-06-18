@@ -4,6 +4,8 @@
 // License: https://opensource.org/licenses/GPL-3.0
 //-----------------------------------------------------------------------
 
+using Dapper;
+
 using DocumentFlow.Common.Enums;
 using DocumentFlow.Common.Extensions;
 using DocumentFlow.Interfaces;
@@ -80,6 +82,17 @@ public class ProductionLotRepository(IDatabase database) :
                 .Join("production_order as po", "t0.owner_id", "po.id"));
     }
 
+    public decimal GetNewlyManufacturedProducts(ProductionLot lot)
+    {
+        using var conn = GetConnection();
+        return GetNewlyManufacturedProducts(conn, lot);
+    }
+
+    public decimal GetNewlyManufacturedProducts(IDbConnection connection, ProductionLot lot)
+    {
+        return connection.ExecuteScalar<decimal>("select get_finished_quantity(:Id)", new { lot.Id });
+    }
+
     private static List<ProductionLot> GetList(Query query)
     {
         return query
@@ -126,18 +139,13 @@ public class ProductionLotRepository(IDatabase database) :
         whereAction?.Invoke(where);
 
         return GetInProgressQuery(connection, lot)
-            //connection.GetQuery<ProductionLot>()
             .SelectRaw("iif(g.is_service, t0.quantity, coalesce(fg.finished_quantity, 0)) - coalesce(s.sale_quantity, 0) as free_quantity")
-            //.MappingQuery<ProductionLot>(x => x.Order)
-            //.MappingQuery<ProductionLot>(x => x.Calculation, joinType: JoinType.Inner)
-            //.MappingQuery<Calculation>(x => x.Goods, joinType: JoinType.Inner, alias: "g")
             .LeftJoin(fg.As("fg"), q => q.On("fg.lot_id", "t0.id"))
             .LeftJoin(sales.As("s"), s => s.On("s.lot_id", "t0.id").On("s.reference_id", "g.id"))
             .Where(q => q
                 .Where(GetWhereQuery)
                 .When(whereAction != null, whereAction)
             );
-            //.When(lot != null, q => q.OrWhere("t0.id", lot!.Id));
     }
 
     private static Query GetWhereQuery(Query query)

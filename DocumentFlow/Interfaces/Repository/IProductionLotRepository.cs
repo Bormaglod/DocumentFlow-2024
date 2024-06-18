@@ -114,4 +114,21 @@ public interface IProductionLotRepository : IDocumentRepository<ProductionLot>
     /// <param name="lot"></param>
     /// <returns></returns>
     IReadOnlyList<ProductionLot> GetActive(IDbConnection connection, Contractor contractor, ProductionLot? lot);
+
+    /// <summary>
+    /// Функция возвращает количество изделий изготовленные в партии <paramref name="lot"/> отсутствующие в 
+    /// списке готовых изделий.
+    /// </summary>
+    /// <param name="lot">Партия для которой производится подсчет изготовленных изделлий.</param>
+    /// <returns></returns>
+    decimal GetNewlyManufacturedProducts(ProductionLot lot);
+
+    /// <summary>
+    /// Функция возвращает количество изделий изготовленные в партии <paramref name="lot"/> отсутствующие в 
+    /// списке готовых изделий.
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="lot">Партия для которой производится подсчет изготовленных изделлий.</param>
+    /// <returns></returns>
+    decimal GetNewlyManufacturedProducts(IDbConnection connection, ProductionLot lot);
 }
