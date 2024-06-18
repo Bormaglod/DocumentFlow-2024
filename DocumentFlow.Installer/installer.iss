@@ -9,7 +9,7 @@
 ; Имя приложения
 #define   Name       "DocumentFlow 2024"
 ; Версия приложения
-#define   Version    "5.0.0.40616"
+#define   Version    "5.0.0.40618"
 ; Имя исполняемого модуля
 #define   ExeName    "DocumentFlow.exe"
 
